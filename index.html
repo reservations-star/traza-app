@@ -47,6 +47,12 @@ p{margin:0;line-height:1.5}
 .between{justify-content:space-between}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 20px;border-radius:999px;font-weight:600;font-size:15px;text-decoration:none;transition:transform .12s,background .2s}
 .btn:active{transform:scale(.98)}
+/* Estados de interacción: normal → hover → presionado → seleccionado → desactivado */
+@media (hover:hover){.btn-primary:hover{background:var(--navy-2)}.btn-ghost:hover{background:var(--cream)}.btn-terra:hover{filter:brightness(1.08)}.icon-btn:hover{background:var(--cream)}.icon-btn.on:hover{background:var(--navy-2)}.filter:hover{background:var(--cream-2)}.filter[aria-pressed="true"]:hover{background:var(--navy-2)}.tab:hover{color:var(--navy)}.opt:hover{background:var(--cream-2)}.list-item:hover{background:var(--cream)}.chip-btn:hover{background:#FAD9CE}}
+.icon-btn:active,.filter:active,.opt:active,.list-item:active,.tab:active,.chip-btn:active,.poi:active .poi-ic{transform:scale(.94)}
+.icon-btn,.filter,.opt,.list-item,.tab,.chip-btn,.poi-ic{transition:transform .12s,background .2s,color .2s}
+.btn:disabled,.btn[aria-disabled="true"]{background:var(--cream-2);color:#9AA3AD;box-shadow:none;border-color:transparent;cursor:not-allowed;transform:none}
+
 .btn-primary{background:var(--navy);color:#fff;box-shadow:0 6px 16px rgba(22,82,119,.25)}
 .btn-ghost{border:1.5px solid var(--navy);color:var(--navy);background:var(--white)}
 .btn-terra{background:var(--terra-dk);color:#fff}
@@ -399,7 +405,7 @@ const visitedCount=()=>STAMP_IDS.filter(vis).length;
 // Los textos se escriben en español; si el idioma es inglés, se traducen al mostrarse en pantalla.
 const EN={
 // Bienvenida e ingreso
-'BY ZEROS3 TRAVEL COMPANY':'BY ZEROS3 TRAVEL COMPANY','Traza tu Guayaquil':'Trace your Guayaquil','Omitir':'Skip','Siguiente':'Next','Empezar':'Get started',
+'BY ZEROS3 TRAVEL COMPANY':'BY ZEROS3 TRAVEL COMPANY','Traza tu Guayaquil':'Trace your Guayaquil','Omitir':'Skip','Siguiente':'Next','Empezar':'Get started','Comenzar':'Start',
 'Recorre la ciudad':'Walk the city','Explora Guayaquil con un mapa ilustrado y rutas pensadas para ti.':'Explore Guayaquil with an illustrated map and routes designed for you.',
 'Descubre lo auténtico':'Discover the real Guayaquil','Escucha la historia de cada lugar y encuentra dónde comer cerca.':'Listen to the story of each place and find somewhere to eat nearby.',
 'Guarda tus fotos como recuerdos y gana un sello en cada lugar.':'Save your photos as memories and earn a stamp at every place.',
@@ -697,11 +703,12 @@ SCREENS.verif=()=>`<section class="screen"><div class="scroll stack"><div class=
  <h1 class="h2">Revisa tu correo</h1><p class="muted">Enviamos un código de 6 dígitos a<br><b style="color:var(--navy)">${esc(S.email)}</b></p>
  <div class="otp" id="otp">${[0,1,2,3,4,5].map(k=>`<input inputmode="numeric" maxlength="1" aria-label="Dígito ${k+1}" id="d${k}">`).join('')}</div>
  <p class="small muted">Prototipo: escribe cualquier código de 6 dígitos.</p>
- <button class="btn btn-primary btn-block" id="ok">Verificar e ingresar ${I('chev','svg-s')}</button></div>
+ <button class="btn btn-primary btn-block" id="ok" disabled>Verificar e ingresar ${I('chev','svg-s')}</button></div>
  <img class="skyline" src="img/skyline.webp" alt=""></div></section>`;
 AFTER.verif=()=>{const ins=[...document.querySelectorAll('#otp input')];ins[0].focus();
- ins.forEach((inp,k)=>{inp.oninput=()=>{inp.value=inp.value.replace(/\D/g,'').slice(-1);if(inp.value&&ins[k+1])ins[k+1].focus();};inp.onkeydown=e=>{if(e.key==='Backspace'&&!inp.value&&ins[k-1])ins[k-1].focus();};
-  inp.onpaste=e=>{const t=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,6);if(t){e.preventDefault();t.split('').forEach((c,j)=>ins[j]&&(ins[j].value=c));}};});
+ const okb=document.getElementById('ok'),chk=()=>{okb.disabled=ins.some(i=>!i.value);};
+ ins.forEach((inp,k)=>{inp.oninput=()=>{inp.value=inp.value.replace(/\D/g,'').slice(-1);if(inp.value&&ins[k+1])ins[k+1].focus();chk();};inp.onkeydown=e=>{if(e.key==='Backspace'&&!inp.value&&ins[k-1])ins[k-1].focus();};
+  inp.onpaste=e=>{const t=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,6);if(t){e.preventDefault();t.split('').forEach((c,j)=>ins[j]&&(ins[j].value=c));chk();}};});
  document.getElementById('ok').onclick=()=>{const code=ins.map(i=>i.value).join('');if(code.length<6){toast('Completa los 6 dígitos');return;}
   const n=(S.email.split('@')[0]||'Viajero').replace(/[._\d]+/g,' ').trim().split(' ')[0];S.name=n?n[0].toUpperCase()+n.slice(1):'Viajero';
   S.mode='cliente';save();stack=[];go('inicio',{},{replace:true});};};
