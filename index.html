@@ -164,6 +164,9 @@ a.list-item,a.list-item *{text-decoration:none}
 .map-wrap.night .lm img{filter:drop-shadow(0 0 12px rgba(255,214,140,.55)) brightness(.95)}
 .map-wrap.night .lbl,.map-wrap.night .poi-t,.map-wrap.night .lbl-sub{background:#22303f;color:#F7F5F0}
 .map-wrap.night .poi-ic{background:#22303f;color:#D6E6F2;border-color:#D6E6F2}.map-wrap.night .poi.sel .poi-ic{background:#F2947A;color:#fff}
+.recbar{position:absolute;left:0;top:46px;display:flex;align-items:center;gap:8px;background:var(--navy);color:#fff;border-radius:20px;padding:6px 6px 6px 12px;font-size:12px;font-weight:600;box-shadow:var(--shadow);z-index:6}
+.recbar button{background:#fff;color:var(--navy);border-radius:14px;padding:4px 10px;font-size:11px;font-weight:700}
+.recdot{width:9px;height:9px;border-radius:50%;background:#F2947A;animation:recpulse 1.2s infinite}@keyframes recpulse{50%{opacity:.25}}
 .icon-btn.on{background:var(--navy);color:#fff}
 .tstops{display:flex;flex-wrap:wrap;gap:6px}
 .tstop{display:inline-flex;align-items:center;gap:6px;background:var(--cream);border-radius:14px;padding:3px 10px 3px 3px;font-size:11px;font-weight:600;color:var(--navy)}
@@ -384,7 +387,7 @@ const COMMUNITY=[
  {who:'Andrés M.',place:'penas',img:'img/foto-penas.jpg',text:'Llegué al escalón 444. ¡Valió cada paso!',likes:87}];
 
 /* ---------- Estado ---------- */
-const def={mode:null,name:'Dennisse',email:'',visited:{malecon:'2026-10-12',penas:'2026-10-13'},mems:[],saved:[],liked:{},onboarded:false,lang:'ES'};
+const def={mode:null,name:'Dennisse',email:'',visited:{},track:[],geo:{},mems:[],saved:[],liked:{},onboarded:false,lang:'ES'};
 let S=Object.assign({},def);
 try{const raw=localStorage.getItem('traza-v1');if(raw)S=Object.assign({},def,JSON.parse(raw));}catch(e){}
 function save(){try{localStorage.setItem('traza-v1',JSON.stringify(S));}catch(e){ /* sin espacio: se mantiene en memoria */ }}
@@ -715,6 +718,7 @@ SCREENS.mapa=({sel})=>`<section class="screen"><div class="map-wrap${nightMap?' 
   <div style="position:absolute;left:0;top:${NY}px;width:${MW}px;height:${MH}px">
   ${LM.map(l=>`<button class="lm ${matches(l.id)?'':'dim'}" data-lm="${l.id}" ${l.k?`data-k="${l.k}"`:''} style="left:${l.x}px;top:${l.y}px;width:${l.w}px;height:${l.h}px" aria-label="${l.lbl}"><img src="${l.img}" alt="" draggable="false"${l.rot?` style="transform:rotate(${l.rot}deg)"`:''}></button>`).join('')}
   <svg id="trsvg" style="position:absolute;left:0;top:${-NY}px;pointer-events:none;overflow:visible" viewBox="0 ${-NY} ${MW} ${MH+NY}" width="${MW}" height="${MH+NY}">${traceSVG()}</svg>
+  <svg id="tracksvg" style="position:absolute;left:0;top:${-NY}px;pointer-events:none;overflow:visible" viewBox="0 ${-NY} ${MW} ${MH+NY}" width="${MW}" height="${MH+NY}">${trackSVG()}</svg>
   ${(()=>{const seen={};return LM.filter(l=>STAMP_IDS.includes(l.id)&&vis(l.id)&&!seen[l.id]&&(seen[l.id]=1)).map(l=>`<span class="stamp-ok" style="left:${l.lx-15}px;top:${l.ly-34}px" title="Sello conseguido">${I('check','svg-s')}</span>`).join('');})()}
   ${LM.map(l=>`<span class="lbl ${matches(l.id)?'':'dim'}" style="left:${l.lx}px;top:${l.ly}px">${l.lbl}</span>`).join('')}
   <span class="lbl-sub ${matches('historico')?'':'dim'}" style="left:1612px;top:338px">Samborondón · 20 min en auto</span>
@@ -725,7 +729,7 @@ SCREENS.mapa=({sel})=>`<section class="screen"><div class="map-wrap${nightMap?' 
  </div>
  <div class="map-top"><button class="search" id="srch">${I('search')}Busca lugares, hoteles, cafés…</button>
   <div class="filters" role="group" aria-label="Filtros">${['Todos','Cultura','Mar','Naturaleza','Fotografía','Gastronomía','Hoteles'].map(f=>`<button class="filter" aria-pressed="${f===mapFilter}" data-f="${f}">${f}</button>`).join('')}</div>
-  <div style="position:relative;height:40px"><button class="hist-chip" data-lm="historico"><img src="img/historico.webp" alt="">Parque Histórico →</button></div></div>
+  <div style="position:relative;height:40px"><button class="hist-chip" data-lm="historico"><img src="img/historico.webp" alt="">Parque Histórico →</button>${recBar()}</div></div>
  <div class="fabs" id="fabs"><button class="icon-btn${traceMode?' on':''}" id="trz" aria-label="Trazar mi camino" aria-pressed="${traceMode}">${I('route')}</button><button class="icon-btn" id="loc" aria-label="Mi ubicación">${I('target')}</button><button class="icon-btn" id="lay" aria-label="Capas del mapa">${I('layers')}</button>
   <div class="zoom"><button id="zin" aria-label="Acercar">${I('plus')}</button><button id="zout" aria-label="Alejar">${I('minus')}</button></div></div>
  <div class="sheet-card" id="pc"></div><div class="sheet-card" id="tp"></div>
@@ -779,7 +783,8 @@ AFTER.mapa=({sel})=>{
   <button class="opt" id="l1">${I(trace.length?'map':'check')}<span class="stack gap4"><b style="color:var(--navy)">Solo lugares</b><span class="small muted">Mapa limpio, sin caminos</span></span></button>
   <button class="opt" id="l2">${I(trace.length?'check':'route')}<span class="stack gap4"><b style="color:var(--navy)">Ruta del centro</b><span class="small muted">Camino a pie por las calles, de Las Peñas a la Catedral</span></span></button>
   <button class="opt" id="l3">${I(nightMap?'check':'star')}<span class="stack gap4"><b style="color:var(--navy)">Mapa de noche</b><span class="small muted">${nightMap?'Activado · toca para volver al día':'Colores oscuros para recorridos nocturnos'}</span></span></button>`,{onOpen:(o,close)=>{o.querySelector('#l3').onclick=()=>{nightMap=!nightMap;close();mw.classList.toggle('night',nightMap);toast(nightMap?'Mapa de noche activado':'Mapa de día');};o.querySelector('#l1').onclick=()=>{trace=[];close();setTrace(false);};o.querySelector('#l2').onclick=()=>{trace=CENTER.slice();close();setTrace(true);fitAll();};}});
- document.getElementById('loc').onclick=locate;
+ document.getElementById('loc').onclick=recSheet;const rs=document.getElementById('recStop');if(rs)rs.onclick=()=>stopTracking(true);
+ mw.addEventListener('pointerdown',()=>{if(recording())followMe=false;});
  function locate(){const fx=PROM,fy=ys(8)+130;const fallback=why=>{mePos={x:fx,y:fy};const me=document.getElementById('me');if(me){me.style.left=fx+'px';me.style.top=fy+'px';}centerOn(fx,fy);toast(why);};
   if(!navigator.geolocation){fallback('Tu navegador no comparte la ubicación. Te mostramos el Malecón.');return;}
   navigator.geolocation.getCurrentPosition(pos=>{const{latitude:la,longitude:lo}=pos.coords;const near=nearest(la,lo);
@@ -880,6 +885,60 @@ function gotPhoto(url){stopCam();draft=Object.assign({},draft||{},{photo:url,dat
 
 /* ---------- Ubicación ---------- */
 function dist(a,b,c,d){const R=6371000,r=Math.PI/180;const x=(d-b)*r*Math.cos((a+c)/2*r),y=(c-a)*r;return Math.sqrt(x*x+y*y)*R;}
+/* ---------- Recorrido en vivo y sellos por ubicación ---------- */
+// Puntos de llegada de cada lugar (lat, lng) y radio en metros. Se pueden recalibrar desde Perfil.
+const GEO={penas:{pts:[[-2.1826,-79.8762],[-2.1803,-79.8758]],r:120},malecon:{pts:[[-2.1857,-79.8776],[-2.1890,-79.8785],[-2.1913,-79.8792]],r:110},cacao:{pts:[[-2.1872,-79.8801]],r:70},seminario:{pts:[[-2.1951,-79.8822]],r:90},plaza:{pts:[[-2.1940,-79.8806]],r:70},puerto:{pts:[[-2.1785,-79.8768]],r:150},historico:{pts:[[-2.1466,-79.8687]],r:300}};
+const geoOf=id=>(S.geo&&S.geo[id])?{pts:[S.geo[id]],r:GEO[id].r}:GEO[id];
+const toMap=(la,lo)=>[-105146.9007*la+332219.0369*lo+26308093.8653,-224663.5979*la+74783.5409*lo+5483116.7234];
+let watchId=null,simTimer=null,followMe=true;const arrived={};
+const fmtKm=m=>m<1000?`${Math.round(m)} m`:`${(m/1000).toFixed(1).replace('.',',')} km`;
+function trackLen(){const t=S.track||[];let d=0;for(let i=1;i<t.length;i++)d+=Math.hypot(t[i][0]-t[i-1][0],t[i][1]-t[i-1][1]);return d/PXM;}
+function trackSVG(){const t=S.track||[];if(t.length<2)return'';const pts=t.map(p=>p[0].toFixed(0)+','+p[1].toFixed(0)).join(' ');
+ return `<polyline points="${pts}" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/><polyline points="${pts}" fill="none" stroke="#165277" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${t[0][0]}" cy="${t[0][1]}" r="9" fill="#fff" stroke="#165277" stroke-width="4"/>`;}
+const recording=()=>watchId!==null||simTimer!==null;
+function recBar(){return recording()?`<div id="recbar" class="recbar"><span class="recdot"></span><span>${simTimer?'Simulando recorrido':'Grabando tu recorrido'} · ${fmtKm(trackLen())}</span><button id="recStop">Detener</button></div>`:'<div id="recbar" hidden></div>';}
+function refreshTrackUI(){const el=document.getElementById('tracksvg');if(el)el.innerHTML=trackSVG();const b=document.getElementById('recbar');if(b){b.outerHTML=recBar();const s=document.getElementById('recStop');if(s)s.onclick=()=>stopTracking(true);}}
+function placeMe(x,y){mePos={x,y};const me=document.getElementById('me');if(me){me.style.left=x+'px';me.style.top=y+'px';}if(followMe&&document.getElementById('mw')&&AFTER.mapa.center)AFTER.mapa.center(x,y);}
+function addPoint(x,y){S.track=S.track||[];const l=S.track[S.track.length-1];if(!l||Math.hypot(x-l[0],y-l[1])>6){S.track.push([+x.toFixed(1),+y.toFixed(1)]);if(S.track.length>4000)S.track.shift();save();}placeMe(x,y);refreshTrackUI();}
+function unlock(id){if(!PLACES[id])return;
+ if(STAMP_IDS.includes(id)&&isClient()){if(S.visited[id])return;S.visited[id]=new Date().toISOString().slice(0,10);save();try{navigator.vibrate&&navigator.vibrate([120,60,120]);}catch(e){}stampOverlay(id);return;}
+ if(arrived[id])return;arrived[id]=1;toast(`Llegaste a ${PLACES[id].nombre}${STAMP_IDS.includes(id)?' · los sellos son para viajeros ZEROS3':''}`);}
+function checkGeo(la,lo){Object.keys(GEO).forEach(id=>{const g=geoOf(id);if(g.pts.some(p=>dist(la,lo,p[0],p[1])<=g.r))unlock(id);});}
+function startTracking(){if(!navigator.geolocation){toast('Tu celular no comparte la ubicación');return;}stopSim();followMe=true;S.track=[];save();let warned=false;
+ watchId=navigator.geolocation.watchPosition(pos=>{const{latitude:la,longitude:lo,accuracy:acc}=pos.coords;checkGeo(la,lo);
+   if(nearest(la,lo).d>5000){if(!warned){warned=true;toast('Estás lejos del centro de Guayaquil. Tu camino se dibujará cuando llegues; mientras tanto prueba “Simular recorrido”.');}return;}
+   if(acc>60)return;const[x,y]=toMap(la,lo);addPoint(x,y);},
+  err=>{if(err.code===1){toast('Activa el permiso de ubicación para grabar tu recorrido');stopTracking(false);}else if(!warned){warned=true;toast('Buscando señal de GPS…');}},
+  {enableHighAccuracy:true,maximumAge:2000,timeout:20000});
+ toast('Recorrido iniciado: tu camino se dibuja mientras caminas');refreshTrackUI();}
+function stopSim(){if(simTimer){clearInterval(simTimer);simTimer=null;}}
+function stopTracking(msg){if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null;}stopSim();refreshTrackUI();if(msg)toast(`Recorrido guardado · ${fmtKm(trackLen())}`);}
+function simulateWalk(){stopTracking(false);S.track=[];save();followMe=true;
+ const keys=CENTER;let path=[];for(let i=1;i<keys.length;i++){const r=shortest(LMK[keys[i-1]].node,LMK[keys[i]].node);path.push(...(path.length?r.pts.slice(1):r.pts));}
+ const dense=[];for(let i=1;i<path.length;i++){const[a,b]=[path[i-1],path[i]];const n=Math.max(1,Math.round(Math.hypot(b[0]-a[0],b[1]-a[1])/14));for(let k=0;k<n;k++)dense.push([a[0]+(b[0]-a[0])*k/n,a[1]+(b[1]-a[1])*k/n]);}dense.push(path[path.length-1]);
+ let i=0,pause=0;if(document.getElementById('mw')){mapView.z=Math.max(mapView.z,.8);}
+ simTimer=setInterval(()=>{if(pause>0){pause--;return;}if(document.querySelector('.overlay.show'))return;
+  if(i>=dense.length){stopSim();refreshTrackUI();toast(`Recorrido simulado completo · ${fmtKm(trackLen())}`);return;}
+  const[x,y]=dense[i++];addPoint(x,y);
+  LM.forEach(l=>{if(l.k&&Math.hypot(l.node[0]-x,l.node[1]-y)<16&&!(STAMP_IDS.includes(l.id)&&S.visited[l.id])&&!arrived[l.id]){unlock(l.id);pause=6;}});},90);
+ toast('Simulación: así se ve tu camino al caminar por el centro');refreshTrackUI();}
+function resetJourney(){stopTracking(false);S.visited={};S.track=[];Object.keys(arrived).forEach(k=>delete arrived[k]);save();}
+function recSheet(){const vc=STAMP_IDS.filter(id=>S.visited[id]).length;
+ sheet(`<h2 class="h2">Mi recorrido</h2>
+ <div class="row gap8"><div class="card stat"><b>${fmtKm(trackLen())}</b><span class="small muted">Caminado</span></div><div class="card stat"><b>${isClient()?vc:0}/5</b><span class="small muted">Sellos</span></div></div>
+ <p class="small muted" style="margin:0">Mientras grabas, el mapa dibuja tu camino y, al llegar a cada lugar, se desbloquea su sello. Mantén la app abierta y la pantalla encendida.</p>
+ <button class="opt" id="r1">${I(recording()?'check':'route')}<span class="stack gap4"><b style="color:var(--navy)">${recording()?'Detener recorrido':'Grabar mi recorrido'}</b><span class="small muted">Usa el GPS del celular</span></span></button>
+ <button class="opt" id="r2">${I('compass')}<span class="stack gap4"><b style="color:var(--navy)">Simular recorrido</b><span class="small muted">Para presentar la app fuera de Guayaquil</span></span></button>
+ <button class="opt" id="r3">${I('pin')}<span class="stack gap4"><b style="color:var(--navy)">Calibrar un lugar aquí</b><span class="small muted">Guarda tu ubicación actual como punto de llegada</span></span></button>
+ <button class="opt" id="r4" style="color:var(--terra-dk)">${I('logout')}<span class="stack gap4"><b>Empezar de cero</b><span class="small muted">Borra el camino y los sellos de este celular</span></span></button>`,
+ {onOpen:(o,close)=>{o.querySelector('#r1').onclick=()=>{close();if(recording())stopTracking(true);else{startTracking();if(!document.getElementById('mw'))go('mapa');}};
+  o.querySelector('#r2').onclick=()=>{close();if(!document.getElementById('mw'))go('mapa');setTimeout(simulateWalk,400);};
+  o.querySelector('#r3').onclick=()=>{close();calibrate();};
+  o.querySelector('#r4').onclick=()=>{close();resetJourney();toast('Listo: tu recorrido y tus sellos empiezan de cero');render();};}});}
+function calibrate(){sheet(`<h2 class="h2">Calibrar un lugar</h2><p class="small muted">Párate en la entrada del lugar y elige cuál es. Su sello se desbloqueará al llegar a este punto.</p>${Object.keys(GEO).map(id=>`<button class="opt" data-cal="${id}"><img src="${PLACES[id].img}" alt=""><span class="stack gap4"><b style="color:var(--navy)">${PLACES[id].nombre}</b><span class="small muted">${S.geo&&S.geo[id]?'Calibrado en este celular':'Punto por defecto'}</span></span></button>`).join('')}`,
+ {onOpen:(o,close)=>o.querySelectorAll('[data-cal]').forEach(b=>b.onclick=()=>{const id=b.dataset.cal;close();if(!navigator.geolocation){toast('Sin GPS en este navegador');return;}toast('Leyendo tu ubicación…');
+  navigator.geolocation.getCurrentPosition(p=>{S.geo=S.geo||{};S.geo[id]=[+p.coords.latitude.toFixed(6),+p.coords.longitude.toFixed(6)];save();toast(`${PLACES[id].nombre} calibrado: ${S.geo[id].join(', ')} (±${Math.round(p.coords.accuracy)} m)`);},()=>toast('No pudimos leer tu ubicación'),{enableHighAccuracy:true,timeout:15000});})});}
+
 function nearest(la,lo){let best=null;Object.values(PLACES).forEach(p=>{const d=dist(la,lo,p.lat,p.lng);if(!best||d<best.d)best={p,d};});return best;}
 SCREENS.detectando=()=>`<section class="screen"><div class="pad stack gap24" style="flex:1;justify-content:center;text-align:center;padding-block:24px">
  <div class="radar"><span class="icon-btn" style="width:64px;height:64px;color:var(--terra-dk)">${I('pin')}</span></div>
@@ -987,13 +1046,14 @@ SCREENS.perfil=()=>{const vc=visitedCount();
  <h1 class="h1">Perfil</h1>
  <div class="card row gap16" style="padding:16px"><img src="img/avatar.jpg" alt="" style="width:68px;height:68px;border-radius:50%;object-fit:cover"><div class="stack gap4"><b style="font-family:var(--f-display);font-size:20px;color:var(--navy)">${esc(S.name)}</b><span class="small muted">${esc(S.email||'Sin reserva')}</span><span class="chip" style="background:${isClient()?'var(--navy)':'var(--cream-2)'};color:${isClient()?'#fff':'var(--navy)'};align-self:flex-start">${isClient()?'Viajero ZEROS3':'Explorador'}</span></div></div>
  <div class="row gap8"><div class="card stat"><b>${isClient()?vc:0}/5</b><span class="small muted">Sellos</span></div><div class="card stat"><b>${allMems().length}</b><span class="small muted">Recuerdos</span></div><div class="card stat"><b>${S.saved.length}</b><span class="small muted">Guardados</span></div></div>
- <div class="card menu">${[['pas','book','Mi pasaporte'],['viaje','compass','Mi viaje con ZEROS3'],['ben','gift','Mis beneficios'],['sav','bookf','Lugares guardados'],['idi','globe','Idioma · Español'],['con','chat','Contactar a ZEROS3']].map(m=>`<button class="list-item" data-m="${m[0]}">${I(m[1])}<span style="flex:1;color:var(--navy)">${m[2]}</span>${I('chev','svg-s')}</button>`).join('')}
+ <div class="card menu">${[['pas','book','Mi pasaporte'],['viaje','compass','Mi viaje con ZEROS3'],['ben','gift','Mis beneficios'],['rec','route','Mi recorrido y sellos'],['sav','bookf','Lugares guardados'],['idi','globe','Idioma · Español'],['con','chat','Contactar a ZEROS3']].map(m=>`<button class="list-item" data-m="${m[0]}">${I(m[1])}<span style="flex:1;color:var(--navy)">${m[2]}</span>${I('chev','svg-s')}</button>`).join('')}
  <button class="list-item" data-m="out" style="color:var(--terra-dk)">${I('logout')}<span style="flex:1">Cerrar sesión</span></button></div>
  <p class="small muted" style="text-align:center">TRAZA · prototipo funcional · ZEROS3 Travel Company</p></div></div>${tabbar('perfil')}</section>`;};
 AFTER.perfil=()=>app.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const k=b.dataset.m;
  if(k==='pas')go('pasaporte');
  else if(k==='viaje'){if(!isClient()){openExperiencias();return;}go('inicio');setTimeout(()=>{const i=document.getElementById('itin');i&&i.click();},50);}
  else if(k==='ben')sheet(`<h2 class="h2">Mis beneficios</h2>${(isClient()?[['10 % en restaurantes aliados','Muestra tu código QR al pagar'],['Guía ZEROS3','Contacto directo durante tu viaje'],['15 % próximo viaje','Al completar los 5 sellos']]:[['Mapa e historias en audio','Incluido gratis'],['Recuerdos y compartir','Incluido gratis'],['Sellos, guía y descuentos','Solo viajeros ZEROS3']]).map(x=>`<div class="opt"><span style="color:var(--terra-dk)">${I('gift')}</span><span class="stack gap4"><b style="color:var(--navy)">${x[0]}</b><span class="small muted">${x[1]}</span></span></div>`).join('')}<button class="btn btn-ghost" data-close>Cerrar</button>`);
+ else if(k==='rec')recSheet();
  else if(k==='sav')sheet(`<h2 class="h2">Lugares guardados</h2>${S.saved.length?S.saved.map(id=>`<button class="opt" data-place="${id}"><img src="${PLACES[id].img}" alt=""><b style="color:var(--navy)">${PLACES[id].nombre}</b></button>`).join(''):'<p class="muted">Aún no guardas lugares. Toca el marcador en la ficha de un lugar para guardarlo aquí.</p>'}`);
  else if(k==='idi')sheet(`<h2 class="h2">Idioma</h2><button class="opt" data-close>${I('check')}<b style="color:var(--navy)">Español</b></button><button class="opt" id="en">${I('globe')}<span class="stack gap4"><b style="color:var(--navy)">English</b><span class="small muted">Disponible en la próxima versión</span></span></button>`,{onOpen:(o,close)=>o.querySelector('#en').onclick=()=>{close();toast('La versión en inglés llegará en la próxima entrega');}});
  else if(k==='con')sheet(`<h2 class="h2">Contactar a ZEROS3</h2><p class="muted">Escríbenos para dudas de tu viaje o para reservar una experiencia.</p><div class="select">reservations@zeros3travel.com</div><button class="btn btn-primary" id="cp">Copiar correo</button>`,{onOpen:o=>o.querySelector('#cp').onclick=async()=>{try{await navigator.clipboard.writeText('reservations@zeros3travel.com');toast('Correo copiado');}catch(e){toast('Selecciona el correo y cópialo');}}});
