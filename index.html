@@ -358,7 +358,7 @@ const PLACES={
   galeria:['img/foto-malecon.jpg','img/perla.webp','img/rotonda.webp'],rest:[['La Central','Restaurante · calle Panamá','fork'],['Puerto Ancla','Mariscos · calle Panamá','fork']]},
  cacao:{id:'cacao',nombre:'Museo del Cacao',corto:'Cacao',sub:'Calle Panamá',cats:['Cultura','Gastronomía'],tag:'Cultura',img:'img/cacao.webp',dist:'a 900 m',dur:'45 min',horario:'Mar a dom · 10:00 – 17:00',precio:'Gratis · aporte voluntario',lat:-2.1888,lng:-79.8812,
   sobre:'La historia de la “pepa de oro”: cómo el cacao de esta tierra llegó al mundo. En el tercer piso funciona el Bar Juliana.',
-  historia:'Antes del chocolate, hubo una semilla que hizo historia. Al cacao de esta región lo llamaron la pepa de oro, porque llevó el nombre de esta tierra a todo el mundo. En este museo verás cómo se cultiva, se seca y se transforma el grano. Y al final, la historia tiene sabor: prueba un chocolate caliente.',
+  historia:'Antes del chocolate, hubo una semilla que hizo historia. Al cacao de esta región lo llamaron la pepa de oro, porque llevó el nombre de esta tierra a todo el mundo. En este museo verás cómo se cultiva, se seca y se transforma el grano. Y al final, recuerda: cada chocolate empieza en una mazorca como esta.',
   galeria:['img/cacao.webp'],rest:[['La Central','Restaurante · calle Panamá','fork'],['Bar Juliana','Cócteles · 3.er piso del museo','coffee']]},
  seminario:{id:'seminario',nombre:'Parque Seminario',corto:'Seminario',sub:'Parque de las Iguanas',cats:['Naturaleza','Fotografía'],tag:'Naturaleza',img:'img/iguana.webp',dist:'a 800 m',dur:'30 min',horario:'Consultar horario',precio:'Gratis',lat:-2.1954,lng:-79.8826,
   sobre:'El parque de las iguanas, en pleno centro. Al frente está la Catedral. Recuerda: no toques ni alimentes a las iguanas.',
@@ -395,6 +395,214 @@ const allMems=()=>[...S.mems,...SEED_MEM];
 const isClient=()=>S.mode==='cliente';
 const vis=id=>isClient()&&!!S.visited[id];
 const visitedCount=()=>STAMP_IDS.filter(vis).length;
+/* ---------- Idioma: español / inglés ---------- */
+// Los textos se escriben en español; si el idioma es inglés, se traducen al mostrarse en pantalla.
+const EN={
+// Bienvenida e ingreso
+'BY ZEROS3 TRAVEL COMPANY':'BY ZEROS3 TRAVEL COMPANY','Traza tu Guayaquil':'Trace your Guayaquil','Omitir':'Skip','Siguiente':'Next','Empezar':'Get started',
+'Recorre la ciudad':'Walk the city','Explora Guayaquil con un mapa ilustrado y rutas pensadas para ti.':'Explore Guayaquil with an illustrated map and routes designed for you.',
+'Descubre lo auténtico':'Discover the real Guayaquil','Escucha la historia de cada lugar y encuentra dónde comer cerca.':'Listen to the story of each place and find somewhere to eat nearby.',
+'Guarda tus fotos como recuerdos y gana un sello en cada lugar.':'Save your photos as memories and earn a stamp at every place.',
+'Bienvenido a TRAZA':'Welcome to TRAZA','Ingresa con el correo que usaste en tu reserva con':'Sign in with the email you used to book with',
+'Te enviaremos un código de 6 dígitos para ingresar.':'We will send you a 6-digit code to sign in.','Enviar código':'Send code','o':'or','Explorar sin reserva':'Explore without a booking',
+'tucorreo@ejemplo.com':'youremail@example.com','Idioma':'Language','Revisa tu correo':'Check your email','Enviamos un código de 6 dígitos a':'We sent a 6-digit code to',
+'Prototipo: escribe cualquier código de 6 dígitos.':'Prototype: type any 6-digit code.','Verificar e ingresar':'Verify and sign in','Volver':'Back',
+'Escribe un correo válido, por ejemplo: nombre@gmail.com':'Enter a valid email, for example: name@gmail.com','Completa los 6 dígitos':'Enter all 6 digits',
+// Inicio
+'¿Qué quieres descubrir hoy?':'What would you like to discover today?','Busca lugares, hoteles, cafés…':'Search places, hotels, cafés…','En ruta activa':'Trip in progress',
+'Mi viaje con ZEROS3':'My trip with ZEROS3','Ver itinerario':'See itinerary','Tu traza':'Your trace','Ver pasaporte':'See passport','Lugares para ti':'Places for you',
+'Ver en el mapa':'See on the map','ver en el mapa':'see on the map','✓ Visitado':'✓ Visited','Cerca de ti':'Near you','Gastronomía local':'Local food','Ver':'See','Restaurante':'Restaurant',
+'Cócteles':'Cocktails','Mariscos':'Seafood','Inicio':'Home','Mapa':'Map','Rutas':'Routes','Recuerdos':'Memories','Perfil':'Profile','Navegación principal':'Main navigation',
+'Modo explorador':'Explorer mode','Explora Guayaquil a tu ritmo':'Explore Guayaquil at your own pace',
+'Mapa, historias en audio y recuerdos gratis. Con ZEROS3 desbloqueas sellos, guía y descuentos.':'Map, audio stories and memories for free. With ZEROS3 you unlock stamps, a guide and discounts.',
+'Conocer experiencias ZEROS3':'See ZEROS3 experiences',
+// Lugares
+'Las Peñas':'Las Peñas','Cerro Santa Ana':'Santa Ana Hill','Malecón Simón Bolívar':'Malecón Simón Bolívar','Malecón':'Malecón','La Perla y La Rotonda':'La Perla and La Rotonda',
+'Museo del Cacao':'Cacao Museum','Cacao':'Cacao','Calle Panamá':'Panamá Street','calle Panamá':'Panamá Street','Parque Seminario':'Seminario Park','Seminario':'Seminario',
+'Parque de las Iguanas':'Iguana Park','Plaza de la Administración':'Plaza de la Administración','Palacio Municipal':'City Hall','Plaza':'Plaza',
+'Puerto Santa Ana':'Puerto Santa Ana','Puerto':'Puerto','Junto a Las Peñas':'Next to Las Peñas','Parque Histórico':'Historical Park','P. Histórico':'Hist. Park','Samborondón':'Samborondón',
+'Cultura':'Culture','Mar':'Waterfront','Naturaleza':'Nature','Fotografía':'Photography','Gastronomía':'Food','Hoteles':'Hotels','Todos':'All','Filtros':'Filters',
+'Gratis':'Free','Abierto':'Open','Abierto todo el día':'Open all day','Consultar horario':'Check opening hours','Gratis · aporte voluntario':'Free · voluntary donation',
+'Abre desde las 09:00':'Opens at 09:00','$4 adultos':'$4 adults','$2 niños':'$2 children','20 min en auto':'20 min by car','en auto':'by car',
+'Escuchar historia':'Listen to the story','Sobre el lugar':'About this place','Galería':'Gallery','1 imagen':'1 image','Restaurantes cerca':'Restaurants nearby',
+'Café y snacks':'Coffee and snacks','Mariscos y comida típica':'Seafood and local food','Cómo llegar':'Directions','Añadir recuerdo':'Add memory','Guardar lugar':'Save place','Compartir lugar':'Share place',
+'Cócteles · 3.er piso del museo':'Cocktails · museum’s 3rd floor','Cerrar tarjeta':'Close card','Ver lugar':'See place',
+'El barrio más antiguo de Guayaquil, al pie del cerro Santa Ana. Sus escalones numerados suben entre casas de colores, galerías y cafés hasta el faro.':'The oldest neighbourhood in Guayaquil, at the foot of Santa Ana Hill. Its numbered steps climb past colourful houses, galleries and cafés up to the lighthouse.',
+'Paseo de 2,5 km a orillas del río Guayas, con jardines, monumentos, miradores y la rueda La Perla. En La Rotonda se recuerda el encuentro de Bolívar y San Martín.':'A 2.5 km promenade along the Guayas River, with gardens, monuments, viewpoints and La Perla Ferris wheel. La Rotonda commemorates the meeting of Bolívar and San Martín.',
+'La historia de la “pepa de oro”: cómo el cacao de esta tierra llegó al mundo. En el tercer piso funciona el Bar Juliana.':'The story of the “golden bean”: how the cacao from this land reached the world. Bar Juliana is on the third floor.',
+'El parque de las iguanas, en pleno centro. Al frente está la Catedral. Recuerda: no toques ni alimentes a las iguanas.':'The iguana park, right downtown. The Cathedral stands opposite. Remember: do not touch or feed the iguanas.',
+'Entre el Palacio Municipal y la Gobernación, frente al Malecón. Un buen punto para fotografiar la arquitectura del centro.':'Between City Hall and the Governor’s Palace, facing the Malecón. A good spot to photograph downtown architecture.',
+'Paseo moderno junto al río, al norte del cerro Santa Ana. Tiene restaurantes, miradores al Guayas, la torre The Point y el museo de la música popular Julio Jaramillo.':'A modern riverside promenade north of Santa Ana Hill, with restaurants, views of the Guayas, The Point tower and the Julio Jaramillo popular music museum.',
+'Cruzando el río, en Samborondón: casas patrimoniales de madera, senderos entre el manglar y una zona de vida silvestre.':'Across the river in Samborondón: heritage wooden houses, mangrove trails and a wildlife area.',
+// Historias (audio)
+'Bienvenido a Las Peñas, el barrio más antiguo de Guayaquil. Sube por los cuatrocientos cuarenta y cuatro escalones numerados del cerro Santa Ana. A cada lado verás casas de madera pintadas de colores, galerías de arte y pequeños cafés. Arriba te espera el faro, y desde ahí toda la ciudad y el río Guayas. Cada escalón guarda una historia. Así empieza tu traza.':'Welcome to Las Peñas, the oldest neighbourhood in Guayaquil. Climb the four hundred and forty-four numbered steps of Santa Ana Hill. On each side you will see wooden houses painted in bright colours, art galleries and little cafés. The lighthouse waits at the top, and from there the whole city and the Guayas River. Every step holds a story. This is where your trace begins.',
+'Yo soy el río Guayas, y yo vi nacer esta ciudad. Por este malecón llegaron barcos, crecieron puertos y hubo muchas despedidas. Camina entre las palmeras hasta La Rotonda, donde se recuerda el encuentro de dos libertadores, Bolívar y San Martín, en mil ochocientos veintidós. Y si subes a La Perla, me verás desde lo alto. Acércate, tengo más historias para ti.':'I am the Guayas River, and I watched this city being born. Ships arrived along this waterfront, ports grew and there were many farewells. Walk among the palm trees to La Rotonda, which recalls the meeting of two liberators, Bolívar and San Martín, in eighteen twenty-two. And if you ride La Perla, you will see me from above. Come closer, I have more stories for you.',
+'Antes del chocolate, hubo una semilla que hizo historia. Al cacao de esta región lo llamaron la pepa de oro, porque llevó el nombre de esta tierra a todo el mundo. En este museo verás cómo se cultiva, se seca y se transforma el grano. Y al final, recuerda: cada chocolate empieza en una mazorca como esta.':'Before chocolate, there was a seed that made history. The cacao from this region was called the golden bean, because it carried the name of this land around the world. In this museum you will see how the bean is grown, dried and transformed. And remember: every chocolate begins in a pod like this one.',
+'Hola, te estaba esperando. Somos las iguanas del Parque Seminario y vivimos en el corazón de Guayaquil. Nos visitan personas de todo el mundo. Al frente, cruzando la calle, la Catedral nos cuida. En el centro del parque está la estatua de Bolívar a caballo. Quédate un rato: aquí el tiempo va lento. Y por favor, no nos toques ni nos des de comer.':'Hello, I was waiting for you. We are the iguanas of Seminario Park and we live in the heart of Guayaquil. People from all over the world come to visit us. Across the street, the Cathedral watches over us. In the middle of the park stands the statue of Bolívar on horseback. Stay a while: time goes slowly here. And please, do not touch us or feed us.',
+'Estás en la Plaza de la Administración. A un lado está el Palacio Municipal, construido por el arquitecto Francesco Maccaferri. Al otro lado, la Gobernación. Desde aquí, el Malecón está a pocos pasos.':'You are in Plaza de la Administración. On one side is City Hall, built by the architect Francesco Maccaferri. On the other, the Governor’s Palace. The Malecón is just a few steps away.',
+'Bienvenido a Puerto Santa Ana. Aquí, donde antes había bodegas y astilleros, hoy hay un paseo frente al río. Camina junto a la baranda y mira pasar los barcos. Al fondo verás The Point, la torre que parece girar. Y si escuchas un pasillo, sigue la música: el museo de Julio Jaramillo, el Ruiseñor de América, está muy cerca.':'Welcome to Puerto Santa Ana. Where warehouses and shipyards once stood, there is now a riverside promenade. Walk along the railing and watch the boats go by. In the background you will see The Point, the tower that seems to twist. And if you hear a pasillo song, follow the music: the museum of Julio Jaramillo, the Nightingale of the Americas, is very close.',
+'Cruza el río y viaja cien años atrás. En el Parque Histórico verás cómo vivía Guayaquil hace un siglo, en casas de madera con balcones. Antes de los edificios, estaba el manglar: camina por sus senderos y escucha a las aves. Algunos viajes se hacen en el tiempo.':'Cross the river and travel a hundred years back. In the Historical Park you will see how Guayaquil lived a century ago, in wooden houses with balconies. Before the buildings there was the mangrove: walk its trails and listen to the birds. Some journeys are made through time.',
+// Mapa
+'Gobernación':'Governor’s Palace','Río Guayas':'Guayas River','← Aerovía a Julián Coronel y Parque Centenario':'← Aerovía to Julián Coronel and Centenario Park',
+'Las Peñas · Cerro Santa Ana':'Las Peñas · Santa Ana Hill','La Perla · Malecón 2000':'La Perla · Malecón 2000','Catedral':'Cathedral','Parque Histórico →':'Historical Park →',
+'Iglesia Santo Domingo':'Santo Domingo Church','Cafés de las escalinatas':'Stairway cafés','Museo Julio Jaramillo':'Julio Jaramillo Museum','Museos de Barcelona y Emelec':'Barcelona & Emelec museums',
+'Museo Nahim Isaías':'Nahim Isaías Museum','Restaurantes del puerto':'Port restaurants','Mercado Artesanal':'Artisan Market','Jardines del Malecón':'Malecón Gardens',
+'Iglesia San Francisco':'San Francisco Church','Paseos en barco':'Boat tours','Torre Morisca':'Moorish Clock Tower','Capilla del Cerro Santa Ana':'Santa Ana Hill Chapel',
+'Museo Naval El Fortín':'El Fortín Naval Museum','Sagrado Corazón de Jesús':'Sacred Heart of Jesus','Jardines del puerto':'Port gardens','Palacio de Cristal':'Crystal Palace',
+'Iglesia San José':'San José Church','Parque Centenario ←':'Centenario Park ←','Cementerio General ↖':'General Cemetery ↖','Museo Municipal':'Municipal Museum',
+'Sello conseguido':'Stamp earned','Trazar mi camino':'Trace my path','Mi ubicación':'My location','Capas del mapa':'Map layers','Acercar':'Zoom in','Alejar':'Zoom out',
+'Solo lugares':'Places only','Mapa limpio, sin caminos':'Clean map, no paths','Ruta del centro':'Downtown route','Camino a pie por las calles, de Las Peñas a la Catedral':'Walking route through the streets, from Las Peñas to the Cathedral',
+'Mapa de noche':'Night map','Colores oscuros para recorridos nocturnos':'Dark colours for night walks','Activado · toca para volver al día':'On · tap to return to day mode',
+'Mapa de noche activado':'Night map on','Mapa de día':'Day map',
+'Traza tu camino':'Trace your path','Toca los lugares del mapa en el orden en que quieres visitarlos.':'Tap places on the map in the order you want to visit them.',
+'Toca otro lugar del mapa para seguir tu camino.':'Tap another place on the map to continue your path.','Toca los lugares en el orden que quieras':'Tap the places in any order you like',
+'Del centro':'Downtown','Iglesias':'Churches','Museos':'Museums','Gastronómica':'Food','Deshacer':'Undo','Borrar':'Clear',
+'Mostrando todos los lugares':'Showing all places',
+// Descripciones de los puntos del mapa
+'La iglesia más antigua de Guayaquil, al pie del cerro Santa Ana.':'The oldest church in Guayaquil, at the foot of Santa Ana Hill.',
+'Cafés, bares y galerías junto a los escalones de Las Peñas.':'Cafés, bars and galleries along the Las Peñas steps.',
+'Museo de la música popular, en el Edificio Astillero de Puerto Santa Ana. Mié a sáb 10:00–17:00, dom 10:00–15:00.':'Popular music museum in the Astillero Building, Puerto Santa Ana. Wed–Sat 10:00–17:00, Sun 10:00–15:00.',
+'Museos de los dos equipos de fútbol de la ciudad, en el primer piso del Edificio Astillero.':'Museums of the city’s two football clubs, on the first floor of the Astillero Building.',
+'Museo de arte en Pichincha y Clemente Ballén, junto a la Plaza de la Administración. Mar a sáb 09:00–17:00, gratis.':'Art museum at Pichincha and Clemente Ballén, next to Plaza de la Administración. Tue–Sat 09:00–17:00, free.',
+'Mariscos y comida típica frente al río, en Puerto Santa Ana.':'Seafood and local food by the river, in Puerto Santa Ana.',
+'Bar de cócteles en el tercer piso del Museo del Cacao, en Panamá e Imbabura.':'Cocktail bar on the third floor of the Cacao Museum, at Panamá and Imbabura.',
+'Restaurante en la calle Panamá, uno de los pioneros de la zona gastronómica.':'Restaurant on Panamá Street, one of the pioneers of the food district.',
+'Mariscos en la calle Panamá, sucursal de El Ancla de Milagro.':'Seafood on Panamá Street, a branch of El Ancla from Milagro.',
+'Cocina molecular del chef Wladimir Castro, en la calle Panamá.':'Molecular cuisine by chef Wladimir Castro, on Panamá Street.',
+'Bar de cócteles en la calle Panamá.':'Cocktail bar on Panamá Street.','Cafetería en la calle Panamá, abierta desde 2014.':'Café on Panamá Street, open since 2014.',
+'Artesanías de todo el Ecuador, en Baquerizo Moreno, entre Loja y Juan Montalvo.':'Crafts from all over Ecuador, on Baquerizo Moreno, between Loja and Juan Montalvo.',
+'Jardines con plantas nativas y un estanque, entre Loja y Tomás Martínez.':'Gardens with native plants and a pond, between Loja and Tomás Martínez.',
+'Iglesia y Plaza San Francisco, en la Av. 9 de Octubre y Pedro Carbo.':'San Francisco Church and Square, at Av. 9 de Octubre and Pedro Carbo.',
+'Muelle de botes turísticos del Malecón, a la altura de la calle Imbabura.':'Tour boat pier on the Malecón, at Imbabura Street.',
+'El reloj público de Guayaquil, en el Malecón a la altura de la calle República de Guayaquil (antes 10 de Agosto).':'Guayaquil’s public clock, on the Malecón at República de Guayaquil Street (formerly 10 de Agosto).',
+'Estación de la Aerovía en el Malecón y Loja. Cruza el río Guayas en cabina hasta Durán.':'Aerovía cable car station at the Malecón and Loja. Cross the Guayas River by cabin to Durán.',
+'Estación de la Aerovía en el malecón de Durán, al otro lado del río.':'Aerovía station on the Durán waterfront, across the river.',
+'Pequeña iglesia en la cima del cerro, frente al faro, dedicada a la Virgen de la Merced. Entrada libre.':'Small church at the top of the hill, opposite the lighthouse, dedicated to Our Lady of Mercy. Free entry.',
+'Museo al aire libre junto al faro: cañones, anclas y restos de las antiguas defensas de la ciudad. Entrada libre.':'Open-air museum next to the lighthouse: cannons, anchors and remains of the old city defences. Free entry.',
+'Monumento de 27 m en la cima del Cerro del Carmen. Se sube por unos 164 escalones; mejor ir en taxi.':'A 27 m monument on top of Cerro del Carmen. About 164 steps to climb; a taxi is the best way to go.',
+'Pequeña plaza junto a la iglesia Santo Domingo, al pie del cerro Santa Ana.':'Small square next to Santo Domingo Church, at the foot of Santa Ana Hill.',
+'Hotel frente al río en Puerto Santa Ana, calle Numa Pompilio Llona.':'Riverside hotel in Puerto Santa Ana, on Numa Pompilio Llona Street.',
+'Paseo con jardines, bancas y monumentos frente al río Guayas.':'Promenade with gardens, benches and monuments facing the Guayas River.',
+'Hotel en el Malecón e Imbabura, junto al Museo del Cacao y cerca de La Perla.':'Hotel at the Malecón and Imbabura, next to the Cacao Museum and close to La Perla.',
+'Hotel en el Malecón y Roca, cerca de La Rotonda.':'Hotel at the Malecón and Roca, close to La Rotonda.','Hotel frente al Malecón, a pocas cuadras de La Perla.':'Hotel facing the Malecón, a few blocks from La Perla.',
+'Hostal boutique en el Malecón y Aguirre.':'Boutique guesthouse at the Malecón and Aguirre.','Hotel en Clemente Ballén, frente al Parque Seminario.':'Hotel on Clemente Ballén, opposite Seminario Park.',
+'Hotel en Chile y Luque, a una cuadra de la 9 de Octubre.':'Hotel at Chile and Luque, one block from 9 de Octubre.','Hotel en Sucre y Pichincha, cerca del Malecón.':'Hotel at Sucre and Pichincha, close to the Malecón.',
+'Hotel boutique en Junín y Córdova.':'Boutique hotel at Junín and Córdova.','Hotel en Junín y Córdova.':'Hotel at Junín and Córdova.',
+'Hotel en la calle Escobedo, cerca de la 9 de Octubre.':'Hotel on Escobedo Street, close to 9 de Octubre.','Hotel en una casa patrimonial de la calle Escobedo.':'Hotel in a heritage house on Escobedo Street.',
+'Hotel boutique dentro del Parque Histórico, en Samborondón.':'Boutique hotel inside the Historical Park, in Samborondón.',
+'Museo Antropológico y de Arte Contemporáneo, al norte del Malecón.':'Museum of Anthropology and Contemporary Art, at the north end of the Malecón.',
+'Club de yates en el Malecón, a la altura de la calle Aguirre, junto al Paseo de los Presidentes.':'Yacht club on the Malecón at Aguirre Street, next to the Paseo de los Presidentes.',
+'El antiguo Mercado Sur (1907), hoy centro de exposiciones, al final del Malecón.':'The former South Market (1907), now an exhibition centre at the end of the Malecón.',
+'Iglesia frente al Palacio de Cristal, en la avenida Eloy Alfaro.':'Church opposite the Crystal Palace, on Eloy Alfaro Avenue.',
+'A 1 km por la Av. 9 de Octubre: la Columna de los Próceres y el parque más grande del centro.':'1 km along Av. 9 de Octubre: the Column of the Founding Fathers and the largest park downtown.',
+'Detrás del Cerro del Carmen. Tiene recorridos guiados por sus mausoleos de mármol.':'Behind Cerro del Carmen, with guided tours of its marble mausoleums.',
+'En la calle Sucre, entre Chile y Pedro Carbo. Mar a sáb 09:00–17:30, entrada gratis.':'On Sucre Street, between Chile and Pedro Carbo. Tue–Sat 09:00–17:30, free entry.',
+'El Parque Histórico está en Samborondón: 20 min en auto por el Puente de la Unidad Nacional':'The Historical Park is in Samborondón: 20 min by car over the Unidad Nacional Bridge',
+// Rutas
+'Recorre el centro histórico a pie, de norte a sur. Toca un lugar para ver su ficha.':'Walk the historic centre from north to south. Tap a place to see its details.','Ver ruta en el mapa':'See route on the map',
+// Recuerdos
+'Mis recuerdos':'My memories','Comunidad':'Community','Nuevo':'New','Privado':'Private','Público':'Public','Me gusta':'Like','Comentar':'Comment','Compartir':'Share','Tomar foto':'Take photo',
+'Atardecer subiendo los 444 escalones. La brisa del río y los colores de las casas hacen que cada paso valga la pena.':'Sunset climbing the 444 steps. The river breeze and the colours of the houses make every step worth it.',
+'Paseo matutino junto al río Guayas, con un jugo fresco frente al agua.':'Morning walk along the Guayas River, with a fresh juice by the water.',
+'Recuerdos públicos de otros viajeros con #TrazaTuGuayaquil. Las publicaciones de esta pestaña son ejemplos del prototipo.':'Public memories from other travellers with #TrazaTuGuayaquil. The posts in this tab are prototype examples.',
+'Ejemplo':'Example','La Perla al atardecer es otra cosa. #TrazaTuGuayaquil':'La Perla at sunset is something else. #TrazaTuGuayaquil','Llegué al escalón 444. ¡Valió cada paso!':'Made it to step 444. Worth every step!',
+'Te gusta este recuerdo':'You like this memory','Los comentarios llegan en la próxima versión':'Comments are coming in the next version','Solo puedes compartir tus propios recuerdos':'You can only share your own memories',
+// Pasaporte
+'Mi pasaporte TRAZA':'My TRAZA passport','Completa los 5 sellos y obtén':'Complete the 5 stamps and get','15 % en tu próximo viaje':'15% off your next trip','con ZEROS3.':'with ZEROS3.',
+'LAS PEÑAS · GUAYAQUIL':'LAS PEÑAS · GUAYAQUIL','MALECÓN · LA PERLA':'MALECÓN · LA PERLA','PARQUE SEMINARIO':'SEMINARIO PARK','MUSEO DEL CACAO':'CACAO MUSEUM','PARQUE HISTÓRICO':'HISTORICAL PARK',
+'Ver mi recuerdo':'See my memory','Compartir sello':'Share stamp','Visita el lugar y publica un recuerdo para ganar este sello.':'Visit the place and post a memory to earn this stamp.',
+'Nuevo sello':'New stamp','Ver mi pasaporte':'See my passport','Seguir':'Continue','Sellos exclusivos para viajeros ZEROS3':'Stamps exclusive to ZEROS3 travellers',
+'Reserva una experiencia y colecciona los 5 sellos de Guayaquil en tu pasaporte.':'Book an experience and collect the 5 Guayaquil stamps in your passport.','Reservar una experiencia':'Book an experience','Ingresar con mi reserva':'Sign in with my booking',
+'Los sellos del pasaporte son para viajeros ZEROS3.':'Passport stamps are for ZEROS3 travellers.',
+// Perfil
+'Viajero ZEROS3':'ZEROS3 traveller','Explorador':'Explorer','Sellos':'Stamps','Guardados':'Saved','Mi pasaporte':'My passport','Mis beneficios':'My benefits','Mi recorrido y sellos':'My walk and stamps',
+'Lugares guardados':'Saved places','Idioma · Español':'Language · English','Contactar a ZEROS3':'Contact ZEROS3','Cerrar sesión':'Sign out','TRAZA · prototipo funcional · ZEROS3 Travel Company':'TRAZA · working prototype · ZEROS3 Travel Company',
+'Sin reserva':'No booking','10 % en restaurantes aliados':'10% off at partner restaurants','Muestra tu código QR al pagar':'Show your QR code when paying','Guía ZEROS3':'ZEROS3 guide',
+'Contacto directo durante tu viaje':'Direct contact during your trip','15 % próximo viaje':'15% off your next trip','Al completar los 5 sellos':'When you complete the 5 stamps',
+'Mapa e historias en audio':'Map and audio stories','Incluido gratis':'Included for free','Recuerdos y compartir':'Memories and sharing','Sellos, guía y descuentos':'Stamps, guide and discounts','Solo viajeros ZEROS3':'ZEROS3 travellers only',
+'Aún no guardas lugares. Toca el marcador en la ficha de un lugar para guardarlo aquí.':'You have no saved places yet. Tap the bookmark on a place’s page to save it here.',
+'Español':'Español','English':'English','Escríbenos para dudas de tu viaje o para reservar una experiencia.':'Write to us with questions about your trip or to book an experience.',
+'Copiar correo':'Copy email','Correo copiado':'Email copied','Selecciona el correo y cópialo':'Select the email and copy it','¿Cerrar sesión?':'Sign out?','Tus recuerdos se quedan guardados en este celular.':'Your memories stay saved on this phone.','Cancelar':'Cancel','Cerrar':'Close',
+'Itinerario · Mi viaje con ZEROS3':'Itinerary · My trip with ZEROS3','Malecón Simón Bolívar y La Perla':'Malecón Simón Bolívar and La Perla','Llegada y recorrido guiado':'Arrival and guided tour',
+'Las Peñas y Museo del Cacao':'Las Peñas and Cacao Museum','Hoy':'Today','Parque Seminario y Catedral':'Seminario Park and Cathedral','Almuerzo en la calle Panamá':'Lunch on Panamá Street','Traslado en auto':'Transfer by car',
+'Experiencias ZEROS3':'ZEROS3 experiences','Viaja con la agencia y desbloquea tu itinerario, guía, descuentos en restaurantes aliados, los 5 sellos del pasaporte y 15 % de recompensa para tu próximo viaje.':'Travel with the agency and unlock your itinerary, a guide, discounts at partner restaurants, the 5 passport stamps and a 15% reward for your next trip.',
+'Medio día':'Half day','City tour':'City tour','Las Peñas, Malecón y Seminario':'Las Peñas, Malecón and Seminario','Ruta del cacao':'Cacao route','Museo del Cacao y degustación':'Cacao Museum and tasting',
+'Día completo':'Full day','Centro histórico + Parque Histórico':'Historic centre + Historical Park','Para reservar escribe a ZEROS3 Travel Company:':'To book, write to ZEROS3 Travel Company:','Ya tengo reserva · Ingresar':'I have a booking · Sign in',
+// Recorrido y sellos
+'Mi recorrido':'My walk','Caminado':'Walked','Mientras grabas, el mapa dibuja tu camino y, al llegar a cada lugar, se desbloquea su sello. Mantén la app abierta y la pantalla encendida.':'While recording, the map draws your path and each place’s stamp unlocks when you arrive. Keep the app open and the screen on.',
+'Grabar mi recorrido':'Record my walk','Detener recorrido':'Stop recording','Usa el GPS del celular':'Uses your phone’s GPS','Simular recorrido':'Simulate a walk','Para presentar la app fuera de Guayaquil':'To present the app outside Guayaquil',
+'Calibrar un lugar aquí':'Calibrate a place here','Guarda tu ubicación actual como punto de llegada':'Save your current location as the arrival point','Empezar de cero':'Start over','Borra el camino y los sellos de este celular':'Erase the path and stamps on this phone',
+'Calibrar un lugar':'Calibrate a place','Párate en la entrada del lugar y elige cuál es. Su sello se desbloqueará al llegar a este punto.':'Stand at the entrance of the place and choose which one it is. Its stamp will unlock when you reach this point.',
+'Punto por defecto':'Default point','Calibrado en este celular':'Calibrated on this phone','Detener':'Stop','Grabando tu recorrido':'Recording your walk','Simulando recorrido':'Simulating walk',
+'Recorrido iniciado: tu camino se dibuja mientras caminas':'Recording started: your path is drawn as you walk','Simulación: así se ve tu camino al caminar por el centro':'Simulation: this is how your path looks as you walk downtown',
+'Activa el permiso de ubicación para grabar tu recorrido':'Allow location access to record your walk','Buscando señal de GPS…':'Looking for GPS signal…','Tu celular no comparte la ubicación':'Your phone is not sharing its location',
+'Estás lejos del centro de Guayaquil. Tu camino se dibujará cuando llegues; mientras tanto prueba “Simular recorrido”.':'You are far from downtown Guayaquil. Your path will be drawn when you arrive; meanwhile try “Simulate a walk”.',
+'Listo: tu recorrido y tus sellos empiezan de cero':'Done: your walk and stamps start over','Leyendo tu ubicación…':'Reading your location…','No pudimos leer tu ubicación':'We could not read your location','Sin GPS en este navegador':'No GPS in this browser',
+// Cámara y publicar
+'Toca el botón blanco para abrir la cámara de tu celular.':'Tap the white button to open your phone’s camera.','La foto se guardará con el lugar donde la tomaste.':'The photo will be saved with the place where you took it.',
+'Ubicación activada':'Location on','Cerrar cámara':'Close camera','Elegir de la galería':'Choose from gallery','Cambiar cámara':'Switch camera','Abre la cámara con el botón blanco':'Open the camera with the white button',
+'Detectando el lugar…':'Detecting the place…','Confirmar lugar':'Confirm place','¿Es aquí donde tomaste tu foto?':'Is this where you took your photo?','Lo tomamos del lugar que estabas viendo.':'We took it from the place you were viewing.',
+'Sí, es correcto':'Yes, that’s right','Cambiar lugar':'Change place','Elige el lugar':'Choose the place','Nuevo recuerdo':'New memory','Cuenta tu experiencia':'Tell your experience','Cuenta tu experiencia…':'Tell your experience…',
+'¿Quién puede verlo?':'Who can see it?','Solo yo':'Only me','Automático':'Automatic','Publicar en mi traza':'Post to my trace','Marcar como visitado':'Mark as visited','¡Recuerdo publicado!':'Memory posted!',
+'Comparte tu traza con tus amigos':'Share your trace with your friends','Más':'More','Descargar imagen':'Download image','Ahora no':'Not now','Tu historia':'Your story','Simulación del prototipo':'Prototype simulation','Publicar':'Post',
+'Preparando la imagen…':'Preparing the image…','Imagen lista en tu dispositivo':'Image ready on your device','Si no se descargó, mantén presionada la imagen para guardarla':'If it did not download, press and hold the image to save it',
+'Toma una foto en este lugar para compartirlo':'Take a photo at this place to share it','Enlace del lugar copiado':'Place link copied','No se pudo copiar en este navegador':'Could not copy in this browser',
+'Guardado en tus lugares':'Saved to your places','Quitado de lugares guardados':'Removed from saved places','Mi traza':'My trace',
+'Este navegador no tiene voz; el audio final se grabará con narrador':'This browser has no voice; the final audio will be recorded with a narrator'
+};
+const MES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'],MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MESL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],MONL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DIA={'Lun':'Mon','Mar':'Tue','Mié':'Wed','Jue':'Thu','Vie':'Fri','Sáb':'Sat','Dom':'Sun'};
+const num=s=>s.replace(',','.');
+const PAT=[
+ [/^a ([\d,]+) (km|m)$/,m=>`${num(m[1])} ${m[2]} away`],
+ [/^([\d,]+) (km|m)$/,m=>`${num(m[1])} ${m[2]}`],
+ [/^(\d+) min a pie$/,m=>`${m[1]} min walk`],
+ [/^(\d+) imagenes$/,m=>`${m[1]} images`],
+ [/^Dígito (\d)$/,m=>`Digit ${m[1]}`],
+ [/^Hola, (.+)$/,m=>`Hi, ${m[1]}`],
+ [/^Día (\d+) de (\d+)$/,m=>`Day ${m[1]} of ${m[2]}`],
+ [/^Hoy · Día (\d+)$/,m=>`Today · Day ${m[1]}`],
+ [/^(\d+) de 5 lugares visitados$/,m=>`${m[1]} of 5 places visited`],
+ [/^(\d+) de 5 lugares con recuerdos$/,m=>`${m[1]} of 5 places with memories`],
+ [/^(\d+) de 5 sellos$/,m=>`${m[1]} of 5 stamps`],
+ [/^Llevas (\d+) de 5 sellos en tu pasaporte\.$/,m=>`You have ${m[1]} of 5 stamps in your passport.`],
+ [/^¡Llegaste a (.+)!$/,m=>`You made it to ${tr1(m[1])}!`],
+ [/^Llegaste a (.+?)( · los sellos son para viajeros ZEROS3)?$/,m=>`You arrived at ${tr1(m[1])}${m[2]?' · stamps are for ZEROS3 travellers':''}`],
+ [/^Estás en (.+)$/,m=>`You are at ${tr1(m[1])}`],
+ [/^Estás a (\d+) m de (.+)$/,m=>`You are ${m[1]} m from ${tr1(m[2])}`],
+ [/^Sello (.+) obtenido$/,m=>`${tr1(m[1])} stamp earned`],
+ [/^Sello (.+) pendiente$/,m=>`${tr1(m[1])} stamp pending`],
+ [/^Sello obtenido el (\d+) de (\w+)$/,m=>`Stamp earned on ${MONL[MESL.indexOf(m[2])]||m[2]} ${m[1]}`],
+ [/^Ruta (.+): (\d+) paradas$/,m=>`${tr1(m[1][0].toUpperCase()+m[1].slice(1))} route: ${m[2]} stops`],
+ [/^(\d+) resultados? de (.+)$/,m=>`${m[1]} result${m[1]==='1'?'':'s'} for ${tr1(m[2][0].toUpperCase()+m[2].slice(1)).toLowerCase()}`],
+ [/^Recorrido guardado · (.+)$/,m=>`Walk saved · ${tr1(m[1])}`],
+ [/^Recorrido simulado completo · (.+)$/,m=>`Simulated walk complete · ${tr1(m[1])}`],
+ [/^(.+) queda fuera del centro: no se puede trazar a pie$/,m=>`${tr1(m[1])} is outside downtown: it can’t be traced on foot`],
+ [/^(.+) calibrado: (.+)$/,m=>`${tr1(m[1])} calibrated: ${m[2]}`],
+ [/^Publicado en tu historia de (.+)$/,m=>`Posted to your ${m[1]} story`],
+ [/^Compartir en (.+) · Historia$/,m=>`Share to ${m[1]} · Story`],
+ [/^Marcar (.+) como visitado y ganar su sello$/,m=>`Mark ${tr1(m[1])} as visited and earn its stamp`],
+ [/^Mi recuerdo en (.+)$/,m=>`My memory at ${tr1(m[1])}`],
+ [/^(\d+) (ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic) (\d{4})$/i,m=>`${MON[MES.indexOf(m[2].toLowerCase())]} ${m[1]}, ${m[3]}`],
+ [/^(\d+) (ENE|FEB|MAR|ABR|MAY|JUN|JUL|AGO|SEP|OCT|NOV|DIC)$/,m=>`${MON[MES.indexOf(m[2].toLowerCase())].toUpperCase()} ${m[1]}`],
+ [/^(\d+) – (\d+) (\w{3})$/,m=>`${MON[MES.indexOf(m[3])]||m[3]} ${m[1]} – ${m[2]}`],
+ [/^(Lun|Mar|Mié|Jue|Vie|Sáb|Dom) (\d+) (\w{3})$/,m=>`${DIA[m[1]]} ${MON[MES.indexOf(m[3])]||m[3]} ${m[2]}`],
+ [/^Mar a dom$/,()=>'Tue to Sun'],[/^Mar a dom · (.+)$/,m=>`Tue to Sun · ${m[1]}`],
+ [/^(\d+):(\d+) a\.\s?m\.$/,m=>`${m[1]}:${m[2]} a.m.`],[/^(\d+):(\d+) p\.\s?m\.$/,m=>`${m[1]}:${m[2]} p.m.`],
+ [/^(.+?): (.+)$/,m=>{const a=tr1(m[1]),b=tr1(m[2]);return(a!==m[1]||b!==m[2])?`${a}: ${b}`:m[0];}]
+];
+function tr1(t){if(EN[t]!==undefined)return EN[t];for(const[re,f]of PAT){const m=t.match(re);if(m){const r=f(m);if(r!==t)return r;}}
+ if(t.includes(' · ')){const ps=t.split(' · '),out=ps.map(tr1);if(out.some((o,i)=>o!==ps[i]))return out.join(' · ');}return t;}
+const isEN=()=>S.lang==='EN';
+function tr(s){if(!isEN()||!s)return s;const t=s.trim();if(!t)return s;const r=tr1(t);return r===t?s:s.replace(t,r);}
+function trNode(n){if(n.nodeType===3){const v=n.nodeValue,r=tr(v);if(r!==v)n.nodeValue=r;return;}
+ if(n.nodeType!==1||n.tagName==='SCRIPT'||n.tagName==='STYLE'||n.hasAttribute('data-notr'))return;
+ ['placeholder','aria-label','title'].forEach(a=>{const v=n.getAttribute(a);if(v){const r=tr(v);if(r!==v)n.setAttribute(a,r);}});if(n.tagName!=='TEXTAREA')n.childNodes.forEach(trNode);}
+new MutationObserver(ms=>{if(!isEN())return;ms.forEach(m=>{if(m.type==='characterData')trNode(m.target);else m.addedNodes.forEach(trNode);});}).observe(document.documentElement,{childList:true,subtree:true,characterData:true});
+function setLang(l){S.lang=l;save();document.documentElement.lang=l==='EN'?'en':'es';render();toast(l==='EN'?'Language: English':'Idioma: español');}
+document.documentElement.lang=isEN()?'en':'es';
+
 
 /* ---------- Navegación ---------- */
 const app=document.getElementById('app');
@@ -438,8 +646,8 @@ function playAudio(p,onTick,onEnd){
   const dur=wordsDur(p.historia);const st={p,t0:Date.now(),dur,paused:false,el:0};
   speaking=st;
   if('speechSynthesis' in window){
-    try{const u=new SpeechSynthesisUtterance(p.historia);u.lang='es-ES';u.rate=1;
-      const v=speechSynthesis.getVoices().find(v=>/^es/i.test(v.lang));if(v)u.voice=v;
+    try{const u=new SpeechSynthesisUtterance(tr(p.historia));u.lang=isEN()?'en-US':'es-ES';u.rate=1;
+      const v=speechSynthesis.getVoices().find(v=>(isEN()?/^en/i:/^es/i).test(v.lang));if(v)u.voice=v;
       u.onend=()=>{if(speaking===st){finish();}};speechSynthesis.speak(u);}catch(e){}
   }
   st.iv=setInterval(()=>{if(st.paused)return;st.el=Math.min(dur,(Date.now()-st.t0)/1000);onTick&&onTick(st.el,dur);if(st.el>=dur+4)finish();},250);
@@ -474,14 +682,14 @@ SCREENS.ingreso=()=>`<section class="screen"><div class="scroll stack"><div clas
   <button class="btn btn-primary btn-block" type="submit">Enviar código ${I('chev','svg-s')}</button></form>
  <div class="row gap12" style="width:100%;color:var(--gray-2)"><span style="flex:1;border-top:1px solid var(--line)"></span>o<span style="flex:1;border-top:1px solid var(--line)"></span></div>
  <button class="btn btn-ghost btn-block" id="exp">Explorar sin reserva</button>
- <div class="lang" role="group" aria-label="Idioma"><button class="on">ES</button><button id="en">EN</button></div></div>
+ <div class="lang" role="group" aria-label="Idioma"><button id="es" class="${isEN()?'':'on'}">ES</button><button id="en" class="${isEN()?'on':''}">EN</button></div></div>
  <img class="skyline" src="img/skyline.webp" alt=""></div></section>`;
 AFTER.ingreso=()=>{
  document.getElementById('f').onsubmit=e=>{e.preventDefault();const v=document.getElementById('email').value.trim();
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){const m=document.getElementById('msg');m.textContent='Escribe un correo válido, por ejemplo: nombre@gmail.com';m.style.color='var(--terra-dk)';return;}
   S.email=v;save();go('verif');};
  document.getElementById('exp').onclick=()=>{S.mode='explorador';S.name='Explorador';save();go('inicio',{},{replace:true});};
- document.getElementById('en').onclick=()=>toast('La versión en inglés llegará en la próxima entrega');};
+ document.getElementById('en').onclick=()=>setLang('EN');document.getElementById('es').onclick=()=>setLang('ES');};
 
 SCREENS.verif=()=>`<section class="screen"><div class="scroll stack"><div class="pad stack gap16" style="padding-block:calc(14px + env(safe-area-inset-top,0px)) 16px;align-items:center;text-align:center">
  <div style="align-self:flex-start"><button class="icon-btn" data-back aria-label="Volver">${I('back')}</button></div>
@@ -980,13 +1188,13 @@ AFTER.nuevo=()=>{const tx=document.getElementById('tx');tx.oninput=()=>{draft.te
 /* ---------- Compartir ---------- */
 let storyURL=null;let storyBlob=null;
 function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src;});}
-async function makeStory(){const p=PLACES[draft.place];const c=document.createElement('canvas');c.width=1080;c.height=1920;const g=c.getContext('2d');
+async function makeStory(){const p=PLACES[draft.place];const c=document.createElement('canvas');c.width=1080;c.height=1920;const g=c.getContext('2d');{const ft=g.fillText.bind(g);g.fillText=(t,...a)=>ft(tr(String(t)),...a);}
  g.fillStyle='#165277';g.fillRect(0,0,1080,1920);
  try{const im=await loadImg(draft.photo);const s=Math.max(1080/im.width,1500/im.height);const w=im.width*s,h=im.height*s;g.save();g.beginPath();g.rect(0,0,1080,1500);g.clip();g.drawImage(im,(1080-w)/2,(1500-h)/2,w,h);g.restore();}catch(e){}
  const grd=g.createLinearGradient(0,1200,0,1500);grd.addColorStop(0,'rgba(22,82,119,0)');grd.addColorStop(1,'rgba(22,82,119,1)');g.fillStyle=grd;g.fillRect(0,1200,1080,300);
  g.strokeStyle='#F2947A';g.lineWidth=10;g.lineCap='round';g.beginPath();g.moveTo(80,1560);g.bezierCurveTo(300,1500,520,1640,1000,1540);g.stroke();
  g.fillStyle='#fff';g.font='700 66px "Source Serif 4", Georgia, serif';g.fillText(IMG_LBL[p.id],80,1680,920);
- g.font='500 40px Montserrat, sans-serif';g.globalAlpha=.85;g.fillText(new Date(draft.date).toLocaleDateString('es-EC',{day:'numeric',month:'long',year:'numeric'}),80,1745);g.globalAlpha=1;
+ g.font='500 40px Montserrat, sans-serif';g.globalAlpha=.85;g.fillText(new Date(draft.date).toLocaleDateString(isEN()?'en-US':'es-EC',{day:'numeric',month:'long',year:'numeric'}),80,1745);g.globalAlpha=1;
  g.fillStyle='#F2947A';g.font='600 44px Montserrat, sans-serif';g.fillText('#TrazaTuGuayaquil',80,1825);
  try{const lg=await loadImg('img/logo.webp');g.drawImage(lg,890,1690,110,119);}catch(e){}
  g.fillStyle='rgba(0,0,0,.35)';const rr=(x,y,w,h,r)=>{g.beginPath();g.roundRect?g.roundRect(x,y,w,h,r):g.rect(x,y,w,h);g.fill();};rr(60,60,250,76,38);g.fillStyle='#fff';g.font='600 36px Montserrat, sans-serif';g.fillText('Mi traza',100,111);
@@ -1055,7 +1263,7 @@ AFTER.perfil=()=>app.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{cons
  else if(k==='ben')sheet(`<h2 class="h2">Mis beneficios</h2>${(isClient()?[['10 % en restaurantes aliados','Muestra tu código QR al pagar'],['Guía ZEROS3','Contacto directo durante tu viaje'],['15 % próximo viaje','Al completar los 5 sellos']]:[['Mapa e historias en audio','Incluido gratis'],['Recuerdos y compartir','Incluido gratis'],['Sellos, guía y descuentos','Solo viajeros ZEROS3']]).map(x=>`<div class="opt"><span style="color:var(--terra-dk)">${I('gift')}</span><span class="stack gap4"><b style="color:var(--navy)">${x[0]}</b><span class="small muted">${x[1]}</span></span></div>`).join('')}<button class="btn btn-ghost" data-close>Cerrar</button>`);
  else if(k==='rec')recSheet();
  else if(k==='sav')sheet(`<h2 class="h2">Lugares guardados</h2>${S.saved.length?S.saved.map(id=>`<button class="opt" data-place="${id}"><img src="${PLACES[id].img}" alt=""><b style="color:var(--navy)">${PLACES[id].nombre}</b></button>`).join(''):'<p class="muted">Aún no guardas lugares. Toca el marcador en la ficha de un lugar para guardarlo aquí.</p>'}`);
- else if(k==='idi')sheet(`<h2 class="h2">Idioma</h2><button class="opt" data-close>${I('check')}<b style="color:var(--navy)">Español</b></button><button class="opt" id="en">${I('globe')}<span class="stack gap4"><b style="color:var(--navy)">English</b><span class="small muted">Disponible en la próxima versión</span></span></button>`,{onOpen:(o,close)=>o.querySelector('#en').onclick=()=>{close();toast('La versión en inglés llegará en la próxima entrega');}});
+ else if(k==='idi')sheet(`<h2 class="h2">Idioma</h2><button class="opt" id="es">${I(isEN()?'globe':'check')}<b style="color:var(--navy)" data-notr>Español</b></button><button class="opt" id="en">${I(isEN()?'check':'globe')}<b style="color:var(--navy)" data-notr>English</b></button>`,{onOpen:(o,close)=>{o.querySelector('#en').onclick=()=>{close();setLang('EN');};o.querySelector('#es').onclick=()=>{close();setLang('ES');};}});
  else if(k==='con')sheet(`<h2 class="h2">Contactar a ZEROS3</h2><p class="muted">Escríbenos para dudas de tu viaje o para reservar una experiencia.</p><div class="select">reservations@zeros3travel.com</div><button class="btn btn-primary" id="cp">Copiar correo</button>`,{onOpen:o=>o.querySelector('#cp').onclick=async()=>{try{await navigator.clipboard.writeText('reservations@zeros3travel.com');toast('Correo copiado');}catch(e){toast('Selecciona el correo y cópialo');}}});
  else if(k==='out')sheet(`<h2 class="h2" style="text-align:center">¿Cerrar sesión?</h2><p class="muted small" style="text-align:center">Tus recuerdos se quedan guardados en este celular.</p><button class="btn btn-terra" id="yo">Cerrar sesión</button><button class="btn btn-ghost" data-close>Cancelar</button>`,{center:true,onOpen:(o,close)=>o.querySelector('#yo').onclick=()=>{close();S.mode=null;save();stack=[];go('ingreso',{},{replace:true});}});});
 
