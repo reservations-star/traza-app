@@ -229,6 +229,20 @@ a.list-item,a.list-item *{text-decoration:none}
 .memory .acts{display:flex;align-items:center;gap:14px;padding:10px 14px 0;color:var(--navy);font-size:12px}
 .memory .acts button{display:inline-flex;align-items:center;gap:5px;min-height:32px}
 .liked{color:var(--terra-dk)}
+.arma-cta{display:flex;align-items:center;gap:14px;width:100%;padding:16px;border-radius:var(--r-m);background:var(--navy);color:#fff;text-align:left}.arma-cta b{font-size:17px;font-family:var(--f-display)}.arma-cta .small{opacity:.85}
+.arma-cta:hover{background:#12466A}.arma-cta:active{background:#0E3A58}.arma-ic{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;flex:none}
+.ar-per{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--white);border-radius:var(--r-m);padding:10px 12px 10px 16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.ar-seg{display:flex;gap:4px;background:var(--cream-2);border-radius:999px;padding:3px}.ar-seg button{width:38px;height:34px;border-radius:999px;font-weight:700;color:var(--navy)}.ar-seg button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.ar-card{display:flex;align-items:center;gap:14px;width:100%;padding:10px 14px 10px 10px;background:var(--white);border-radius:var(--r-m);border:1.5px solid transparent;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.ar-card.on{border-color:var(--navy)}.ar-card img{width:62px;height:62px;border-radius:12px;object-fit:cover;background:var(--cream-2);flex:none}
+.ar-num{width:28px;height:28px;border-radius:50%;border:1.5px solid #C9C4BA;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;color:#fff}
+.ar-card.on .ar-num,.ar-num.on{background:var(--navy);border-color:var(--navy)}
+.ar-warn{align-self:flex-start;display:inline-flex;gap:4px;align-items:center;font-size:11px;font-weight:600;color:var(--terra-dk);background:#FBE9E3;border-radius:999px;padding:2px 8px}
+.ar-day{display:flex;flex-direction:column;gap:4px;background:var(--white);border-radius:var(--r-s);padding:12px 14px;border-left:4px solid var(--navy);color:var(--navy)}
+.ar-long{color:var(--terra-dk);font-weight:600}
+.ar-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:var(--white);border-top:1px solid var(--line);color:var(--navy)}
+.ar-bar .btn{flex:none}
+.ar-stop{width:100%}.ar-stop img{width:46px;height:46px;border-radius:10px;object-fit:cover;flex:none}
 .sv-card{display:flex;align-items:center;background:var(--white);border-radius:var(--r-m);box-shadow:0 1px 4px rgba(0,0,0,.06);padding:10px 6px 10px 10px}
 .sv-main{display:flex;align-items:center;gap:14px;flex:1;min-width:0;text-align:left;color:inherit;text-decoration:none}
 .sv-main img{width:62px;height:62px;border-radius:12px;object-fit:cover;background:var(--cream-2);flex:none}
@@ -330,6 +344,7 @@ a.list-item,a.list-item *{text-decoration:none}
 .overlay.show .panel{transform:none}
 .overlay.center{align-items:center;justify-content:center;padding:24px}
 .overlay.center .panel{border-radius:var(--r-l);padding:24px}
+.toast.low{top:calc(118px + env(safe-area-inset-top,0px))}
 .toast{position:absolute;left:50%;top:calc(18px + env(safe-area-inset-top,0px));transform:translate(-50%,-20px);background:var(--navy);color:#fff;font-size:13px;font-weight:600;padding:10px 16px;border-radius:999px;box-shadow:var(--shadow);opacity:0;transition:all .25s;z-index:60;max-width:88%;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .opt{display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--r-s);background:var(--cream);width:100%;text-align:left}
@@ -429,7 +444,7 @@ const COMMUNITY=[
  {who:'Andrés M.',place:'penas',img:'img/foto-penas.jpg',text:'Llegué al escalón 444. ¡Valió cada paso!',likes:87}];
 
 /* ---------- Estado ---------- */
-const def={mode:null,name:'Dennisse',email:'',visited:{},track:[],geo:{},mems:[],saved:[],savedR:[],liked:{},comments:{},onboarded:false,lang:'ES'};
+const def={mode:null,name:'Dennisse',email:'',visited:{},track:[],geo:{},mems:[],saved:[],savedR:[],myRoute:null,liked:{},comments:{},onboarded:false,lang:'ES'};
 let S=Object.assign({},def);
 try{const raw=localStorage.getItem('traza-v1');if(raw)S=Object.assign({},def,JSON.parse(raw));}catch(e){}
 function save(){try{localStorage.setItem('traza-v1',JSON.stringify(S));}catch(e){ /* sin espacio: se mantiene en memoria */ }}
@@ -548,7 +563,7 @@ const EN={
 'Paseo matutino junto al río Guayas, con un jugo fresco frente al agua.':'Morning walk along the Guayas River, with a fresh juice by the water.',
 'Recuerdos públicos de otros viajeros con #TrazaTuGuayaquil. Las publicaciones de esta pestaña son ejemplos del prototipo.':'Public memories from other travellers with #TrazaTuGuayaquil. The posts in this tab are prototype examples.',
 'Ejemplo':'Example','La Perla al atardecer es otra cosa. #TrazaTuGuayaquil':'La Perla at sunset is something else. #TrazaTuGuayaquil','Llegué al escalón 444. ¡Valió cada paso!':'Made it to step 444. Worth every step!',
-'Te gusta este recuerdo':'You like this memory','Comentarios':'Comments','Lugares guardados':'Saved places','Lugares':'Places','Restaurantes':'Restaurants','Aún no guardas lugares':'No saved places yet','Toca el marcador en la ficha de un lugar para guardarlo aquí.':'Tap the bookmark on a place page to save it here.','Aún no guardas restaurantes':'No saved restaurants yet','En el mapa, toca un restaurante o café y elige “Guardar”.':'On the map, tap a restaurant or café and choose “Save”.','Tus lugares guardados se quedan en este celular para que los encuentres rápido durante tu recorrido.':'Your saved places stay on this phone so you can find them quickly during your walk.','Quitado de tus restaurantes':'Removed from your restaurants','Guardado en tus restaurantes':'Saved to your restaurants','Guardar':'Save','Guardado':'Saved','Cómo llegar':'Directions','Café y bar':'Café and bar','Restaurante':'Restaurant','Guardar restaurante':'Save restaurant','Quitar de guardados':'Remove from saved',
+'Te gusta este recuerdo':'You like this memory','Comentarios':'Comments','Arma tu ruta':'Build your route','Elige los lugares que quieres visitar':'Choose the places you want to visit','Lugares por día':'Places per day','El número indica el orden de tu recorrido':'The number shows the order of your walk','Ordenar para caminar menos':'Reorder to walk less','Orden ajustado para caminar menos':'Order adjusted to walk less','Tu plan':'Your plan','Requiere traslado':'Needs transfer','Crear mi ruta':'Create my route','Toca los lugares en orden':'Tap the places in order','Mi ruta':'My route','Editar mi ruta':'Edit my route','Ruta sugerida del centro':'Suggested downtown route','Elige los lugares y cuántos quieres hacer por día':'Choose the places and how many to do per day','Incluye traslado en auto':'Includes a car transfer','Cómo llegar en auto':'Directions by car','Parque Historico: 20 min en auto':'Parque Histórico: 20 min by car','Parque Histórico: 20 min en auto':'Parque Histórico: 20 min by car','Parque Seminario y Catedral':'Seminario Park and Cathedral','Toca “Ver en el mapa” para seguir el camino de cada día.':'Tap “See on the map” to follow each day’s path.','Lugares guardados':'Saved places','Lugares':'Places','Restaurantes':'Restaurants','Aún no guardas lugares':'No saved places yet','Toca el marcador en la ficha de un lugar para guardarlo aquí.':'Tap the bookmark on a place page to save it here.','Aún no guardas restaurantes':'No saved restaurants yet','En el mapa, toca un restaurante o café y elige “Guardar”.':'On the map, tap a restaurant or café and choose “Save”.','Tus lugares guardados se quedan en este celular para que los encuentres rápido durante tu recorrido.':'Your saved places stay on this phone so you can find them quickly during your walk.','Quitado de tus restaurantes':'Removed from your restaurants','Guardado en tus restaurantes':'Saved to your restaurants','Guardar':'Save','Guardado':'Saved','Cómo llegar':'Directions','Café y bar':'Café and bar','Restaurante':'Restaurant','Guardar restaurante':'Save restaurant','Quitar de guardados':'Remove from saved',
 'ASISTENCIA':'SUPPORT','Contactar a ZEROS3':'Contact ZEROS3','Estamos para ayudarte durante tu viaje':'We are here to help during your trip','En línea':'Online','Fuera de horario':'Off hours','Tu guía en Guayaquil':'Your guide in Guayaquil','Llamar a la agencia':'Call the agency','Tu conductor':'Your driver','Traslados: hotel, centro y Parque Histórico':'Transfers: hotel, downtown and Parque Histórico','Número del conductor pendiente':'Driver number pending','WhatsApp del conductor':'Driver WhatsApp','Llamar al conductor':'Call the driver','Escribir un correo':'Send an email','Atención':'Opening hours','Lunes a domingo, 08:00 – 20:00':'Monday to Sunday, 08:00 – 20:00','Emergencias 24/7':'Emergencies 24/7','ECU 911 · policía, bomberos y ambulancia':'ECU 911 · police, fire and ambulance','Llamar ahora':'Call now','TRAZA · ZEROS3 EXPERIENCIAS URBANAS':'TRAZA · ZEROS3 URBAN EXPERIENCES','Número de WhatsApp pendiente: lo agrega ZEROS3':'WhatsApp number pending: ZEROS3 will add it','Número de ejemplo: falta el teléfono real de la agencia':'Sample number: the agency phone is still missing','Aún no hay comentarios':'No comments yet','Sé la primera persona en comentar.':'Be the first to comment.','Escribe un comentario…':'Write a comment…','Escribe un comentario':'Write a comment','Enviar':'Send','Borrar':'Delete','Comentario borrado':'Comment deleted','Prototipo: los comentarios se guardan en este celular.':'Prototype: comments are saved on this phone.','Solo puedes compartir tus propios recuerdos':'You can only share your own memories',
 // Pasaporte
 'Mi pasaporte TRAZA':'My TRAZA passport','Completa los 5 sellos y obtén':'Complete the 5 stamps and get','15 % en tu próximo viaje':'15% off your next trip','con ZEROS3.':'with ZEROS3.',
@@ -671,7 +686,7 @@ function render(){
 const tabbar=act=>`<nav class="tabbar" aria-label="Navegación principal">${[['inicio','home','Inicio'],['mapa','map','Mapa'],['rutas','route','Rutas'],['recuerdos','photo','Recuerdos'],['perfil','user','Perfil']].map(([k,ic,l])=>`<button class="tab" data-go="${k}" ${k===act?'aria-current="page"':''}>${I(ic)}${l}</button>`).join('')}</nav>`;
 
 /* ---------- Avisos y hojas ---------- */
-function toast(msg){let t=app.querySelector('.toast');if(!t){t=document.createElement('div');t.className='toast';app.appendChild(t);}t.textContent=msg;requestAnimationFrame(()=>t.classList.add('show'));clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2400);}
+function toast(msg){let t=app.querySelector('.toast');if(!t){t=document.createElement('div');t.className='toast';app.appendChild(t);}t.textContent=msg;t.classList.toggle('low',!!document.getElementById('mw'));requestAnimationFrame(()=>t.classList.add('show'));clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2400);}
 function sheet(html,{center=false,onOpen}={}){
   const o=document.createElement('div');o.className='overlay'+(center?' center':'');o.innerHTML=`<div class="panel" role="dialog" aria-modal="true">${center?'':'<span class="grab"></span>'}${html}</div>`;
   o.addEventListener('click',e=>{if(e.target===o||e.target.closest('[data-close]'))close();});
@@ -866,7 +881,7 @@ const POI_IC={church:'<path d="M12 2v4M10 4h4M5 22V11l7-5 7 5v11M10 22v-5h4v5"/>
 const LMK=Object.fromEntries(LM.map(l=>[l.k,l]));
 const CENTER=['penas','perla','cacao','rotonda','plaza','parque','catedral'];
 let mapView={z:.46,tx:0,ty:0,first:true};let mapFilter='Todos';let showRoute=false;let mePos={x:PROM,y:ys(8)+130};
-let trace=[],traceMode=false,fitTrace=false,nightMap=false,mapFocus=null;
+let pendTrace=null;let trace=[],traceMode=false,fitTrace=false,nightMap=false,mapFocus=null;
 const _nn={};function nearNode(x,y){const k=x+','+y;if(_nn[k])return _nn[k];let b=null,bd=1e9;GRAPH.N.forEach(n=>{const d=Math.hypot(n.p[0]-x,n.p[1]-y);if(d<bd){bd=d;b=n.p;}});return _nn[k]=b;}
 const itemNode=k=>k.startsWith('p:')?(q=>nearNode(q.x,q.y))(POIS[+k.slice(2)]):LMK[k].node;
 const itemLbl=k=>k.startsWith('p:')?POIS[+k.slice(2)].n.replace(/ [←↓↖]$/,''):LMK[k].lbl.split(' · ')[0];
@@ -1060,6 +1075,7 @@ AFTER.mapa=({sel})=>{
   },()=>fallback('No pudimos usar tu ubicación. Te mostramos el Malecón como ejemplo.'),{enableHighAccuracy:true,timeout:8000});}
  if(mapFocus){const f=mapFocus;mapFocus=null;mapView.z=Math.max(mapView.z,.9);centerOn(f.x,f.y,false);const el=document.querySelector(`[data-poi="${f.i}"]`);if(el){el.classList.add('pulse');setTimeout(()=>el.classList.remove('pulse'),2600);}toast(`${f.n}: ${f.d}`);}
  if(showRoute){showRoute=false;trace=CENTER.slice();setTrace(true);fitAll();}
+ else if(pendTrace){trace=pendTrace.slice();pendTrace=null;setTrace(true);setTimeout(fitRoute,60);}
  else if(traceMode)setTrace(true);
  if(sel){const L=LM.find(l=>l.id===sel);if(L)centerOn(L.lx,L.ly-40,false);openCard(sel);}
 };
@@ -1115,7 +1131,9 @@ AFTER.ficha=({id})=>{const p=PLACES[id];audioWidget(document.getElementById('aud
 
 /* ---------- Rutas ---------- */
 SCREENS.rutas=()=>`<section class="screen"><div class="scroll"><div class="pad stack gap16" style="padding-block:calc(20px + env(safe-area-inset-top,0px)) 24px">
- <h1 class="h1">Rutas</h1><p class="muted">Recorre el centro histórico a pie, de norte a sur. Toca un lugar para ver su ficha.</p>
+ <h1 class="h1">Rutas</h1>
+ <button class="arma-cta" data-go="arma"><span class="arma-ic">${I('route')}</span><span class="stack gap4" style="flex:1;text-align:left"><b>Arma tu ruta</b><span class="small">${S.myRoute?`Tu ruta: ${S.myRoute.sel.length} lugares · ${Math.ceil(S.myRoute.sel.length/S.myRoute.per)} día${Math.ceil(S.myRoute.sel.length/S.myRoute.per)>1?'s':''}`:'Elige los lugares y cuántos quieres hacer por día'}</span></span>${I('chev','svg-s')}</button>
+ <h2 class="h3" style="margin-top:4px">Ruta sugerida del centro</h2><p class="muted">Recorre el centro histórico a pie, de norte a sur. Toca un lugar para ver su ficha.</p>
  <div class="card stack" style="padding:6px 0">${['penas','malecon','cacao','plaza','seminario'].map((id,k)=>{const p=PLACES[id];return `<button class="list-item" data-place="${id}"><span class="ico" style="font-family:var(--f-display);font-weight:700;font-size:18px;${vis(id)?'background:var(--navy);color:#fff':''}">${vis(id)?I('check'):k+1}</span><span class="stack gap4" style="flex:1"><b style="color:var(--navy)">${p.nombre}</b><span class="small muted">${p.sub} · ${p.dur}</span></span>${I('chev','svg-s')}</button>`;}).join('')}</div>
  <div class="card list-item" style="border:1.5px dashed var(--navy)"><span class="ico"><img src="img/historico.webp" alt="" style="width:36px"></span><span class="stack gap4" style="flex:1"><b style="color:var(--navy)">Parque Histórico</b><span class="small muted">Samborondón · 20 min en auto</span></span><button class="btn btn-ghost btn-s" data-place="historico">Ver</button></div>
  <button class="btn btn-primary" id="vr">${I('route','svg-s')}Ver ruta en el mapa</button></div></div>${tabbar('rutas')}</section>`;
@@ -1140,6 +1158,54 @@ AFTER.recuerdos=()=>{document.getElementById('fab').onclick=()=>{draft={};go('ca
  app.querySelectorAll('[data-like]').forEach(b=>b.onclick=()=>{const id=b.dataset.like;if(!id){toast('Te gusta este recuerdo');return;}S.liked[id]=!S.liked[id];save();render();});
  app.querySelectorAll('[data-cm]').forEach(b=>b.onclick=()=>commentSheet(b.dataset.cm,b));
  app.querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{const m=allMems().find(x=>x.id===b.dataset.sh);if(!m){toast('Solo puedes compartir tus propios recuerdos');return;}draft={place:m.place,photo:m.img,text:m.text,date:m.date};go('compartir');});};
+
+/* ---------- Arma tu ruta ---------- */
+const ARMA=[
+ {id:'malecon',n:'Malecón Simón Bolívar',keys:['rotonda'],min:90,dur:'1 – 2 h'},
+ {id:'penas',n:'Las Peñas · Cerro Santa Ana',keys:['penas'],min:60,dur:'1 h'},
+ {id:'seminario',n:'Parque Seminario y Catedral',keys:['parque','catedral'],min:45,dur:'45 min'},
+ {id:'cacao',n:'Museo del Cacao',keys:['cacao'],min:45,dur:'45 min'},
+ {id:'plaza',n:'Plaza de la Administración',keys:['plaza'],min:20,dur:'20 min'},
+ {id:'puerto',n:'Puerto Santa Ana',keys:['puerto'],min:90,dur:'1 – 2 h'},
+ {id:'historico',n:'Parque Histórico',keys:[],min:150,dur:'2 – 3 h',auto:40}];
+const AR=id=>ARMA.find(a=>a.id===id);
+let armaSel=null,armaPer=null;
+function keysDist(keys){let d=0;for(let i=1;i<keys.length;i++)d+=shortest(itemNode(keys[i-1]),itemNode(keys[i])).d;return d;}
+function dayPlan(ids){const keys=ids.flatMap(id=>AR(id).keys);const d=keysDist(keys);const walk=Math.round(d/PXM/75);
+ const visit=ids.reduce((t,id)=>t+AR(id).min+(AR(id).auto||0),0);return{keys,d,walk,total:visit+walk,auto:ids.some(id=>AR(id).auto)};}
+function splitDays(sel,per){const out=[];for(let i=0;i<sel.length;i+=per)out.push(sel.slice(i,i+per));return out;}
+const fmtH=m=>m<60?`${m} min`:`${Math.round(m/30)/2}`.replace('.',',')+' h';
+function nearOrder(sel){if(sel.length<3)return sel.slice();const walkers=sel.filter(id=>AR(id).keys.length),rest=sel.filter(id=>!AR(id).keys.length);
+ const out=[walkers.shift()];while(walkers.length){const last=AR(out[out.length-1]).keys.slice(-1)[0];let bi=0,bd=1e12;walkers.forEach((id,i)=>{const d=shortest(itemNode(last),itemNode(AR(id).keys[0])).d;if(d<bd){bd=d;bi=i;}});out.push(walkers.splice(bi,1)[0]);}
+ return out.concat(rest);}
+SCREENS.arma=()=>{if(!armaSel){armaSel=S.myRoute?S.myRoute.sel.slice():[];armaPer=S.myRoute?S.myRoute.per:3;}
+ const sel=armaSel,days=splitDays(sel,armaPer),tot=sel.length?days.map(dayPlan).reduce((a,g)=>({total:a.total+g.total,d:a.d+g.d}),{total:0,d:0}):null;
+ return `<section class="screen"><div class="row gap12 pad" style="padding-block:calc(12px + env(safe-area-inset-top,0px)) 0"><button class="icon-btn" data-back aria-label="Volver" style="box-shadow:none;background:none">${I('back')}</button></div>
+ <div class="scroll"><div class="pad stack gap12" style="padding-bottom:24px">
+ <div class="stack gap4"><h1 class="h1" style="font-size:26px">Arma tu ruta</h1><p class="small muted">Elige los lugares que quieres visitar</p></div>
+ <div class="ar-per"><span class="small" style="color:var(--navy);font-weight:600">Lugares por día</span><div class="ar-seg" role="group" aria-label="Lugares por día">${[2,3,4,5].map(n=>`<button aria-pressed="${armaPer===n}" data-per="${n}">${n}</button>`).join('')}</div></div>
+ ${ARMA.map(a=>{const p=PLACES[a.id],k=sel.indexOf(a.id),on=k>=0;return `<button class="ar-card${on?' on':''}" data-ar="${a.id}" aria-pressed="${on}"><img src="${p.img}" alt=""><span class="stack gap4" style="flex:1;min-width:0;text-align:left"><b class="sv-n">${a.n}</b><span class="small muted row gap4"><i class="dot" style="background:${TAG_C[p.tag]||'var(--gray)'}"></i>${p.tag} · ${a.dur}</span>${a.auto?`<span class="ar-warn">${I('car','svg-s')}Requiere traslado</span>`:''}</span><span class="ar-num">${on?k+1:''}</span></button>`;}).join('')}
+ <p class="small muted" style="text-align:center;font-style:italic;margin:0">El número indica el orden de tu recorrido</p>
+ ${sel.length>2?`<button class="btn btn-ghost btn-s" id="arNear" style="align-self:center">${I('route','svg-s')}Ordenar para caminar menos</button>`:''}
+ ${days.length?`<div class="stack gap8"><h2 class="h3">Tu plan</h2>${days.map((d,i)=>{const g=dayPlan(d);return `<div class="ar-day"><div class="row between"><b>Día ${i+1}</b><span class="small ${g.total>480?'ar-long':'muted'}">aprox. ${fmtH(g.total)}${g.total>480?' · día largo':''}</span></div><span class="small">${d.map(id=>AR(id).n.split(' · ')[0]).join(' → ')}</span><span class="small muted">${g.d?fmtDist(g.d)+' a pie':''}${g.d&&g.auto?' · ':''}${g.auto?'Parque Histórico: 20 min en auto':''}</span></div>`;}).join('')}</div>`:''}
+ </div></div>
+ <div class="ar-bar"><span class="small"><b>${sel.length} lugar${sel.length===1?'':'es'}</b>${tot?` · aprox. ${fmtH(tot.total)}${tot.d?' · '+fmtDist(tot.d):''}<br>${days.length} día${days.length>1?'s':''} · ${armaPer} por día`:'<br>Toca los lugares en orden'}</span><button class="btn btn-primary" id="arGo" ${sel.length?'':'disabled'}>Crear mi ruta ${I('chev','svg-s')}</button></div></section>`;};
+AFTER.arma=()=>{const sc=app.querySelector('.scroll');const keep=()=>{const y=sc.scrollTop;render();const n=app.querySelector('.scroll');if(n)n.scrollTop=y;};
+ app.querySelectorAll('[data-ar]').forEach(b=>b.onclick=()=>{const id=b.dataset.ar,i=armaSel.indexOf(id);if(i>=0)armaSel.splice(i,1);else armaSel.push(id);keep();});
+ app.querySelectorAll('[data-per]').forEach(b=>b.onclick=()=>{armaPer=+b.dataset.per;keep();});
+ const nr=document.getElementById('arNear');if(nr)nr.onclick=()=>{armaSel=nearOrder(armaSel);keep();toast('Orden ajustado para caminar menos');};
+ document.getElementById('arGo').onclick=()=>{S.myRoute={sel:armaSel.slice(),per:armaPer};save();armaSel=null;go('miruta',{},{replace:true});};};
+SCREENS.miruta=()=>{const R=S.myRoute;const days=splitDays(R.sel,R.per);
+ return `<section class="screen"><div class="row gap12 pad" style="padding-block:calc(12px + env(safe-area-inset-top,0px)) 8px"><button class="icon-btn" data-back aria-label="Volver" style="box-shadow:none;background:none">${I('back')}</button><h1 class="h2">Mi ruta</h1></div>
+ <div class="scroll"><div class="pad stack gap12" style="padding-bottom:24px">
+ <p class="small muted">${R.sel.length} lugares en ${days.length} día${days.length>1?'s':''}. Toca “Ver en el mapa” para seguir el camino de cada día.</p>
+ ${days.map((d,i)=>{const g=dayPlan(d);return `<div class="card stack gap12" style="padding:16px"><div class="row between"><h2 class="h3" style="margin:0">Día ${i+1}</h2><span class="small ${g.total>480?'ar-long':'muted'}">aprox. ${fmtH(g.total)}</span></div>
+  ${d.map((id,j)=>`<button class="row gap12 ar-stop" data-place="${id}"><span class="ar-num on">${j+1}</span><img src="${PLACES[id].img}" alt=""><span class="stack gap4" style="flex:1;text-align:left;min-width:0"><b class="sv-n">${AR(id).n}</b><span class="small muted">${AR(id).dur}${AR(id).auto?' · 20 min en auto':''}</span></span>${I('chev','svg-s')}</button>`).join('')}
+  <span class="small muted">${g.d?fmtDist(g.d)+' · '+fmtWalk(g.d):''}${g.auto?(g.d?' · ':'')+'Incluye traslado en auto':''}</span>
+  ${g.keys.length?`<button class="btn btn-primary" data-day="${i}">${I('map','svg-s')}Ver día ${i+1} en el mapa</button>`:`<a class="btn btn-ghost" href="${mapsLink(PLACES.historico).replace('walking','driving')}" target="_blank" rel="noopener">${I('car','svg-s')}Cómo llegar en auto</a>`}</div>`;}).join('')}
+ <button class="btn btn-ghost" data-go="arma">${I('route','svg-s')}Editar mi ruta</button>
+ </div></div></section>`;};
+AFTER.miruta=()=>{const days=splitDays(S.myRoute.sel,S.myRoute.per);app.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{const g=dayPlan(days[+b.dataset.day]);pendTrace=g.keys;go('mapa');toast(`Día ${+b.dataset.day+1}: ${days[+b.dataset.day].length} lugares`);});};
 
 /* ---------- Lugares guardados ---------- */
 const TAG_C={Cultura:'#3B82C4',Mar:'#3FA7C9',Naturaleza:'#4E9A6B',Gastronomía:'#E0765A'};
