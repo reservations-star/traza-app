@@ -105,6 +105,10 @@ p{margin:0;line-height:1.5}
 .trip h3{color:#fff;font-size:20px}
 .trip .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:4px 10px;font-size:11px}
 .trip .pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--sky)}
+.guide-row{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:10px 12px;border-radius:var(--r-s);background:rgba(255,255,255,.1);color:#fff}
+.guide-row:hover{background:rgba(255,255,255,.16)}.guide-row:active{background:rgba(255,255,255,.22)}.guide-row b{font-size:15px}
+.g-av{flex:none;width:42px;height:42px;border-radius:50%;background:var(--sky);color:var(--navy);display:grid;place-items:center;font-weight:700;font-size:15px}
+.g-av.big{width:64px;height:64px;font-size:22px;background:var(--navy);color:#fff}
 .trip .dash{height:0;border-top:2px dashed rgba(255,255,255,.35);margin:14px 0;position:relative}
 .steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:relative}
 .steps::before{content:"";position:absolute;left:10%;right:10%;top:15px;border-top:2px solid var(--line)}
@@ -392,6 +396,8 @@ const PLACES={
 };
 const STAMP_IDS=['penas','malecon','seminario','cacao','historico'];
 const IMG_LBL={penas:'Las Peñas · Cerro Santa Ana',malecon:'Malecón Simón Bolívar',cacao:'Museo del Cacao',seminario:'Parque Seminario',plaza:'Plaza de la Administración',historico:'Parque Histórico'};
+/* Guía asignado a la reserva (datos de ejemplo del prototipo: cambiar por los reales de ZEROS3) */
+const GUIDE={nombre:'Carlos Mendoza',ini:'CM',idiomas:'Español · English',hoy:{hora:'9:00',lugar:'Escalinata Diego Noboa, Las Peñas',place:'penas',plan:'Las Peñas y Museo del Cacao'}};
 const SEED_MEM=[
  {id:'s1',place:'penas',img:'img/foto-penas.jpg',text:'Atardecer subiendo los 444 escalones. La brisa del río y los colores de las casas hacen que cada paso valga la pena.',date:'2026-10-13T17:40',pub:false,likes:24,seed:true},
  {id:'s2',place:'malecon',img:'img/foto-malecon.jpg',text:'Paseo matutino junto al río Guayas, con un jugo fresco frente al agua.',date:'2026-10-12T09:15',pub:true,likes:48,seed:true}];
@@ -530,7 +536,7 @@ const EN={
 // Perfil
 'Viajero ZEROS3':'ZEROS3 traveller','Explorador':'Explorer','Sellos':'Stamps','Guardados':'Saved','Mi pasaporte':'My passport','Mis beneficios':'My benefits','Mi recorrido y sellos':'My walk and stamps',
 'Lugares guardados':'Saved places','Idioma · Español':'Language · English','Contactar a ZEROS3':'Contact ZEROS3','Cerrar sesión':'Sign out','TRAZA · prototipo funcional · ZEROS3 Travel Company':'TRAZA · working prototype · ZEROS3 Travel Company',
-'Sin reserva':'No booking','10 % en restaurantes aliados':'10% off at partner restaurants','Muestra tu código QR al pagar':'Show your QR code when paying','Guía ZEROS3':'ZEROS3 guide',
+'Sin reserva':'No booking','10 % en restaurantes aliados':'10% off at partner restaurants','Muestra tu código QR al pagar':'Show your QR code when paying','Guía ZEROS3':'ZEROS3 guide','Escalinata Diego Noboa, Las Peñas':'Diego Noboa stairway, Las Peñas','Tu guía':'Your guide','Tu guía ZEROS3':'Your ZEROS3 guide','Hoy · Día 2':'Today · Day 2','Ver punto de encuentro':'See meeting point','Escribir a ZEROS3':'Write to ZEROS3','Tu guía te acompaña en los recorridos del itinerario. Para cambios de horario o dudas, escribe a la agencia.':'Your guide joins you on the itinerary tours. For schedule changes or questions, write to the agency.',
 'Contacto directo durante tu viaje':'Direct contact during your trip','15 % próximo viaje':'15% off your next trip','Al completar los 5 sellos':'When you complete the 5 stamps',
 'Mapa e historias en audio':'Map and audio stories','Incluido gratis':'Included for free','Recuerdos y compartir':'Memories and sharing','Sellos, guía y descuentos':'Stamps, guide and discounts','Solo viajeros ZEROS3':'ZEROS3 travellers only',
 'Aún no guardas lugares. Toca el marcador en la ficha de un lugar para guardarlo aquí.':'You have no saved places yet. Tap the bookmark on a place’s page to save it here.',
@@ -568,6 +574,9 @@ const MESL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','s
 const DIA={'Lun':'Mon','Mar':'Tue','Mié':'Wed','Jue':'Thu','Vie':'Fri','Sáb':'Sat','Dom':'Sun'};
 const num=s=>s.replace(',','.');
 const PAT=[
+ [/^Hoy (\d+:\d+) · (.+)$/,m=>`Today ${m[1]} · ${tr1(m[2])}`],
+ [/^Encuentro a las (\d+:\d+)$/,m=>`Meet at ${m[1]}`],
+ [/^Guía: (.+)$/,m=>`Guide: ${m[1]}`],
  [/^a ([\d,]+) (km|m)$/,m=>`${num(m[1])} ${m[2]} away`],
  [/^([\d,]+) (km|m)$/,m=>`${num(m[1])} ${m[2]}`],
  [/^(\d+) min a pie$/,m=>`${m[1]} min walk`],
@@ -728,6 +737,7 @@ SCREENS.inicio=()=>{const vc=visitedCount();const lugares=['penas','malecon','ca
  ${isClient()?`<div class="trip"><div class="row between gap8"><span class="pill">En ruta activa</span><span class="small" style="opacity:.8">Guayaquil · 12 – 15 oct</span></div>
   <h3 style="margin-top:12px">Mi viaje con ZEROS3</h3><div class="dash"></div>
   <div class="row gap8 small">${I('bed','svg-s')}Hotel del Parque, Samborondón</div>
+  <button class="guide-row" id="guia"><span class="g-av">${GUIDE.ini}</span><span class="stack" style="flex:1;min-width:0;text-align:left"><span class="small" style="opacity:.75">Tu guía</span><b>${GUIDE.nombre}</b><span class="small" style="opacity:.85">Hoy ${GUIDE.hoy.hora} · ${GUIDE.hoy.lugar}</span></span>${I('chev','svg-s')}</button>
   <div class="row between" style="margin-top:14px;border-top:1px solid rgba(255,255,255,.2);padding-top:12px"><button class="row gap4" id="itin" style="font-weight:600;font-size:13px">Ver itinerario ${I('chev','svg-s')}</button><span class="small" style="opacity:.75">Día 2 de 4</span></div></div>`
  :`<div class="trip"><span class="pill">Modo explorador</span><h3 style="margin-top:12px">Explora Guayaquil a tu ritmo</h3><p class="small" style="opacity:.85;margin-top:6px">Mapa, historias en audio y recuerdos gratis. Con ZEROS3 desbloqueas sellos, guía y descuentos.</p>
   <button class="btn btn-s" id="exper" style="background:#fff;color:var(--navy);margin-top:14px">Conocer experiencias ZEROS3</button></div>`}
@@ -739,8 +749,17 @@ SCREENS.inicio=()=>{const vc=visitedCount();const lugares=['penas','malecon','ca
  <div class="stack gap12"><div class="row between"><h2 class="h2">Cerca de ti</h2><span class="small muted">Gastronomía local</span></div>
   ${[['La Central','Restaurante · calle Panamá','Ver','fork'],['Bar Juliana','Cócteles · Museo del Cacao','Ver','coffee'],['Puerto Ancla','Mariscos · calle Panamá','Ver','fork']].map(r=>`<a class="card list-item" href="https://www.google.com/maps/search/${encodeURIComponent(r[0]+' Guayaquil')}" target="_blank" rel="noopener"><span class="ico">${I(r[3])}</span><span class="stack gap4" style="flex:1;min-width:0"><b style="color:var(--navy)">${r[0]}</b><span class="small muted">${r[1]}</span></span><span class="small row gap4" style="color:var(--navy)">${I('nav','svg-s')}${r[2]}</span></a>`).join('')}</div>
  </div></div>${tabbar('inicio')}</section>`;};
-AFTER.inicio=()=>{document.getElementById('srch').onclick=openSearch;
- const it=document.getElementById('itin');if(it)it.onclick=()=>sheet(`<h2 class="h2">Itinerario · Mi viaje con ZEROS3</h2>${[['Lun 12 oct','Malecón Simón Bolívar y La Perla','Llegada y recorrido guiado'],['Mar 13 oct','Las Peñas y Museo del Cacao','Hoy · Día 2'],['Mié 14 oct','Parque Seminario y Catedral','Almuerzo en la calle Panamá'],['Jue 15 oct','Parque Histórico','Traslado en auto · 20 min']].map(d=>`<div class="row gap12" style="align-items:flex-start"><span class="chip" style="flex:none">${d[0]}</span><span class="stack gap4"><b style="color:var(--navy)">${d[1]}</b><span class="small muted">${d[2]}</span></span></div>`).join('')}<button class="btn btn-ghost" data-close>Cerrar</button>`);
+function guideSheet(){const g=GUIDE;
+ sheet(`<div class="row gap16"><span class="g-av big">${g.ini}</span><div class="stack gap4"><span class="small muted">Tu guía ZEROS3</span><h2 class="h2" style="margin:0">${g.nombre}</h2><span class="small muted">${I('globe','svg-s')} ${g.idiomas}</span></div></div>
+ <div class="card stack gap8" style="padding:14px;border:1px solid var(--line)"><b style="color:var(--navy)">Hoy · Día 2</b>
+  <div class="row gap8 small">${I('clock','svg-s')}Encuentro a las ${g.hoy.hora}</div><div class="row gap8 small">${I('pin','svg-s')}${g.hoy.lugar}</div><div class="row gap8 small">${I('route','svg-s')}${g.hoy.plan}</div></div>
+ <p class="small muted" style="margin:0">Tu guía te acompaña en los recorridos del itinerario. Para cambios de horario o dudas, escribe a la agencia.</p>
+ <button class="btn btn-primary" id="gmap">${I('map','svg-s')}Ver punto de encuentro</button>
+ <button class="btn btn-ghost" id="gmail">${I('chat','svg-s')}Escribir a ZEROS3</button>`,
+ {onOpen:(o,close)=>{o.querySelector('#gmap').onclick=()=>{close();go('mapa',{sel:g.hoy.place});};
+  o.querySelector('#gmail').onclick=()=>{location.href='mailto:reservations@zeros3travel.com?subject='+encodeURIComponent('Mi viaje con ZEROS3 · guía '+g.nombre);};}});}
+AFTER.inicio=()=>{document.getElementById('srch').onclick=openSearch;const gu=document.getElementById('guia');if(gu)gu.onclick=guideSheet;
+ const it=document.getElementById('itin');if(it)it.onclick=()=>sheet(`<h2 class="h2">Itinerario · Mi viaje con ZEROS3</h2><button class="opt" id="ig"><span class="g-av" style="background:var(--navy);color:#fff">${GUIDE.ini}</span><span class="stack gap4" style="flex:1"><b style="color:var(--navy)">Guía: ${GUIDE.nombre}</b><span class="small muted">${GUIDE.idiomas}</span></span>${I('chev','svg-s')}</button>${[['Lun 12 oct','Malecón Simón Bolívar y La Perla','Llegada y recorrido guiado'],['Mar 13 oct','Las Peñas y Museo del Cacao','Hoy · Día 2'],['Mié 14 oct','Parque Seminario y Catedral','Almuerzo en la calle Panamá'],['Jue 15 oct','Parque Histórico','Traslado en auto · 20 min']].map(d=>`<div class="row gap12" style="align-items:flex-start"><span class="chip" style="flex:none">${d[0]}</span><span class="stack gap4"><b style="color:var(--navy)">${d[1]}</b><span class="small muted">${d[2]}</span></span></div>`).join('')}<button class="btn btn-ghost" data-close>Cerrar</button>`,{onOpen:(o,close)=>o.querySelector('#ig').onclick=()=>{close();setTimeout(guideSheet,220);}});
  const ex=document.getElementById('exper');if(ex)ex.onclick=openExperiencias;};
 
 function openSearch(){sheet(`<label class="field">${I('search')}<input id="q" placeholder="Busca lugares, hoteles, cafés…" autocomplete="off"></label><div class="stack gap8" id="res"></div>`,{onOpen:(o,close)=>{
