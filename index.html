@@ -225,6 +225,13 @@ a.list-item,a.list-item *{text-decoration:none}
 .memory .acts{display:flex;align-items:center;gap:14px;padding:10px 14px 0;color:var(--navy);font-size:12px}
 .memory .acts button{display:inline-flex;align-items:center;gap:5px;min-height:32px}
 .liked{color:var(--terra-dk)}
+.cm-list{display:flex;flex-direction:column;gap:14px;max-height:46vh;overflow-y:auto;padding:2px 0}
+.cm{display:flex;gap:10px;align-items:flex-start}.cm img{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none}
+.cm b{font-size:13px;color:var(--navy)}.cm-tx{font-size:14px;margin:0;overflow-wrap:anywhere}
+.cm-del{align-self:flex-start;color:var(--gray);padding:2px 0;min-height:24px}.cm-del:hover{color:var(--terra-dk)}
+.cm-empty{display:flex;flex-direction:column;align-items:center;gap:4px;padding:18px 0;color:var(--navy);text-align:center}.cm-empty svg{width:28px;height:28px;opacity:.5}
+.cm-form{display:flex;gap:8px;align-items:center;border:1.5px solid var(--line);border-radius:999px;padding:4px 4px 4px 14px;background:var(--white)}
+.cm-form:focus-within{border-color:var(--navy)}.cm-form input{flex:1;border:0;outline:0;font:inherit;font-size:15px;background:transparent;min-width:0;color:var(--ink)}
 .example{font-size:10px;font-weight:600;color:var(--gray);background:var(--cream-2);border-radius:999px;padding:2px 8px}
 .fab{position:absolute;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;box-shadow:0 8px 20px rgba(22,82,119,.35);z-index:8}
 
@@ -393,7 +400,7 @@ const COMMUNITY=[
  {who:'Andrés M.',place:'penas',img:'img/foto-penas.jpg',text:'Llegué al escalón 444. ¡Valió cada paso!',likes:87}];
 
 /* ---------- Estado ---------- */
-const def={mode:null,name:'Dennisse',email:'',visited:{},track:[],geo:{},mems:[],saved:[],liked:{},onboarded:false,lang:'ES'};
+const def={mode:null,name:'Dennisse',email:'',visited:{},track:[],geo:{},mems:[],saved:[],liked:{},comments:{},onboarded:false,lang:'ES'};
 let S=Object.assign({},def);
 try{const raw=localStorage.getItem('traza-v1');if(raw)S=Object.assign({},def,JSON.parse(raw));}catch(e){}
 function save(){try{localStorage.setItem('traza-v1',JSON.stringify(S));}catch(e){ /* sin espacio: se mantiene en memoria */ }}
@@ -512,7 +519,7 @@ const EN={
 'Paseo matutino junto al río Guayas, con un jugo fresco frente al agua.':'Morning walk along the Guayas River, with a fresh juice by the water.',
 'Recuerdos públicos de otros viajeros con #TrazaTuGuayaquil. Las publicaciones de esta pestaña son ejemplos del prototipo.':'Public memories from other travellers with #TrazaTuGuayaquil. The posts in this tab are prototype examples.',
 'Ejemplo':'Example','La Perla al atardecer es otra cosa. #TrazaTuGuayaquil':'La Perla at sunset is something else. #TrazaTuGuayaquil','Llegué al escalón 444. ¡Valió cada paso!':'Made it to step 444. Worth every step!',
-'Te gusta este recuerdo':'You like this memory','Los comentarios llegan en la próxima versión':'Comments are coming in the next version','Solo puedes compartir tus propios recuerdos':'You can only share your own memories',
+'Te gusta este recuerdo':'You like this memory','Comentarios':'Comments','Aún no hay comentarios':'No comments yet','Sé la primera persona en comentar.':'Be the first to comment.','Escribe un comentario…':'Write a comment…','Escribe un comentario':'Write a comment','Enviar':'Send','Borrar':'Delete','Comentario borrado':'Comment deleted','Prototipo: los comentarios se guardan en este celular.':'Prototype: comments are saved on this phone.','Solo puedes compartir tus propios recuerdos':'You can only share your own memories',
 // Pasaporte
 'Mi pasaporte TRAZA':'My TRAZA passport','Completa los 5 sellos y obtén':'Complete the 5 stamps and get','15 % en tu próximo viaje':'15% off your next trip','con ZEROS3.':'with ZEROS3.',
 'LAS PEÑAS · GUAYAQUIL':'LAS PEÑAS · GUAYAQUIL','MALECÓN · LA PERLA':'MALECÓN · LA PERLA','PARQUE SEMINARIO':'SEMINARIO PARK','MUSEO DEL CACAO':'CACAO MUSEUM','PARQUE HISTÓRICO':'HISTORICAL PARK',
@@ -1063,7 +1070,7 @@ AFTER.rutas=()=>{document.getElementById('vr').onclick=()=>{showRoute=true;go('m
 SCREENS.recuerdos=({tab='mios'})=>{const mems=allMems();const withMem=new Set(mems.map(m=>m.place));
  const cardM=(m,i,comm)=>{const p=PLACES[m.place];const liked=!comm&&S.liked[m.id];const d=m.date?new Date(m.date):null;
   return `<article class="card memory"><div class="photo"><img src="${m.img}" alt="Recuerdo en ${p.nombre}"><span class="where">${I('pin','svg-s')}${IMG_LBL[m.place]}</span></div>
-  <div class="acts"><button data-like="${comm?'':m.id}" class="${liked?'liked':''}" aria-label="Me gusta">${I(liked?'heartf':'heart')}${(m.likes||0)+(liked?1:0)}</button><button aria-label="Comentar" data-cm>${I('chat')}</button><button aria-label="Compartir" data-sh="${comm?'':m.id}">${I('share')}</button>
+  <div class="acts"><button data-like="${comm?'':m.id}" class="${liked?'liked':''}" aria-label="Me gusta">${I(liked?'heartf':'heart')}${(m.likes||0)+(liked?1:0)}</button><button aria-label="Comentar" data-cm="${comm?'c'+i:m.id}">${I('chat')}<span class="cmn">${cmCount(comm?'c'+i:m.id)||''}</span></button><button aria-label="Compartir" data-sh="${comm?'':m.id}">${I('share')}</button>
    <span style="margin-left:auto" class="small muted row gap4">${comm?`<span class="example">Ejemplo</span>`:I(m.pub?'globe':'lock','svg-s')+(m.pub?'Público':'Privado')}</span></div>
   <div class="stack gap4" style="padding:8px 14px 14px">${comm?`<b class="small" style="color:var(--navy)">${m.who}</b>`:''}<p style="font-size:14px">${esc(m.text||'')}</p>${d?`<span class="small muted">${d.toLocaleDateString('es-EC',{day:'numeric',month:'short',year:'numeric'})}</span>`:''}</div></article>`;};
  return `<section class="screen"><div class="scroll"><div class="pad stack gap16" style="padding-block:calc(20px + env(safe-area-inset-top,0px)) 96px">
@@ -1076,8 +1083,27 @@ SCREENS.recuerdos=({tab='mios'})=>{const mems=allMems();const withMem=new Set(me
  </div></div><button class="fab" id="fab" aria-label="Tomar foto">${I('camera')}</button>${tabbar('recuerdos')}</section>`;};
 AFTER.recuerdos=()=>{document.getElementById('fab').onclick=()=>{draft={};go('camara');};const n=document.getElementById('nuevo');if(n)n.onclick=()=>{draft={};go('camara');};
  app.querySelectorAll('[data-like]').forEach(b=>b.onclick=()=>{const id=b.dataset.like;if(!id){toast('Te gusta este recuerdo');return;}S.liked[id]=!S.liked[id];save();render();});
- app.querySelectorAll('[data-cm]').forEach(b=>b.onclick=()=>toast('Los comentarios llegan en la próxima versión'));
+ app.querySelectorAll('[data-cm]').forEach(b=>b.onclick=()=>commentSheet(b.dataset.cm,b));
  app.querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{const m=allMems().find(x=>x.id===b.dataset.sh);if(!m){toast('Solo puedes compartir tus propios recuerdos');return;}draft={place:m.place,photo:m.img,text:m.text,date:m.date};go('compartir');});};
+
+/* ---------- Comentarios ---------- */
+function cmList(k){if(!S.comments)S.comments={};return S.comments[k]||(S.comments[k]=[]);}
+function cmCount(k){return (S.comments&&S.comments[k]||[]).length;}
+function cmAgo(d){const m=Math.round((Date.now()-new Date(d))/60000),en=isEN();
+ if(m<1)return en?'just now':'hace un momento';if(m<60)return en?m+' min ago':'hace '+m+' min';const h=Math.round(m/60);if(h<24)return en?h+' h ago':'hace '+h+' h';
+ return new Date(d).toLocaleDateString(en?'en-US':'es-EC',{day:'numeric',month:'short'});}
+function commentSheet(k,btn){
+ const items=()=>{const L=cmList(k);return L.length?L.map((c,j)=>`<div class="cm"><img src="img/avatar.jpg" alt=""><div class="stack gap4" style="flex:1;min-width:0"><div class="row gap8"><b data-notr>${esc(c.who)}</b><span class="small muted">${cmAgo(c.date)}</span></div><p class="cm-tx" data-notr>${esc(c.text)}</p><button class="cm-del small" data-del="${j}">Borrar</button></div></div>`).join('')
+  :`<div class="cm-empty">${I('chat')}<b>Aún no hay comentarios</b><span class="small muted">Sé la primera persona en comentar.</span></div>`;};
+ sheet(`<div class="row between"><h2 class="h2">Comentarios</h2><button class="icon-btn" data-close aria-label="Cerrar">${I('close')}</button></div>
+ <div class="cm-list" id="cml">${items()}</div>
+ <form class="cm-form" id="cmf"><input id="cmi" maxlength="200" placeholder="Escribe un comentario…" autocomplete="off" aria-label="Escribe un comentario"><button class="btn btn-primary btn-s" id="cms" disabled>Enviar</button></form>
+ <p class="small muted" style="margin:0;text-align:center">Prototipo: los comentarios se guardan en este celular.</p>`,
+ {onOpen:(o)=>{const inp=o.querySelector('#cmi'),snd=o.querySelector('#cms'),list=o.querySelector('#cml');
+  const upd=()=>{list.innerHTML=items();if(isEN())trNode(list);bind();const n=cmCount(k);const c=btn&&btn.querySelector('.cmn');if(c)c.textContent=n||'';};
+  const bind=()=>list.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{cmList(k).splice(+b.dataset.del,1);save();upd();toast('Comentario borrado');});
+  bind();inp.oninput=()=>{snd.disabled=!inp.value.trim();};
+  o.querySelector('#cmf').onsubmit=e=>{e.preventDefault();const t=inp.value.trim();if(!t)return;cmList(k).push({who:S.name||'Tú',text:t,date:new Date().toISOString()});save();inp.value='';snd.disabled=true;upd();list.scrollTop=list.scrollHeight;};}});}
 
 /* ---------- Cámara ---------- */
 let stream=null;
