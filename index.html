@@ -229,6 +229,26 @@ a.list-item,a.list-item *{text-decoration:none}
 .memory .acts{display:flex;align-items:center;gap:14px;padding:10px 14px 0;color:var(--navy);font-size:12px}
 .memory .acts button{display:inline-flex;align-items:center;gap:5px;min-height:32px}
 .liked{color:var(--terra-dk)}
+.sv-card{display:flex;align-items:center;background:var(--white);border-radius:var(--r-m);box-shadow:0 1px 4px rgba(0,0,0,.06);padding:10px 6px 10px 10px}
+.sv-main{display:flex;align-items:center;gap:14px;flex:1;min-width:0;text-align:left;color:inherit;text-decoration:none}
+.sv-main img{width:62px;height:62px;border-radius:12px;object-fit:cover;background:var(--cream-2);flex:none}
+.sv-ic{width:62px;height:62px;border-radius:12px;background:var(--cream-2);color:var(--terra-dk);display:grid;place-items:center;flex:none}
+.sv-n{color:var(--navy);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sv-bm{box-shadow:none;background:none;color:var(--navy);flex:none}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;flex:none}
+.sv-note{font-size:13px;color:var(--gray);background:var(--cream-2);border-radius:var(--r-s);padding:12px 14px;margin:6px 0 0;font-style:italic}
+.sv-empty{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:28px 12px;color:var(--navy)}.sv-empty svg{width:30px;height:30px;opacity:.45}
+.ct-kicker{font-size:12px;font-weight:600;letter-spacing:.12em;color:var(--navy);opacity:.75;padding-right:4px}
+.ct-guide{display:flex;align-items:center;gap:14px;padding:16px}.ct-guide .g-av{width:54px;height:54px;font-size:18px}
+.ct-name{font-family:var(--f-display);font-size:19px;color:var(--navy)}
+.ct-on{position:absolute;right:1px;bottom:1px;width:12px;height:12px;border-radius:50%;background:#3BA55C;border:2px solid #fff}.ct-on.off{background:var(--gray)}
+.ct-badge{font-size:11px;font-weight:600;color:var(--green-text);background:#E6F2EA;border-radius:999px;padding:2px 8px}.ct-badge.off{color:var(--gray);background:var(--cream-2)}
+.ct-wa{background:#25D366;color:#fff;flex:none}.ct-wa:hover{background:#1FBF5B}.ct-wa:active{background:#18A84F}
+.ct-row{display:flex;align-items:center;gap:14px;padding:14px 16px;width:100%;box-sizing:border-box;color:var(--navy);text-decoration:none}.ct-row b{font-size:15px}
+.ct-ic{width:40px;height:40px;border-radius:50%;background:var(--cream-2);display:grid;place-items:center;flex:none;color:var(--navy)}
+.ct-tz{font-size:11px;font-weight:600;color:var(--gray);background:var(--cream-2);border-radius:6px;padding:3px 7px}
+.ct-sos{display:flex;align-items:center;gap:12px;padding:16px;border-radius:var(--r-m);background:#FBE9E3;border:1px solid #F0B9A8;color:var(--terra-dk);margin-top:10px}
+.ct-sos b{font-size:16px}.ct-sos-ic{width:44px;height:44px;border-radius:50%;background:#F7D5C9;display:grid;place-items:center;flex:none}
 .cm-list{display:flex;flex-direction:column;gap:14px;max-height:46vh;overflow-y:auto;padding:2px 0}
 .cm{display:flex;gap:10px;align-items:flex-start}.cm img{width:34px;height:34px;border-radius:50%;object-fit:cover;flex:none}
 .cm b{font-size:13px;color:var(--navy)}.cm-tx{font-size:14px;margin:0;overflow-wrap:anywhere}
@@ -347,7 +367,7 @@ book:'<path d="M6 4h12v16H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M8 4v16"/>
 share:'<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/>',
 camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
 heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',heartf:'<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" fill="currentColor"/>',
-chat:'<path d="M4 5h16v11H9l-5 4z"/>',lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+chat:'<path d="M4 5h16v11H9l-5 4z"/>',markf:'<path d="M7 3h10v18l-5-4-5 4z" fill="currentColor"/>',phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',wa:'<path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z"/><path d="M9.5 9c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 1a4 4 0 0 1-2-2l1-1-1-2z"/>',alert:'<path d="M12 4v16M5 8l14 8M19 8 5 16"/>',lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
 globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
 check:'<path d="M5 12l5 5 9-10"/>',chev:'<path d="M9 6l6 6-6 6"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
 fork:'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 0-3 3-3 6s1 3 3 3v9"/>',coffee:'<path d="M4 9h12v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4zM16 11h2a2 2 0 0 1 0 4h-2"/>',
@@ -397,7 +417,9 @@ const PLACES={
 const STAMP_IDS=['penas','malecon','seminario','cacao','historico'];
 const IMG_LBL={penas:'Las Peñas · Cerro Santa Ana',malecon:'Malecón Simón Bolívar',cacao:'Museo del Cacao',seminario:'Parque Seminario',plaza:'Plaza de la Administración',historico:'Parque Histórico'};
 /* Guía asignado a la reserva (datos de ejemplo del prototipo: cambiar por los reales de ZEROS3) */
-const GUIDE={nombre:'Carlos Mendoza',ini:'CM',idiomas:'Español · English',hoy:{hora:'9:00',lugar:'Escalinata Diego Noboa, Las Peñas',place:'penas',plan:'Las Peñas y Museo del Cacao'}};
+/* Contacto de la agencia: el teléfono y WhatsApp son de ejemplo (los del diseño en Figma); cambiar por los reales */
+const CONTACT={tel:'+593 4 000 0000',wa:'',email:'reservations@zeros3travel.com',horario:'Lunes a domingo, 08:00 – 20:00'};
+const GUIDE={nombre:'Carlos M.',ini:'CM',idiomas:'Español · English',hoy:{hora:'9:00',lugar:'Escalinata Diego Noboa, Las Peñas',place:'penas',plan:'Las Peñas y Museo del Cacao'}};
 const SEED_MEM=[
  {id:'s1',place:'penas',img:'img/foto-penas.jpg',text:'Atardecer subiendo los 444 escalones. La brisa del río y los colores de las casas hacen que cada paso valga la pena.',date:'2026-10-13T17:40',pub:false,likes:24,seed:true},
  {id:'s2',place:'malecon',img:'img/foto-malecon.jpg',text:'Paseo matutino junto al río Guayas, con un jugo fresco frente al agua.',date:'2026-10-12T09:15',pub:true,likes:48,seed:true}];
@@ -406,7 +428,7 @@ const COMMUNITY=[
  {who:'Andrés M.',place:'penas',img:'img/foto-penas.jpg',text:'Llegué al escalón 444. ¡Valió cada paso!',likes:87}];
 
 /* ---------- Estado ---------- */
-const def={mode:null,name:'Dennisse',email:'',visited:{},track:[],geo:{},mems:[],saved:[],liked:{},comments:{},onboarded:false,lang:'ES'};
+const def={mode:null,name:'Dennisse',email:'',visited:{},track:[],geo:{},mems:[],saved:[],savedR:[],liked:{},comments:{},onboarded:false,lang:'ES'};
 let S=Object.assign({},def);
 try{const raw=localStorage.getItem('traza-v1');if(raw)S=Object.assign({},def,JSON.parse(raw));}catch(e){}
 function save(){try{localStorage.setItem('traza-v1',JSON.stringify(S));}catch(e){ /* sin espacio: se mantiene en memoria */ }}
@@ -525,7 +547,8 @@ const EN={
 'Paseo matutino junto al río Guayas, con un jugo fresco frente al agua.':'Morning walk along the Guayas River, with a fresh juice by the water.',
 'Recuerdos públicos de otros viajeros con #TrazaTuGuayaquil. Las publicaciones de esta pestaña son ejemplos del prototipo.':'Public memories from other travellers with #TrazaTuGuayaquil. The posts in this tab are prototype examples.',
 'Ejemplo':'Example','La Perla al atardecer es otra cosa. #TrazaTuGuayaquil':'La Perla at sunset is something else. #TrazaTuGuayaquil','Llegué al escalón 444. ¡Valió cada paso!':'Made it to step 444. Worth every step!',
-'Te gusta este recuerdo':'You like this memory','Comentarios':'Comments','Aún no hay comentarios':'No comments yet','Sé la primera persona en comentar.':'Be the first to comment.','Escribe un comentario…':'Write a comment…','Escribe un comentario':'Write a comment','Enviar':'Send','Borrar':'Delete','Comentario borrado':'Comment deleted','Prototipo: los comentarios se guardan en este celular.':'Prototype: comments are saved on this phone.','Solo puedes compartir tus propios recuerdos':'You can only share your own memories',
+'Te gusta este recuerdo':'You like this memory','Comentarios':'Comments','Lugares guardados':'Saved places','Lugares':'Places','Restaurantes':'Restaurants','Aún no guardas lugares':'No saved places yet','Toca el marcador en la ficha de un lugar para guardarlo aquí.':'Tap the bookmark on a place page to save it here.','Aún no guardas restaurantes':'No saved restaurants yet','En el mapa, toca un restaurante o café y elige “Guardar”.':'On the map, tap a restaurant or café and choose “Save”.','Tus lugares guardados se quedan en este celular para que los encuentres rápido durante tu recorrido.':'Your saved places stay on this phone so you can find them quickly during your walk.','Quitado de tus restaurantes':'Removed from your restaurants','Guardado en tus restaurantes':'Saved to your restaurants','Guardar':'Save','Guardado':'Saved','Cómo llegar':'Directions','Café y bar':'Café and bar','Restaurante':'Restaurant','Guardar restaurante':'Save restaurant','Quitar de guardados':'Remove from saved',
+'ASISTENCIA':'SUPPORT','Contactar a ZEROS3':'Contact ZEROS3','Estamos para ayudarte durante tu viaje':'We are here to help during your trip','En línea':'Online','Fuera de horario':'Off hours','Tu guía en Guayaquil':'Your guide in Guayaquil','Llamar a la agencia':'Call the agency','Escribir un correo':'Send an email','Atención':'Opening hours','Lunes a domingo, 08:00 – 20:00':'Monday to Sunday, 08:00 – 20:00','Emergencias 24/7':'Emergencies 24/7','ECU 911 · policía, bomberos y ambulancia':'ECU 911 · police, fire and ambulance','Llamar ahora':'Call now','TRAZA · ZEROS3 EXPERIENCIAS URBANAS':'TRAZA · ZEROS3 URBAN EXPERIENCES','Número de WhatsApp pendiente: lo agrega ZEROS3':'WhatsApp number pending: ZEROS3 will add it','Número de ejemplo: falta el teléfono real de la agencia':'Sample number: the agency phone is still missing','Aún no hay comentarios':'No comments yet','Sé la primera persona en comentar.':'Be the first to comment.','Escribe un comentario…':'Write a comment…','Escribe un comentario':'Write a comment','Enviar':'Send','Borrar':'Delete','Comentario borrado':'Comment deleted','Prototipo: los comentarios se guardan en este celular.':'Prototype: comments are saved on this phone.','Solo puedes compartir tus propios recuerdos':'You can only share your own memories',
 // Pasaporte
 'Mi pasaporte TRAZA':'My TRAZA passport','Completa los 5 sellos y obtén':'Complete the 5 stamps and get','15 % en tu próximo viaje':'15% off your next trip','con ZEROS3.':'with ZEROS3.',
 'LAS PEÑAS · GUAYAQUIL':'LAS PEÑAS · GUAYAQUIL','MALECÓN · LA PERLA':'MALECÓN · LA PERLA','PARQUE SEMINARIO':'SEMINARIO PARK','MUSEO DEL CACAO':'CACAO MUSEUM','PARQUE HISTÓRICO':'HISTORICAL PARK',
@@ -755,9 +778,9 @@ function guideSheet(){const g=GUIDE;
   <div class="row gap8 small">${I('clock','svg-s')}Encuentro a las ${g.hoy.hora}</div><div class="row gap8 small">${I('pin','svg-s')}${g.hoy.lugar}</div><div class="row gap8 small">${I('route','svg-s')}${g.hoy.plan}</div></div>
  <p class="small muted" style="margin:0">Tu guía te acompaña en los recorridos del itinerario. Para cambios de horario o dudas, escribe a la agencia.</p>
  <button class="btn btn-primary" id="gmap">${I('map','svg-s')}Ver punto de encuentro</button>
- <button class="btn btn-ghost" id="gmail">${I('chat','svg-s')}Escribir a ZEROS3</button>`,
+ <button class="btn btn-ghost" id="gmail">${I('chat','svg-s')}Contactar a ZEROS3</button>`,
  {onOpen:(o,close)=>{o.querySelector('#gmap').onclick=()=>{close();go('mapa',{sel:g.hoy.place});};
-  o.querySelector('#gmail').onclick=()=>{location.href='mailto:reservations@zeros3travel.com?subject='+encodeURIComponent('Mi viaje con ZEROS3 · guía '+g.nombre);};}});}
+  o.querySelector('#gmail').onclick=()=>{close();go('contacto');};}});}
 AFTER.inicio=()=>{document.getElementById('srch').onclick=openSearch;const gu=document.getElementById('guia');if(gu)gu.onclick=guideSheet;
  const it=document.getElementById('itin');if(it)it.onclick=()=>sheet(`<h2 class="h2">Itinerario · Mi viaje con ZEROS3</h2><button class="opt" id="ig"><span class="g-av" style="background:var(--navy);color:#fff">${GUIDE.ini}</span><span class="stack gap4" style="flex:1"><b style="color:var(--navy)">Guía: ${GUIDE.nombre}</b><span class="small muted">${GUIDE.idiomas}</span></span>${I('chev','svg-s')}</button>${[['Lun 12 oct','Malecón Simón Bolívar y La Perla','Llegada y recorrido guiado'],['Mar 13 oct','Las Peñas y Museo del Cacao','Hoy · Día 2'],['Mié 14 oct','Parque Seminario y Catedral','Almuerzo en la calle Panamá'],['Jue 15 oct','Parque Histórico','Traslado en auto · 20 min']].map(d=>`<div class="row gap12" style="align-items:flex-start"><span class="chip" style="flex:none">${d[0]}</span><span class="stack gap4"><b style="color:var(--navy)">${d[1]}</b><span class="small muted">${d[2]}</span></span></div>`).join('')}<button class="btn btn-ghost" data-close>Cerrar</button>`,{onOpen:(o,close)=>o.querySelector('#ig').onclick=()=>{close();setTimeout(guideSheet,220);}});
  const ex=document.getElementById('exper');if(ex)ex.onclick=openExperiencias;};
@@ -1010,7 +1033,7 @@ AFTER.mapa=({sel})=>{
  AFTER.mapa.lift=lift;
  mw.addEventListener('click',e=>{const q=e.target.closest('[data-poi]');if(q){if(moved>6){moved=0;return;}const i=+q.dataset.poi,P=POIS[i];
    if(traceMode){if(P.x>1440||P.x<100||P.y<-700||P.y>MH-80){toast(`${itemLbl('p:'+i)} queda fuera del centro: no se puede trazar a pie`);return;}const k='p:'+i;if(trace[trace.length-1]!==k){trace.push(k);drawTrace();}return;}
-   toast(`${P.n}: ${P.d}`);return;}
+   openPoiCard(i);return;}
   const t=e.target.closest('[data-lm]');if(!t)return;if(moved>6){moved=0;return;}
   if(t.classList.contains('hist-chip')){const H=LM.find(l=>l.id==='historico');centerOn(H.lx,H.ly-60);}
   if(traceMode){const k=t.dataset.k;if(!k){toast('El Parque Histórico está en Samborondón: 20 min en auto por el Puente de la Unidad Nacional');return;}
@@ -1048,6 +1071,17 @@ function openCard(id){const p=PLACES[id];const pc=document.getElementById('pc');
  pc.querySelector('[data-place]').onclick=()=>go('ficha',{id});
  pc.querySelector('#pcClose').onclick=()=>{stopAudio();pc.classList.remove('open');document.getElementById('fabs').style.bottom='20px';};
  audioWidget(pc.querySelector('#aud'),p,()=>{document.getElementById('fabs').style.bottom=(pc.offsetHeight+24)+'px';});}
+const PIc=n=>`<svg class="svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${POI_IC[n]||P[n]||''}</svg>`;
+const isFood=P=>P.cats.includes('Gastronomía');
+function savedR(n){return (S.savedR||[]).some(r=>r.n===n);}
+function toggleR(n,sub){if(!S.savedR)S.savedR=[];const i=S.savedR.findIndex(r=>r.n===n);if(i>=0)S.savedR.splice(i,1);else S.savedR.push({n,sub});save();toast(i>=0?'Quitado de tus restaurantes':'Guardado en tus restaurantes');return i<0;}
+function openPoiCard(i){const P=POIS[i];const pc=document.getElementById('pc');if(!pc)return;stopAudio();const food=isFood(P);const sv=savedR(P.n);
+ pc.innerHTML=`<button class="grab" id="pcClose" aria-label="Cerrar tarjeta"></button><div class="pc"><span class="ico" style="width:56px;height:56px;border-radius:14px;background:var(--cream-2);color:${P.c};display:grid;place-items:center;flex:none">${PIc(P.ic)}</span><div class="stack gap8" style="flex:1;min-width:0">
+  <h3 class="h3" style="font-size:18px">${P.n.replace(/ [↖↗↙↘]$/,'')}</h3><p class="small muted" style="margin:0">${P.d}</p>
+  <div class="row gap8" style="justify-content:flex-end">${food?`<button class="btn btn-ghost btn-s" id="pcSave" aria-pressed="${sv}">${I(sv?'bookf':'book','svg-s')}${sv?'Guardado':'Guardar'}</button>`:''}<a class="btn btn-primary btn-s" href="https://www.google.com/maps/search/${encodeURIComponent(P.n.replace(/ [↖↗↙↘]$/,'')+' Guayaquil')}" target="_blank" rel="noopener">${I('nav','svg-s')}Cómo llegar</a></div></div></div>`;
+ pc.classList.add('open');document.getElementById('fabs').style.bottom=(pc.offsetHeight+24)+'px';
+ const sb=pc.querySelector('#pcSave');if(sb)sb.onclick=()=>{const on=toggleR(P.n,P.ic==='coffee'?'Café y bar':'Restaurante');sb.setAttribute('aria-pressed',on);sb.innerHTML=I(on?'bookf':'book','svg-s')+(on?'Guardado':'Guardar');if(isEN())trNode(sb);};
+ pc.querySelector('#pcClose').onclick=()=>{pc.classList.remove('open');document.getElementById('fabs').style.bottom='20px';};}
 function audioWidget(host,p,onChange){const dur=wordsDur(p.historia);
  const idle=()=>{host.innerHTML=`<button class="audio-btn"><span class="play">${I('play','svg-s')}</span>Escuchar historia · ${fmt(dur)}</button>`;host.querySelector('button').onclick=start;onChange&&onChange();};
  const start=()=>{host.innerHTML=`<div class="audio"><div class="row gap8"><button class="audio-btn" style="padding:0;background:none" id="pp" aria-label="Pausar"><span class="play">${I('pause','svg-s')}</span></button><b class="small" style="color:var(--navy);flex:1">Historia de ${p.corto}</b><span class="small muted" id="tm">0:00 / ${fmt(dur)}</span></div><div class="bar"><i id="br"></i></div></div>`;onChange&&onChange();
@@ -1068,14 +1102,15 @@ SCREENS.ficha=({id})=>{const p=PLACES[id];const sv=S.saved.includes(id);
   <div class="stack gap8"><h2 class="h3">Sobre el lugar</h2><p>${p.sobre}</p></div>
   <div class="stack gap8"><div class="row between"><h2 class="h3">Galería</h2><span class="small muted">${p.galeria.length} imagen${p.galeria.length>1?'es':''}</span></div>
    <div class="gallery">${p.galeria.map(g=>`<img src="${g}" alt="" class="${g.endsWith('.webp')?'fit':''}">`).join('')}</div></div>
-  ${p.rest.length?`<div class="stack gap8"><h2 class="h3">Restaurantes cerca</h2>${p.rest.map(r=>`<a class="card list-item" style="border:1px solid var(--line)" href="https://www.google.com/maps/search/${encodeURIComponent(r[0]+' Guayaquil')}" target="_blank" rel="noopener"><span class="ico">${I(r[2])}</span><span class="stack gap4" style="flex:1"><b style="color:var(--navy)">${r[0]}</b><span class="small muted">${r[1]}</span></span>${I('chev','svg-s')}</a>`).join('')}</div>`:''}
+  ${p.rest.length?`<div class="stack gap8"><h2 class="h3">Restaurantes cerca</h2>${p.rest.map(r=>`<div class="card row" style="border:1px solid var(--line)"><a class="list-item" style="flex:1;min-width:0" href="https://www.google.com/maps/search/${encodeURIComponent(r[0]+' Guayaquil')}" target="_blank" rel="noopener"><span class="ico">${I(r[2])}</span><span class="stack gap4" style="flex:1;min-width:0"><b style="color:var(--navy)">${r[0]}</b><span class="small muted">${r[1]}</span></span></a><button class="icon-btn bm-r" data-rn="${esc(r[0])}" data-rs="${esc(r[1])}" aria-label="Guardar restaurante" aria-pressed="${savedR(r[0])}" style="box-shadow:none;background:none;color:var(--navy);margin-right:6px">${I(savedR(r[0])?'bookf':'book')}</button></div>`).join('')}</div>`:''}
   <button class="btn btn-ghost" data-go="mapa" data-p='${JSON.stringify({sel:id})}'>${I('map','svg-s')}Ver en el mapa</button>
  </div></div>
  <div class="bottom-actions"><a class="btn btn-ghost" href="${mapsLink(p)}" target="_blank" rel="noopener">Cómo llegar</a><button class="btn btn-primary" id="addm">${I('camera','svg-s')}Añadir recuerdo</button></div></section>`;};
 AFTER.ficha=({id})=>{const p=PLACES[id];audioWidget(document.getElementById('aud'),p);
  document.getElementById('bm').onclick=()=>{const i=S.saved.indexOf(id);if(i>=0)S.saved.splice(i,1);else S.saved.push(id);save();const b=document.getElementById('bm');b.innerHTML=I(i>=0?'book':'bookf');b.setAttribute('aria-pressed',i<0);toast(i>=0?'Quitado de lugares guardados':'Guardado en tus lugares');};
  document.getElementById('sh').onclick=async()=>{const txt=`${p.nombre} en Guayaquil · Descúbrelo con TRAZA #TrazaTuGuayaquil ${mapsLink(p)}`;try{await navigator.clipboard.writeText(txt);toast('Enlace del lugar copiado');}catch(e){toast('No se pudo copiar en este navegador');}};
- document.getElementById('addm').onclick=()=>{draft={place:id};go('camara');};};
+ document.getElementById('addm').onclick=()=>{draft={place:id};go('camara');};
+ app.querySelectorAll('.bm-r').forEach(b=>b.onclick=()=>{const on=toggleR(b.dataset.rn,b.dataset.rs);b.innerHTML=I(on?'bookf':'book');b.setAttribute('aria-pressed',on);});};
 
 /* ---------- Rutas ---------- */
 SCREENS.rutas=()=>`<section class="screen"><div class="scroll"><div class="pad stack gap16" style="padding-block:calc(20px + env(safe-area-inset-top,0px)) 24px">
@@ -1104,6 +1139,44 @@ AFTER.recuerdos=()=>{document.getElementById('fab').onclick=()=>{draft={};go('ca
  app.querySelectorAll('[data-like]').forEach(b=>b.onclick=()=>{const id=b.dataset.like;if(!id){toast('Te gusta este recuerdo');return;}S.liked[id]=!S.liked[id];save();render();});
  app.querySelectorAll('[data-cm]').forEach(b=>b.onclick=()=>commentSheet(b.dataset.cm,b));
  app.querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{const m=allMems().find(x=>x.id===b.dataset.sh);if(!m){toast('Solo puedes compartir tus propios recuerdos');return;}draft={place:m.place,photo:m.img,text:m.text,date:m.date};go('compartir');});};
+
+/* ---------- Lugares guardados ---------- */
+const TAG_C={Cultura:'#3B82C4',Mar:'#3FA7C9',Naturaleza:'#4E9A6B',Gastronomía:'#E0765A'};
+SCREENS.guardados=({tab='lug'})=>{const L=S.saved.filter(id=>PLACES[id]),R=S.savedR||[];
+ const rowL=id=>{const p=PLACES[id];return `<div class="sv-card"><button class="sv-main" data-place="${id}"><img src="${p.img}" alt=""><span class="stack gap4" style="flex:1;min-width:0"><b class="sv-n">${p.nombre}${id==='penas'?' · Cerro Santa Ana':''}</b><span class="small muted row gap4"><i class="dot" style="background:${TAG_C[p.tag]||'var(--gray)'}"></i>${p.tag} · ${p.dist}</span></span></button><button class="icon-btn sv-bm" data-un="${id}" aria-label="Quitar de guardados">${I('markf')}</button></div>`;};
+ const rowR=(r,j)=>{const P=POIS.find(q=>q.n===r.n);return `<div class="sv-card"><a class="sv-main" href="https://www.google.com/maps/search/${encodeURIComponent(r.n+' Guayaquil')}" target="_blank" rel="noopener"><span class="sv-ic">${PIc(P?P.ic:'fork')}</span><span class="stack gap4" style="flex:1;min-width:0"><b class="sv-n">${esc(r.n)}</b><span class="small muted row gap4"><i class="dot" style="background:${TAG_C['Gastronomía']}"></i>${esc(r.sub)}</span></span></a><button class="icon-btn sv-bm" data-unr="${j}" aria-label="Quitar de guardados">${I('markf')}</button></div>`;};
+ const empty=(t,h)=>`<div class="sv-empty">${I('book')}<b>${t}</b><span class="small muted">${h}</span></div>`;
+ return `<section class="screen"><div class="row gap12 pad" style="padding-block:calc(12px + env(safe-area-inset-top,0px)) 8px"><button class="icon-btn" data-back aria-label="Volver" style="box-shadow:none;background:none">${I('back')}</button><h1 class="h2">Lugares guardados</h1></div>
+ <div class="scroll"><div class="pad stack gap12" style="padding-bottom:24px">
+ <div class="seg" role="group"><button aria-pressed="${tab==='lug'}" data-tab="lug">Lugares</button><button aria-pressed="${tab==='res'}" data-tab="res">Restaurantes</button></div>
+ ${tab==='lug'?(L.length?L.map(rowL).join(''):empty('Aún no guardas lugares','Toca el marcador en la ficha de un lugar para guardarlo aquí.'))
+  :(R.length?R.map(rowR).join(''):empty('Aún no guardas restaurantes','En el mapa, toca un restaurante o café y elige “Guardar”.'))}
+ <p class="sv-note">Tus lugares guardados se quedan en este celular para que los encuentres rápido durante tu recorrido.</p>
+ </div></div>
+ <div class="bottom-actions"><button class="btn btn-ghost" id="svmap" style="flex:1">${I('map','svg-s')}Ver en el mapa</button></div></section>`;};
+AFTER.guardados=({tab='lug'})=>{
+ app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>go('guardados',{tab:b.dataset.tab},{replace:true}));
+ app.querySelectorAll('[data-un]').forEach(b=>b.onclick=()=>{const i=S.saved.indexOf(b.dataset.un);if(i>=0)S.saved.splice(i,1);save();toast('Quitado de lugares guardados');render();});
+ app.querySelectorAll('[data-unr]').forEach(b=>b.onclick=()=>{S.savedR.splice(+b.dataset.unr,1);save();toast('Quitado de tus restaurantes');render();});
+ document.getElementById('svmap').onclick=()=>{if(tab==='res')mapFilter='Gastronomía';go('mapa');};};
+
+/* ---------- Contactar a ZEROS3 ---------- */
+const pendingNum=v=>!v||/000 ?0000/.test(v);
+function guideAvail(){const h=+new Date().toLocaleString('en-US',{timeZone:'America/Guayaquil',hour:'numeric',hour12:false});return h>=8&&h<20;}
+SCREENS.contacto=()=>{const g=GUIDE,on=guideAvail();
+ return `<section class="screen"><div class="row between pad" style="padding-block:calc(12px + env(safe-area-inset-top,0px)) 4px"><button class="icon-btn" data-back aria-label="Volver" style="box-shadow:none;background:none">${I('back')}</button><span class="ct-kicker">ASISTENCIA</span></div>
+ <div class="scroll"><div class="pad stack gap12" style="padding-bottom:24px">
+ <div class="stack gap4" style="margin-bottom:6px"><h1 class="h1" style="font-size:26px">Contactar a ZEROS3</h1><p class="small muted">Estamos para ayudarte durante tu viaje</p></div>
+ ${isClient()?`<div class="card ct-guide"><span class="g-av" style="background:var(--navy);color:#fff;position:relative">${g.ini}<i class="ct-on${on?'':' off'}"></i></span><div class="stack gap4" style="flex:1;min-width:0"><div class="row gap8" style="flex-wrap:wrap"><b class="ct-name" data-notr>${g.nombre}</b><span class="ct-badge${on?'':' off'}">${on?'En línea':'Fuera de horario'}</span></div><span class="small muted">Tu guía en Guayaquil</span></div><button class="btn btn-s ct-wa" id="cwa">${I('wa','svg-s')}WhatsApp</button></div>`:''}
+ <button class="card ct-row" id="ctel"><span class="ct-ic">${I('phone','svg-s')}</span><span class="stack gap4" style="flex:1;min-width:0;text-align:left"><b>Llamar a la agencia</b><span class="small muted">${CONTACT.tel}</span></span>${I('chev','svg-s')}</button>
+ <a class="card ct-row" href="mailto:${CONTACT.email}?subject=${encodeURIComponent('Mi viaje con ZEROS3')}"><span class="ct-ic">${I('mail','svg-s')}</span><span class="stack gap4" style="flex:1;min-width:0"><b>Escribir un correo</b><span class="small muted" data-notr>${CONTACT.email}</span></span>${I('chev','svg-s')}</a>
+ <div class="card ct-row"><span class="ct-ic">${I('clock','svg-s')}</span><span class="stack gap4" style="flex:1;min-width:0"><b>Atención</b><span class="small muted">${CONTACT.horario}</span></span><span class="ct-tz">GMT-5</span></div>
+ <div class="ct-sos"><span class="ct-sos-ic">${I('alert')}</span><div class="stack gap4" style="flex:1;min-width:0"><b>Emergencias 24/7</b><span class="small">ECU 911 · policía, bomberos y ambulancia</span></div><a class="btn btn-terra btn-s" href="tel:911">${I('phone','svg-s')}Llamar ahora</a></div>
+ <p class="small muted" style="text-align:center;letter-spacing:.12em;font-size:10px;margin-top:8px">TRAZA · ZEROS3 EXPERIENCIAS URBANAS</p>
+ </div></div></section>`;};
+AFTER.contacto=()=>{const w=document.getElementById('cwa');
+ if(w)w.onclick=()=>{if(pendingNum(CONTACT.wa)){toast('Número de WhatsApp pendiente: lo agrega ZEROS3');return;}window.open('https://wa.me/'+CONTACT.wa.replace(/\D/g,'')+'?text='+encodeURIComponent('Hola '+GUIDE.nombre+', soy '+S.name+' (viaje con ZEROS3).'),'_blank');};
+ document.getElementById('ctel').onclick=()=>{if(pendingNum(CONTACT.tel)){toast('Número de ejemplo: falta el teléfono real de la agencia');return;}location.href='tel:'+CONTACT.tel.replace(/\s/g,'');};};
 
 /* ---------- Comentarios ---------- */
 function cmList(k){if(!S.comments)S.comments={};return S.comments[k]||(S.comments[k]=[]);}
@@ -1305,7 +1378,7 @@ SCREENS.perfil=()=>{const vc=visitedCount();
  return `<section class="screen"><div class="scroll"><div class="pad stack gap16" style="padding-block:calc(20px + env(safe-area-inset-top,0px)) 24px">
  <h1 class="h1">Perfil</h1>
  <div class="card row gap16" style="padding:16px"><img src="img/avatar.jpg" alt="" style="width:68px;height:68px;border-radius:50%;object-fit:cover"><div class="stack gap4"><b style="font-family:var(--f-display);font-size:20px;color:var(--navy)">${esc(S.name)}</b><span class="small muted">${esc(S.email||'Sin reserva')}</span><span class="chip" style="background:${isClient()?'var(--navy)':'var(--cream-2)'};color:${isClient()?'#fff':'var(--navy)'};align-self:flex-start">${isClient()?'Viajero ZEROS3':'Explorador'}</span></div></div>
- <div class="row gap8"><div class="card stat"><b>${isClient()?vc:0}/5</b><span class="small muted">Sellos</span></div><div class="card stat"><b>${allMems().length}</b><span class="small muted">Recuerdos</span></div><div class="card stat"><b>${S.saved.length}</b><span class="small muted">Guardados</span></div></div>
+ <div class="row gap8"><div class="card stat"><b>${isClient()?vc:0}/5</b><span class="small muted">Sellos</span></div><div class="card stat"><b>${allMems().length}</b><span class="small muted">Recuerdos</span></div><div class="card stat"><b>${S.saved.length+(S.savedR||[]).length}</b><span class="small muted">Guardados</span></div></div>
  <div class="card menu">${[['pas','book','Mi pasaporte'],['viaje','compass','Mi viaje con ZEROS3'],['ben','gift','Mis beneficios'],['rec','route','Mi recorrido y sellos'],['sav','bookf','Lugares guardados'],['idi','globe','Idioma · Español'],['con','chat','Contactar a ZEROS3']].map(m=>`<button class="list-item" data-m="${m[0]}">${I(m[1])}<span style="flex:1;color:var(--navy)">${m[2]}</span>${I('chev','svg-s')}</button>`).join('')}
  <button class="list-item" data-m="out" style="color:var(--terra-dk)">${I('logout')}<span style="flex:1">Cerrar sesión</span></button></div>
  <p class="small muted" style="text-align:center">TRAZA · prototipo funcional · ZEROS3 Travel Company</p></div></div>${tabbar('perfil')}</section>`;};
@@ -1314,9 +1387,11 @@ AFTER.perfil=()=>app.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{cons
  else if(k==='viaje'){if(!isClient()){openExperiencias();return;}go('inicio');setTimeout(()=>{const i=document.getElementById('itin');i&&i.click();},50);}
  else if(k==='ben')sheet(`<h2 class="h2">Mis beneficios</h2>${(isClient()?[['10 % en restaurantes aliados','Muestra tu código QR al pagar'],['Guía ZEROS3','Contacto directo durante tu viaje'],['15 % próximo viaje','Al completar los 5 sellos']]:[['Mapa e historias en audio','Incluido gratis'],['Recuerdos y compartir','Incluido gratis'],['Sellos, guía y descuentos','Solo viajeros ZEROS3']]).map(x=>`<div class="opt"><span style="color:var(--terra-dk)">${I('gift')}</span><span class="stack gap4"><b style="color:var(--navy)">${x[0]}</b><span class="small muted">${x[1]}</span></span></div>`).join('')}<button class="btn btn-ghost" data-close>Cerrar</button>`);
  else if(k==='rec')recSheet();
- else if(k==='sav')sheet(`<h2 class="h2">Lugares guardados</h2>${S.saved.length?S.saved.map(id=>`<button class="opt" data-place="${id}"><img src="${PLACES[id].img}" alt=""><b style="color:var(--navy)">${PLACES[id].nombre}</b></button>`).join(''):'<p class="muted">Aún no guardas lugares. Toca el marcador en la ficha de un lugar para guardarlo aquí.</p>'}`);
+ else if(k==='sav')go('guardados');
+ else if(k==='sav_old')sheet(`<h2 class="h2">Lugares guardados</h2>${S.saved.length?S.saved.map(id=>`<button class="opt" data-place="${id}"><img src="${PLACES[id].img}" alt=""><b style="color:var(--navy)">${PLACES[id].nombre}</b></button>`).join(''):'<p class="muted">Aún no guardas lugares. Toca el marcador en la ficha de un lugar para guardarlo aquí.</p>'}`);
  else if(k==='idi')sheet(`<h2 class="h2">Idioma</h2><button class="opt" id="es">${I(isEN()?'globe':'check')}<b style="color:var(--navy)" data-notr>Español</b></button><button class="opt" id="en">${I(isEN()?'check':'globe')}<b style="color:var(--navy)" data-notr>English</b></button>`,{onOpen:(o,close)=>{o.querySelector('#en').onclick=()=>{close();setLang('EN');};o.querySelector('#es').onclick=()=>{close();setLang('ES');};}});
- else if(k==='con')sheet(`<h2 class="h2">Contactar a ZEROS3</h2><p class="muted">Escríbenos para dudas de tu viaje o para reservar una experiencia.</p><div class="select">reservations@zeros3travel.com</div><button class="btn btn-primary" id="cp">Copiar correo</button>`,{onOpen:o=>o.querySelector('#cp').onclick=async()=>{try{await navigator.clipboard.writeText('reservations@zeros3travel.com');toast('Correo copiado');}catch(e){toast('Selecciona el correo y cópialo');}}});
+ else if(k==='con')go('contacto');
+ else if(k==='con_old')sheet(`<h2 class="h2">Contactar a ZEROS3</h2><p class="muted">Escríbenos para dudas de tu viaje o para reservar una experiencia.</p><div class="select">reservations@zeros3travel.com</div><button class="btn btn-primary" id="cp">Copiar correo</button>`,{onOpen:o=>o.querySelector('#cp').onclick=async()=>{try{await navigator.clipboard.writeText('reservations@zeros3travel.com');toast('Correo copiado');}catch(e){toast('Selecciona el correo y cópialo');}}});
  else if(k==='out')sheet(`<h2 class="h2" style="text-align:center">¿Cerrar sesión?</h2><p class="muted small" style="text-align:center">Tus recuerdos se quedan guardados en este celular.</p><button class="btn btn-terra" id="yo">Cerrar sesión</button><button class="btn btn-ghost" data-close>Cancelar</button>`,{center:true,onOpen:(o,close)=>o.querySelector('#yo').onclick=()=>{close();S.mode=null;save();stack=[];go('ingreso',{},{replace:true});}});});
 
 /* ---------- Inicio de la app ---------- */
