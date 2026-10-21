@@ -487,7 +487,7 @@ const EN={
 'Puerto Santa Ana':'Puerto Santa Ana','Puerto':'Puerto','Junto a Las Peñas':'Next to Las Peñas','Parque Histórico':'Historical Park','P. Histórico':'Hist. Park','Samborondón':'Samborondón',
 'Cultura':'Culture','Mar':'Waterfront','Naturaleza':'Nature','Fotografía':'Photography','Gastronomía':'Food','Hoteles':'Hotels','Todos':'All','Filtros':'Filters',
 'Gratis':'Free','Abierto':'Open','Abierto todo el día':'Open all day','Consultar horario':'Check opening hours','Gratis · aporte voluntario':'Free · voluntary donation',
-'Abre desde las 09:00':'Opens at 09:00','$4 adultos':'$4 adults','$2 niños':'$2 children','20 min en auto':'20 min by car','en auto':'by car',
+'Abre desde las 09:00':'Opens at 09:00','$4 adultos':'$4 adults','$2 niños':'$2 children','$5 niños':'$5 children','21 oct 2026':'Oct 21, 2026','20 min en auto':'20 min by car','en auto':'by car',
 'Escuchar historia':'Listen to the story','Sobre el lugar':'About this place','Galería':'Gallery','1 imagen':'1 image','Restaurantes cerca':'Restaurants nearby',
 'Café y snacks':'Coffee and snacks','Mariscos y comida típica':'Seafood and local food','Cómo llegar':'Directions','Añadir recuerdo':'Add memory','Guardar lugar':'Save place','Compartir lugar':'Share place',
 'Cócteles · 3.er piso del museo':'Cocktails · museum’s 3rd floor','Cerrar tarjeta':'Close card','Ver lugar':'See place',
@@ -831,7 +831,7 @@ const TICKETS={
  plaza:{adulto:'Gratis',reducido:'Gratis',incluye:'',duracion:'20 min'},
  puerto:{adulto:'Gratis',reducido:'Gratis',incluye:'',duracion:'1 – 2 h'},
  historico:{adulto:'$4',reducido:'$2 niños',incluye:'',duracion:'2 – 3 h'},
- 'Jardín Botánico de Guayaquil':{},'Zoológico El Pantanal':{},'Parque Samanes':{adulto:'Gratis',reducido:'Gratis'},'Malecón del Salado':{adulto:'Gratis',reducido:'Gratis'},
+ 'Jardín Botánico de Guayaquil':{},'Zoológico El Pantanal':{adulto:'$10',reducido:'$5 niños',duracion:'1 h 30 min',verificado:'21 oct 2026'},'Parque Samanes':{adulto:'Gratis',reducido:'Gratis'},'Malecón del Salado':{adulto:'Gratis',reducido:'Gratis'},
  'Puente Zigzag y Guayarte':{adulto:'Gratis',reducido:'Gratis'},'Parque Forestal':{},'Bosque Protector Cerro Blanco':{},'Reserva Manglares Churute':{}};
 function ticketCard(key,horario){const t=TICKETS[key]||{};const v=x=>x?esc(x):'<span class="tk-pend">Por confirmar</span>';
  return `<div class="tk"><div class="row between"><h2 class="h3" style="margin:0">Entrada y visita</h2>${t.verificado?`<span class="small muted">Verificado ${esc(t.verificado)}</span>`:''}</div>
