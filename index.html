@@ -257,6 +257,7 @@ a.list-item,a.list-item *{text-decoration:none}
 .lnk{color:var(--navy);font-weight:600;text-decoration:underline;font-size:inherit;padding:0}
 .ava{display:grid;place-items:center;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;flex:none;letter-spacing:.02em}
 .ava-cam{position:absolute;right:-2px;bottom:-2px;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--navy);display:grid;place-items:center;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.offchip{position:absolute;left:50%;top:calc(178px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:7;display:flex;align-items:center;gap:6px;background:var(--white);color:var(--navy);font-size:12px;font-weight:600;padding:7px 12px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.15);white-space:nowrap;max-width:92%}.offchip span{overflow:hidden;text-overflow:ellipsis}
 .out-pill{align-self:flex-start;font-size:11px;font-weight:600;color:var(--terra-dk);background:#FBE9E3;border-radius:999px;padding:2px 8px}
 .sv-card{display:flex;align-items:center;background:var(--white);border-radius:var(--r-m);box-shadow:0 1px 4px rgba(0,0,0,.06);padding:10px 6px 10px 10px}
 .sv-main{display:flex;align-items:center;gap:14px;flex:1;min-width:0;text-align:left;color:inherit;text-decoration:none}
@@ -628,6 +629,8 @@ const MESL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','s
 const DIA={'Lun':'Mon','Mar':'Tue','Mié':'Wed','Jue':'Thu','Vie':'Fri','Sáb':'Sat','Dom':'Sun'};
 const num=s=>s.replace(',','.');
 const PAT=[
+ [/^Estás fuera del mapa · a ([\d,]+) km de (.+)$/,m=>`You are outside the map · ${num(m[1])} km from ${tr1(m[2])}`],
+ [/^Estás a ([\d,]+) km de (.+), fuera del centro histórico que muestra el mapa\. Tu punto aparecerá cuando llegues\.$/,m=>`You are ${num(m[1])} km from ${tr1(m[2])}, outside the historic center shown on the map. Your dot will appear when you arrive.`],
  [/^Reenviar en (\d+) s$/,m=>`Resend in ${m[1]} s`],
  [/^Está junto a (.+)$/,m=>`Right next to ${tr1(m[1])}`],
  [/^desde (.+)$/,m=>`from ${tr1(m[1])}`],
@@ -1482,7 +1485,7 @@ const geoOf=id=>(S.geo&&S.geo[id])?{pts:[S.geo[id]],r:GEO[id].r}:GEO[id];
 const ANCH=[[980,330,-2.1824,-79.8762],[900,-570,-2.1785,-79.8768],[1123,ys(2)+56,-2.1857,-79.8776],[bx(5)+72,by(3)+65,-2.1872,-79.8801],[1123,ys(8),-2.1913,-79.8792],[bx(5)+72,by(11)+65,-2.1940,-79.8806],[bx(2)+72,by(11)+69,-2.1951,-79.8822]];
 function gpsToMap(la,lo){const[bx0,by0]=toMap(la,lo);let sw=0,sx=0,sy=0;
  for(const[ax,ay,ga,go]of ANCH){const d=dist(la,lo,ga,go);const w=1/Math.pow(d+15,2);const[gx,gy]=toMap(ga,go);sw+=w;sx+=w*(ax+bx0-gx);sy+=w*(ay+by0-gy);}
- let x=sx/sw,y=sy/sw;x=Math.min(x,shoreX(y)-16);x=Math.max(20,x);y=Math.max(-NY+20,Math.min(MH-20,y));return[x,y];}
+ let x=sx/sw,y=sy/sw;gpsToMap.inside=x>=0&&x<=MW&&y>=-NY&&y<=MH;x=Math.min(x,shoreX(y)-16);x=Math.max(20,x);y=Math.max(-NY+20,Math.min(MH-20,y));return[x,y];}
 const toMap=(la,lo)=>[-105146.9007*la+332219.0369*lo+26308093.8653,-224663.5979*la+74783.5409*lo+5483116.7234];
 let watchId=null,simTimer=null,followMe=true;const arrived={};
 const fmtKm=m=>m<1000?`${Math.round(m)} m`:`${(m/1000).toFixed(1).replace('.',',')} km`;
@@ -1511,18 +1514,22 @@ function stopLive(){if(liveId!==null){navigator.geolocation.clearWatch(liveId);l
 function startLive(centerFirst){if(!navigator.geolocation||liveId!==null)return;liveFirst=centerFirst;
  liveId=navigator.geolocation.watchPosition(pos=>{if(!document.getElementById('mw')){stopLive();return;}
   const{latitude:la,longitude:lo,accuracy:acc}=pos.coords;const near=nearest(la,lo);meNear=near;meAcc=acc;
-  if(near.d>4000){meFar=true;meLive=false;const me=document.getElementById('me');if(me&&!recording())me.classList.add('hid');return;}
-  meFar=false;meLive=true;if(recording())return;const[cx,cy]=gpsToMap(la,lo);
+  const[cx,cy]=gpsToMap(la,lo);
+  if(near.d>6000||!gpsToMap.inside){meFar=true;meLive=false;['me','meacc'].forEach(k=>{const e=document.getElementById(k);if(e&&!recording())e.classList.add('hid');});offChip(near);return;}
+  meFar=false;meLive=true;offChip(null);if(recording())return;
   mePos={x:cx,y:cy};const me=document.getElementById('me');if(me){me.classList.remove('hid');me.style.left=cx+'px';me.style.top=cy+'px';}
   const ac=document.getElementById('meacc');if(ac){const r=Math.min(260,Math.max(20,acc*PXM));ac.classList.remove('hid');ac.style.left=cx+'px';ac.style.top=cy+'px';ac.style.width=ac.style.height=(r*2)+'px';}
   if(liveFirst){liveFirst=false;if(AFTER.mapa.center)AFTER.mapa.center(cx,cy);}},
  err=>{if(err.code===1){stopLive();}},{enableHighAccuracy:true,maximumAge:3000,timeout:20000});}
+function offChip(near){let c=document.getElementById('offchip');if(!near){if(c)c.remove();return;}const mw=document.getElementById('mw');if(!mw)return;
+ const km=(near.d/1000).toFixed(1).replace('.',',');const txt=`Estás fuera del mapa · a ${km} km de ${near.p.nombre}`;
+ if(!c){c=document.createElement('button');c.id='offchip';c.className='offchip';c.onclick=locMe;mw.appendChild(c);}c.innerHTML=I('pin','svg-s')+`<span>${txt}</span>`;}
 function locMe(){if(!navigator.geolocation){meSheet('Tu navegador no comparte la ubicación.');return;}
  if(meLive){if(AFTER.mapa.center)AFTER.mapa.center(mePos.x,mePos.y);const n=meNear;if(n)toast(n.d<150?`Estás en ${n.p.nombre}`:`Estás a ${Math.round(n.d)} m de ${n.p.nombre}`);return;}
- if(meFar){meSheet('Estás fuera del centro histórico de Guayaquil. Tu punto aparecerá en el mapa cuando llegues.');return;}
+ if(meFar){const n=meNear;meSheet(n?`Estás a ${(n.d/1000).toFixed(1).replace('.',',')} km de ${n.p.nombre}, fuera del centro histórico que muestra el mapa. Tu punto aparecerá cuando llegues.`:'Estás fuera del centro histórico de Guayaquil. Tu punto aparecerá en el mapa cuando llegues.');return;}
  toast('Buscando tu ubicación…');
  navigator.geolocation.getCurrentPosition(pos=>{const n=nearest(pos.coords.latitude,pos.coords.longitude);
-   if(n.d>4000){meFar=true;meSheet('Estás fuera del centro histórico de Guayaquil. Tu punto aparecerá en el mapa cuando llegues.');return;}
+   gpsToMap(pos.coords.latitude,pos.coords.longitude);if(n.d>6000||!gpsToMap.inside){meFar=true;offChip(n);meSheet(`Estás a ${(n.d/1000).toFixed(1).replace('.',',')} km de ${n.p.nombre}, fuera del centro histórico que muestra el mapa. Tu punto aparecerá cuando llegues.`);return;}
    stopLive();startLive(true);},
   err=>meSheet(err.code===1?'Para ver dónde estás, permite el acceso a tu ubicación en los ajustes del navegador.':'No encontramos señal de GPS. Intenta al aire libre.'),{enableHighAccuracy:true,timeout:10000});}
 function meSheet(msg){sheet(`<h2 class="h2" style="margin:0">Mi ubicación</h2><p class="small muted" style="margin:0">${msg}</p>
