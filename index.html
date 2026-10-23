@@ -208,7 +208,13 @@ a.list-item,a.list-item *{text-decoration:none}
 .meta{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--gray)}
 .meta span{display:inline-flex;align-items:center;gap:6px}
 .gallery{display:flex;gap:10px;overflow-x:auto}
-.gallery img{width:120px;height:110px;object-fit:cover;border-radius:var(--r-s);background:var(--cream-2);flex:none}
+.g-it{position:relative;flex:none;padding:0;border-radius:var(--r-s);overflow:hidden}.gallery img{width:120px;height:110px;object-fit:cover;border-radius:var(--r-s);background:var(--cream-2);flex:none;display:block}
+.g-play{position:absolute;inset:0;margin:auto;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;display:grid;place-items:center}
+.viewer{position:absolute;inset:0;z-index:80;background:#0b0f14;display:flex;flex-direction:column}
+.v-top{display:flex;align-items:center;gap:12px;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 10px;color:#fff}.v-c{font-size:13px;opacity:.8;min-width:44px}.v-t{flex:1;font-weight:600;font-size:14px;text-align:center}
+.v-x{color:#fff;width:40px;height:40px;display:grid;place-items:center}
+.v-stage{flex:1;display:grid;place-items:center;min-height:0;padding:0 0 calc(16px + env(safe-area-inset-bottom,0px))}.v-stage img,.v-stage video{max-width:100%;max-height:100%;object-fit:contain}
+.v-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;display:grid;place-items:center}.v-prev{left:10px}.v-next{right:10px}
 .gallery img.fit{object-fit:contain;padding:8px;box-sizing:border-box}
 .bottom-actions{display:flex;gap:10px;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:var(--white);border-top:1px solid var(--line);flex:none}
 .bottom-actions .btn{flex:1}
@@ -643,6 +649,8 @@ const MESL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','s
 const DIA={'Lun':'Mon','Mar':'Tue','Mié':'Wed','Jue':'Thu','Vie':'Fri','Sáb':'Sat','Dom':'Sun'};
 const num=s=>s.replace(',','.');
 const PAT=[
+ [/^(\d+) fotos?( · (\d+) videos?)?$/,m=>`${m[1]} photo${m[1]>1?'s':''}${m[2]?` · ${m[3]} video${m[3]>1?'s':''}`:''}`],
+ [/^(\d+) videos?$/,m=>`${m[1]} video${m[1]>1?'s':''}`],
  [/^Muestra este código al pagar\. (.+) Válido hasta el (.+)\.$/,m=>`Show this code when paying. ${tr1(m[1])} Valid until ${m[2]}.`],
  [/^(.+) Válido hasta el (.+)\.$/,m=>`${tr1(m[1])} Valid until ${m[2]}.`],
  [/^Estás fuera del mapa · a ([\d,]+) km de (.+)$/,m=>`You are outside the map · ${num(m[1])} km from ${tr1(m[2])}`],
@@ -1346,8 +1354,8 @@ SCREENS.ficha=({id})=>{const p=PLACES[id];const sv=S.saved.includes(id);
   <div id="aud"></div>
   <div class="stack gap8"><h2 class="h3">Sobre el lugar</h2><p>${p.sobre}</p></div>
   ${ticketCard(id,p.horario)}
-  <div class="stack gap8"><div class="row between"><h2 class="h3">Galería</h2><span class="small muted">${p.galeria.length} imagen${p.galeria.length>1?'es':''}</span></div>
-   <div class="gallery">${p.galeria.map(g=>`<img src="${g}" alt="" class="${g.endsWith('.webp')?'fit':''}">`).join('')}</div></div>
+  <div class="stack gap8"><div class="row between"><h2 class="h3">Galería</h2><span class="small muted">${galCount(p.galeria)}</span></div>
+   <div class="gallery">${p.galeria.map((g,k)=>isVid(g)?`<button class="g-it g-vid" data-gal="${k}" aria-label="Ver video"><img src="${g.replace(/\.mp4$/,'.jpg')}" alt="" loading="lazy"><span class="g-play">${I('play','svg-s')}</span></button>`:`<button class="g-it" data-gal="${k}" aria-label="Ver foto"><img src="${g}" alt="" loading="lazy" class="${g.endsWith('.webp')?'fit':''}"></button>`).join('')}</div></div>
   ${p.rest.length?`<div class="stack gap8"><h2 class="h3">Restaurantes cerca</h2>${p.rest.map(r=>`<div class="card row" style="border:1px solid var(--line)"><button class="list-item" style="flex:1;min-width:0" data-poin="${esc(r[0])}" data-from="${id}"><span class="ico">${I(r[2])}</span><span class="stack gap4" style="flex:1;min-width:0"><b style="color:var(--navy)">${r[0]}</b><span class="small muted">${r[1]}</span></span></button><button class="icon-btn bm-r" data-rn="${esc(r[0])}" data-rs="${esc(r[1])}" aria-label="Guardar restaurante" aria-pressed="${savedR(r[0])}" style="box-shadow:none;background:none;color:var(--navy);margin-right:6px">${I(savedR(r[0])?'bookf':'book')}</button></div>`).join('')}</div>`:''}
   <button class="btn btn-ghost" data-go="mapa" data-p='${JSON.stringify({sel:id})}'>${I('map','svg-s')}Ver en el mapa</button>
   <a class="lnk small" href="${mapsLink(p)}" target="_blank" rel="noopener" style="align-self:center">Prefiero abrirlo en Google Maps</a>
@@ -1357,6 +1365,7 @@ AFTER.ficha=({id})=>{const p=PLACES[id];audioWidget(document.getElementById('aud
  document.getElementById('bm').onclick=()=>{const i=S.saved.indexOf(id);if(i>=0)S.saved.splice(i,1);else S.saved.push(id);save();const b=document.getElementById('bm');b.innerHTML=I(i>=0?'book':'bookf');b.setAttribute('aria-pressed',i<0);toast(i>=0?'Quitado de lugares guardados':'Guardado en tus lugares');};
  document.getElementById('sh').onclick=async()=>{const txt=`${p.nombre} en Guayaquil · Descúbrelo con TRAZA #TrazaTuGuayaquil ${mapsLink(p)}`;try{await navigator.clipboard.writeText(txt);toast('Enlace del lugar copiado');}catch(e){toast('No se pudo copiar en este navegador');}};
  document.getElementById('addm').onclick=()=>{draft={place:id};go('camara');};
+ app.querySelectorAll('[data-gal]').forEach(b=>b.onclick=()=>viewer(p.galeria,+b.dataset.gal,p.nombre));
  document.getElementById('howto').onclick=()=>howTo(id);
  app.querySelectorAll('.bm-r').forEach(b=>b.onclick=()=>{const on=toggleR(b.dataset.rn,b.dataset.rs);b.innerHTML=I(on?'bookf':'book');b.setAttribute('aria-pressed',on);});};
 
@@ -1544,6 +1553,19 @@ function camConsent(onOk,onNo){sheet(`<div class="stack gap12" style="text-align
  <button class="small" id="cTerms" style="color:var(--navy);text-decoration:underline">Ver términos y condiciones</button>
  <button class="btn btn-primary btn-block" id="cOk">Aceptar y abrir cámara</button><button class="btn btn-ghost btn-block" id="cNo">Ahora no</button></div>`,
  {center:true,onOpen:(o,close)=>{o.querySelector('#cOk').onclick=()=>{S.camOk=true;save();close();onOk();};o.querySelector('#cNo').onclick=()=>{close();onNo();};o.querySelector('#cTerms').onclick=()=>{close();go('terminos');};}});}
+
+/* ---------- Galería: fotos y videos ---------- */
+const isVid=g=>/\.mp4$/i.test(g);
+function galCount(G){const v=G.filter(isVid).length,f=G.length-v;return [f?`${f} foto${f>1?'s':''}`:'',v?`${v} video${v>1?'s':''}`:''].filter(Boolean).join(' · ');}
+function viewer(G,k,title){const o=document.createElement('div');o.className='viewer';
+ o.innerHTML=`<div class="v-top"><span class="v-c" id="vc"></span><span class="v-t" data-notr>${esc(title)}</span><button class="v-x" aria-label="Cerrar">${I('close')}</button></div><div class="v-stage" id="vs"></div><button class="v-nav v-prev" aria-label="Anterior">${I('back')}</button><button class="v-nav v-next" aria-label="Siguiente">${I('chev')}</button>`;
+ app.appendChild(o);const st=o.querySelector('#vs');
+ const show=i=>{k=(i+G.length)%G.length;const g=G[k];st.innerHTML=isVid(g)?`<video src="${g}" poster="${g.replace(/\.mp4$/,'.jpg')}" controls playsinline autoplay preload="metadata"></video>`:`<img src="${g}" alt="">`;o.querySelector('#vc').textContent=`${k+1} / ${G.length}`;o.querySelectorAll('.v-nav').forEach(b=>b.hidden=G.length<2);};
+ const close=()=>{st.innerHTML='';o.remove();document.removeEventListener('keydown',kd);};
+ const kd=e=>{if(e.key==='Escape')close();if(e.key==='ArrowRight')show(k+1);if(e.key==='ArrowLeft')show(k-1);};document.addEventListener('keydown',kd);
+ o.querySelector('.v-x').onclick=close;o.querySelector('.v-prev').onclick=()=>show(k-1);o.querySelector('.v-next').onclick=()=>show(k+1);
+ let x0=null;st.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;},{passive:true});st.addEventListener('touchend',e=>{if(x0===null)return;const d=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(d)>50)show(k+(d<0?1:-1));});
+ show(k);}
 
 /* ---------- Comentarios ---------- */
 function cmList(k){if(!S.comments)S.comments={};return S.comments[k]||(S.comments[k]=[]);}
