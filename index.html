@@ -743,7 +743,7 @@ const SCREENS={};const AFTER={};
 
 /* ---------- Nombre, foto y envío del código ---------- */
 /* Envío real del código por correo con EmailJS (emailjs.com). Llenar con los datos de la cuenta; vacío = modo prototipo. */
-const MAIL={service:'',template:'',key:''};
+const MAIL={service:'service_khn5fzw',template:'template_k2cl5wv',key:'XbAqIiIReFs7-Rtvi'};
 const mailReady=()=>!!(MAIL.service&&MAIL.template&&MAIL.key);
 function nameFromEmail(e){const u=(e.split('@')[0]||'').toLowerCase();const parts=u.split(/[._\-+]+/).map(x=>x.replace(/\d+/g,'')).filter(x=>x.length>1);
  const w=parts[0]||'';return w?w[0].toUpperCase()+w.slice(1):'Viajero';}
