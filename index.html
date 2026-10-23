@@ -1166,8 +1166,9 @@ function poiSheet(i,from,onMap){const P=POIS[i];if(!P)return;const food=isFood(P
  ${near?`<div class="card row gap12" style="padding:12px 14px;border:1px solid var(--line)">${I('pin','svg-s')}<span class="small"><b style="color:var(--navy)">Está junto a ${PLACES[from].nombre}</b></span></div>`:''}
  ${walk?`<button class="btn btn-primary" id="pRoute">${I('route','svg-s')}Ver ruta a pie en el mapa</button>`:''}
  ${onMap?'':`<button class="btn ${walk?'btn-ghost':'btn-primary'}" id="pMap">${I('map','svg-s')}Ver en el mapa</button>`}
- ${food?`<button class="btn btn-ghost" id="pSave" aria-pressed="${sv}">${I(sv?'bookf':'book','svg-s')}${sv?'Guardado':'Guardar'}</button>`:''}`,
- {onOpen:(o,close)=>{const r=o.querySelector('#pRoute');if(r)r.onclick=()=>{close();pendTrace=[LMOF[from],'p:'+i];go('mapa');};
+ ${food?`<button class="btn btn-ghost" id="pSave" aria-pressed="${sv}">${I(sv?'bookf':'book','svg-s')}${sv?'Guardado':'Guardar'}</button>`:''}
+ <button class="lnk small" id="pExt" style="align-self:center">Prefiero abrirlo en Google Maps</button>`,
+ {onOpen:(o,close)=>{o.querySelector('#pExt').onclick=()=>window.open('https://www.google.com/maps/search/'+encodeURIComponent(pName(P)+' Guayaquil'),'_blank','noopener');const r=o.querySelector('#pRoute');if(r)r.onclick=()=>{close();pendTrace=[LMOF[from],'p:'+i];go('mapa');};
   const m=o.querySelector('#pMap');if(m)m.onclick=()=>{close();mapFocus={x:P.x,y:P.y,i,n:P.n,d:P.d};go('mapa');};
   const b=o.querySelector('#pSave');if(b)b.onclick=()=>{const on=toggleR(P.n,P.ic==='coffee'?'Café y bar':'Restaurante');b.innerHTML=I(on?'bookf':'book','svg-s')+(on?'Guardado':'Guardar');if(isEN())trNode(b);};}});}
 function poiByName(n){return POIS.findIndex(q=>q.n===n);}
@@ -1212,6 +1213,7 @@ SCREENS.ficha=({id})=>{const p=PLACES[id];const sv=S.saved.includes(id);
    <div class="gallery">${p.galeria.map(g=>`<img src="${g}" alt="" class="${g.endsWith('.webp')?'fit':''}">`).join('')}</div></div>
   ${p.rest.length?`<div class="stack gap8"><h2 class="h3">Restaurantes cerca</h2>${p.rest.map(r=>`<div class="card row" style="border:1px solid var(--line)"><button class="list-item" style="flex:1;min-width:0" data-poin="${esc(r[0])}" data-from="${id}"><span class="ico">${I(r[2])}</span><span class="stack gap4" style="flex:1;min-width:0"><b style="color:var(--navy)">${r[0]}</b><span class="small muted">${r[1]}</span></span></button><button class="icon-btn bm-r" data-rn="${esc(r[0])}" data-rs="${esc(r[1])}" aria-label="Guardar restaurante" aria-pressed="${savedR(r[0])}" style="box-shadow:none;background:none;color:var(--navy);margin-right:6px">${I(savedR(r[0])?'bookf':'book')}</button></div>`).join('')}</div>`:''}
   <button class="btn btn-ghost" data-go="mapa" data-p='${JSON.stringify({sel:id})}'>${I('map','svg-s')}Ver en el mapa</button>
+  <a class="lnk small" href="${mapsLink(p)}" target="_blank" rel="noopener" style="align-self:center">Prefiero abrirlo en Google Maps</a>
  </div></div>
  <div class="bottom-actions"><button class="btn btn-ghost" id="howto">Cómo llegar</button><button class="btn btn-primary" id="addm">${I('camera','svg-s')}Añadir recuerdo</button></div></section>`;};
 AFTER.ficha=({id})=>{const p=PLACES[id];audioWidget(document.getElementById('aud'),p);
