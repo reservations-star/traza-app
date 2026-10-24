@@ -170,7 +170,7 @@ a.list-item,a.list-item *{text-decoration:none}
 .hist-card b{font-size:10px;color:var(--navy)}
 .hist-card span{font-size:9px;color:var(--gray)}
 .map-top{position:absolute;top:0;left:0;right:0;padding:calc(12px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:10px;background:linear-gradient(var(--cream) 70%,rgba(247,245,240,0));z-index:5}
-.filters{display:flex;gap:8px;overflow-x:auto}
+.filters{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-right:28px;-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 36px),transparent)}.filters::-webkit-scrollbar{display:none}.filters.end{-webkit-mask-image:none;mask-image:none}.filters>*{flex:none}
 .filters::-webkit-scrollbar{display:none}
 .filter{flex:none;padding:8px 16px;border-radius:999px;background:var(--white);font-size:13px;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .filter[aria-pressed="true"]{background:var(--navy);color:#fff}
@@ -1645,6 +1645,15 @@ function viewer(G,k,title){const o=document.createElement('div');o.className='vi
  o.querySelector('.v-x').onclick=close;o.querySelector('.v-prev').onclick=()=>show(k-1);o.querySelector('.v-next').onclick=()=>show(k+1);
  let x0=null;st.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;},{passive:true});st.addEventListener('touchend',e=>{if(x0===null)return;const d=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(d)>50)show(k+(d<0?1:-1));});
  show(k);}
+
+/* ---------- Arrastrar listas horizontales con el mouse (en celular ya se deslizan con el dedo) ---------- */
+(()=>{const SEL='.filters,.hscroll,.gallery,.stories';let el=null,x0=0,s0=0,moved=false;
+ document.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'||e.button!==0)return;const t=e.target.closest(SEL);if(!t||t.scrollWidth<=t.clientWidth)return;el=t;x0=e.clientX;s0=t.scrollLeft;moved=false;t.style.scrollSnapType='none';t.style.scrollBehavior='auto';},true);
+ document.addEventListener('pointermove',e=>{if(!el)return;const d=e.clientX-x0;if(Math.abs(d)>4)moved=true;el.scrollLeft=s0-d;});
+ document.addEventListener('pointerup',()=>{if(!el)return;const t=el;el=null;setTimeout(()=>{t.style.scrollSnapType='';t.style.scrollBehavior='';},50);});
+ document.addEventListener('click',e=>{if(moved){moved=false;if(e.target.closest(SEL)){e.stopPropagation();e.preventDefault();}}},true);
+ document.addEventListener('wheel',e=>{const t=e.target.closest('.filters');if(!t||t.scrollWidth<=t.clientWidth||Math.abs(e.deltaX)>Math.abs(e.deltaY))return;t.scrollLeft+=e.deltaY;e.preventDefault();},{passive:false,capture:true});
+ document.addEventListener('scroll',e=>{const t=e.target;if(t&&t.classList&&t.classList.contains('filters'))t.classList.toggle('end',t.scrollLeft+t.clientWidth>=t.scrollWidth-4);},true);})();
 
 /* ---------- Comentarios ---------- */
 function cmList(k){if(!S.comments)S.comments={};return S.comments[k]||(S.comments[k]=[]);}
