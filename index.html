@@ -359,6 +359,11 @@ a.list-item,a.list-item *{text-decoration:none}
 .stamps>button:last-child:nth-child(odd){grid-column:1 / -1}
 .stamp{width:100%;max-width:150px;aspect-ratio:1}
 .stamp svg{width:100%;height:100%;display:block}
+.sello{position:relative;display:block;width:100%;height:100%}.sello img{width:100%;height:100%;display:block;object-fit:contain;filter:grayscale(1) opacity(.38);transition:filter .3s}
+.sello.got img{filter:drop-shadow(0 4px 10px rgba(22,82,119,.25))}
+.sello-date{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%) rotate(-4deg);background:var(--navy);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;padding:3px 10px;border-radius:4px;box-shadow:0 2px 6px rgba(0,0,0,.2);white-space:nowrap}
+.sello-ok{position:absolute;right:4%;top:4%;width:26px;height:26px;border-radius:50%;background:#F2947A;color:#fff;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.sello-lock{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.92);color:#8A939D;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .stamp.got{animation:none}
 .stamp.new{animation:stampIn .6s cubic-bezier(.2,1.3,.4,1) both}
 @keyframes stampIn{0%{transform:scale(1.5) rotate(-12deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
@@ -1771,13 +1776,9 @@ AFTER.publicar=({net})=>{document.getElementById('go').onclick=async()=>{
 /* ---------- Pasaporte ---------- */
 const STAMP_ICON={penas:'<path d="M-9 14 L-6 -14 H6 L9 14 Z M-7 -2 H7 M-8 6 H8"/><path d="M-8 -14 L0 -22 L8 -14"/>',malecon:'<circle r="15"/><path d="M0 -15V15M-15 0H15M-10.6 -10.6L10.6 10.6M10.6 -10.6L-10.6 10.6M-8 22L0 15 8 22"/>',seminario:'<path d="M-16 8q8-10 20-6l8-5 3 4-8 5q-6 7-22 6z"/><path d="M-6 8v6M6 8v6"/>',cacao:'<path d="M0 -18C-12 -10-12 10 0 18 12 10 12-10 0-18zM0 -16V16M-6-8q6 4 12 0M-6 2q6 4 12 0"/>',historico:'<path d="M-16 14V-2L0-14 16-2V14zM-16 2H16M-4 14V6H4v8"/>'};
 const STAMP_NAME={penas:'LAS PEÑAS · GUAYAQUIL',malecon:'MALECÓN · LA PERLA',seminario:'PARQUE SEMINARIO',cacao:'MUSEO DEL CACAO',historico:'PARQUE HISTÓRICO'};
-function stampSVG(id,got,date){const p=PLACES[id];const name=STAMP_NAME[id];const col=got?'#165277':'#B9B3A8';const uid='a'+id;
- return `<svg viewBox="-75 -75 150 150" role="img" aria-label="Sello ${p.nombre}${got?' obtenido':' pendiente'}"><defs><path id="${uid}" d="M-53 4 A53 53 0 0 1 53 4"/></defs>
- <circle r="70" fill="${got?'#fff':'none'}" stroke="${col}" stroke-width="${got?4:2}" ${got?'':'stroke-dasharray="5 5"'}/><circle r="61" fill="none" stroke="${col}" stroke-width="1.5" stroke-dasharray="2 4"/>
- <text font-family="Montserrat, sans-serif" font-size="9" font-weight="700" letter-spacing="1.6" fill="${col}"><textPath href="#${uid}" startOffset="50%" text-anchor="middle">${name}</textPath></text>
- <g fill="none" stroke="${col}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 8)">${STAMP_ICON[id]}</g>
- ${got?`<g transform="translate(0 46) rotate(-4)"><rect x="-34" y="-9" width="68" height="18" rx="3" fill="#165277"/><text text-anchor="middle" y="4" font-family="Montserrat, sans-serif" font-size="9" font-weight="700" fill="#fff">${new Date(date+'T12:00').toLocaleDateString('es-EC',{day:'numeric',month:'short'}).toUpperCase()}</text></g><circle cx="44" cy="-46" r="9" fill="#F2947A"/><path d="M40 -46l3 3 5-6" stroke="#fff" stroke-width="2" fill="none"/>`
- :`<g transform="translate(0 46)"><circle r="10" fill="#EFEBE3"/><g transform="translate(-6 -6) scale(.5)" fill="none" stroke="#8A939D" stroke-width="2.4">${P.lock}</g></g>`}</svg>`;}
+function stampSVG(id,got,date){const p=PLACES[id];
+ return `<span class="sello${got?' got':''}" role="img" aria-label="Sello ${p.nombre}${got?' obtenido':' pendiente'}"><img src="img/sello-${id}.webp" alt="" draggable="false">
+ ${got?`<span class="sello-date">${(d=>(isNaN(d)?new Date():d).toLocaleDateString('es-EC',{day:'numeric',month:'short'}).toUpperCase())(new Date((date||'')+'T12:00'))}</span><span class="sello-ok">${I('check','svg-s')}</span>`:`<span class="sello-lock">${I('lock','svg-s')}</span>`}</span>`;}
 SCREENS.pasaporte=({fresh})=>{const vc=visitedCount();const grid=`<div class="stamps">${STAMP_IDS.map(id=>`<button class="stamp ${S.visited[id]?'got':''} ${fresh===id?'new':''}" data-st="${id}">${stampSVG(id,!!S.visited[id],S.visited[id])}</button>`).join('')}</div>`;
  return `<section class="screen"><div class="row gap12 pad" style="padding-block:calc(12px + env(safe-area-inset-top,0px)) 8px"><button class="icon-btn" data-back aria-label="Volver" style="box-shadow:none;background:none">${I('back')}</button><h1 class="h2">Mi pasaporte TRAZA</h1></div>
  <div class="scroll"><div class="pad stack gap16" style="padding-bottom:24px">
