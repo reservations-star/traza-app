@@ -584,7 +584,7 @@ const EN={
 'Cruza el río y viaja cien años atrás. En el Parque Histórico verás cómo vivía Guayaquil hace un siglo, en casas de madera con balcones. Antes de los edificios, estaba el manglar: camina por sus senderos y escucha a las aves. Algunos viajes se hacen en el tiempo.':'Cross the river and travel a hundred years back. In the Historical Park you will see how Guayaquil lived a century ago, in wooden houses with balconies. Before the buildings there was the mangrove: walk its trails and listen to the birds. Some journeys are made through time.',
 // Mapa
 'Gobernación':'Governor’s Palace','Río Guayas':'Guayas River','← Aerovía a Julián Coronel y Parque Centenario':'← Aerovía to Julián Coronel and Centenario Park',
-'Las Peñas · Cerro Santa Ana':'Las Peñas · Santa Ana Hill','La Perla · Malecón 2000':'La Perla · Malecón 2000','Catedral':'Cathedral','Parque Histórico →':'Historical Park →',
+'Las Peñas · Cerro Santa Ana':'Las Peñas · Santa Ana Hill','La Perla · Malecón Simón Bolívar':'La Perla · Malecón Simón Bolívar','Catedral':'Cathedral','Parque Histórico →':'Historical Park →',
 'Iglesia Santo Domingo':'Santo Domingo Church','Cafés de las escalinatas':'Stairway cafés','Museo Julio Jaramillo':'Julio Jaramillo Museum','Museos de Barcelona y Emelec':'Barcelona & Emelec museums',
 'Museo Nahim Isaías':'Nahim Isaías Museum','Restaurantes del puerto':'Port restaurants','Mercado Artesanal':'Artisan Market','Jardines del Malecón':'Malecón Gardens',
 'Iglesia San Francisco':'San Francisco Church','Paseos en barco':'Boat tours','Torre Morisca':'Moorish Clock Tower','Capilla del Cerro Santa Ana':'Santa Ana Hill Chapel',
@@ -1013,9 +1013,9 @@ const by=r=>ys(r)+13;                         // borde superior de la manzana de
 const PROM=1172;const shoreX=y=>1205+9*Math.sin(y/260);const farX=y=>1492+14*Math.sin(y/320+1.2);
 const LM=[
  {k:'penas',id:'penas',img:'img/penas.webp',x:640,y:4,w:440,h:366,lbl:'Las Peñas · Cerro Santa Ana',lx:860,ly:350,node:[PROM,ys(1)]},
- {k:'perla',id:'malecon',img:'img/perla.webp',x:1048,y:ys(2)-14,w:150,h:140,lbl:'La Perla · Malecón 2000',lx:1123,ly:ys(2)+130,node:[PROM,ys(2)]},
+ {k:'perla',id:'malecon',img:'img/perla.webp',x:1048,y:ys(2)-14,w:150,h:140,lbl:'La Perla · Malecón Simón Bolívar',lx:1123,ly:ys(2)+130,node:[PROM,ys(2)]},
  {k:'cacao',id:'cacao',img:'img/cacao.webp',x:bx(5)+2,y:by(3)+6,w:140,h:118,lbl:'Museo del Cacao',lx:bx(5)+72,ly:by(3)+124,node:[sx[5],ys(3)]},
- {k:'rotonda',id:'malecon',img:'img/rotonda.webp',x:1053,y:ys(8)-65,w:140,h:130,rot:90,lbl:'La Rotonda',lx:1123,ly:ys(8)+74,node:[PROM,ys(8)]},
+ {k:'rotonda',id:'malecon',img:'img/rotonda.webp',x:1053,y:ys(8)-65,w:140,h:130,rot:90,lbl:'La Rotonda · Malecón Simón Bolívar',lx:1123,ly:ys(8)+74,node:[PROM,ys(8)]},
  {k:'plaza',id:'plaza',img:'img/plaza.webp',x:bx(5)+2,y:by(11)+6,w:140,h:118,lbl:'Plaza de la Administración',lx:bx(5)+72,ly:by(11)+124,node:[sx[6],ys(11)]},
  {k:'parque',id:'seminario',img:'img/iguana.webp',x:bx(2)+12,y:by(11)+22,w:120,h:94,lbl:'Parque Seminario',lx:bx(2)+72,ly:by(11)+124,node:[sx[3],ys(11)]},
  {k:'catedral',id:'seminario',img:'img/catedral.webp',x:bx(1)+2,y:by(11)+6,w:140,h:118,lbl:'Catedral',lx:bx(1)+72,ly:by(11)+124,node:[sx[2],ys(11)]},
