@@ -73,7 +73,20 @@ p{margin:0;line-height:1.5}
 
 /* Splash */
 .splash{align-items:center;justify-content:center;gap:16px;text-align:center}
-.splash img{width:150px;animation:pop .8s cubic-bezier(.2,1.4,.4,1) both}
+.splash{overflow:hidden;background:var(--cream)}
+.sp-glow{position:absolute;left:50%;top:38%;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;background:radial-gradient(circle,rgba(73,172,229,.22),rgba(73,172,229,0) 65%);animation:glow 2.6s ease-out both}@keyframes glow{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.sp-route{position:absolute;inset:0;width:100%;height:100%}.sp-route path{stroke-dashoffset:900;animation:route 1.3s .1s cubic-bezier(.5,0,.3,1) forwards;stroke-dasharray:2 12}
+@keyframes route{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.sp-route path{stroke-dashoffset:0;clip-path:inset(0 100% 0 0)}
+.sp-dot{animation:dot .5s 1.25s cubic-bezier(.2,1.6,.4,1) both}@keyframes dot{from{transform:scale(0)}to{transform:scale(1)}}
+.sp-center{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;z-index:2}
+.splash .sp-logo{width:150px;animation:logoin .9s .55s cubic-bezier(.2,1.5,.4,1) both,float 3s 1.6s ease-in-out infinite}@keyframes logoin{0%{opacity:0;transform:translateY(-60px) scale(.6)}70%{opacity:1}100%{opacity:1;transform:none}}@keyframes float{0%,100%{translate:0 0}50%{translate:0 -6px}}
+.sp-by{animation:track 1s 1s cubic-bezier(.2,.8,.3,1) both}@keyframes track{from{letter-spacing:.8em;opacity:0}to{letter-spacing:.22em;opacity:1}}
+.sp-lema{position:relative;padding-bottom:8px}.sp-lema span{display:inline-block;animation:wordin .5s cubic-bezier(.2,1.3,.4,1) both;animation-delay:calc(1.25s + var(--w)*.15s)}@keyframes wordin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.sp-line{position:absolute;left:10%;right:10%;bottom:0;height:3px;border-radius:2px;background:var(--terra);transform-origin:left;animation:line .6s 1.75s ease-out both}@keyframes line{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.splash .loader{position:relative;bottom:auto;margin-top:18px;animation:fadein .4s 1.4s both}@keyframes fadein{from{opacity:0}to{opacity:1}}
+.sp-sky{position:absolute;left:0;right:0;bottom:0;width:100%;opacity:.9;animation:skyup 1.2s .2s cubic-bezier(.2,.8,.3,1) both;pointer-events:none}@keyframes skyup{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:.9}}
+.splash.out .sp-center{animation:spout .35s ease-in forwards}.splash.out{animation:fadeout .35s ease-in forwards}@keyframes spout{to{transform:scale(1.08)}}@keyframes fadeout{to{opacity:0}}
 .splash .by{letter-spacing:.22em;font-size:11px;color:var(--gray);margin-top:12px}
 .splash .lema{font-size:16px;color:var(--navy);font-weight:500}
 .loader{width:120px;height:3px;border-radius:3px;background:var(--line);overflow:hidden;position:absolute;bottom:calc(60px + env(safe-area-inset-bottom,0px))}
@@ -881,8 +894,15 @@ async function sendCode(email){const code=String(Math.floor(100000+Math.random()
    body:JSON.stringify({service_id:MAIL.service,template_id:MAIL.template,user_id:MAIL.key,template_params:{to_email:email,to_name:nameFromEmail(email),code}})});
   return r.ok?'sent':'error';}catch(e){return 'error';}}
 const codeOk=c=>S.otp&&Date.now()<S.otp.exp&&S.otp.h===c.split('').reverse().join('')+'z';
-SCREENS.splash=()=>`<section class="screen splash"><img src="img/logo.webp" alt="Logo de TRAZA"><div class="by">BY ZEROS3 TRAVEL COMPANY</div><div class="lema">Traza tu Guayaquil</div><div class="loader" aria-hidden="true"></div></section>`;
-AFTER.splash=()=>setTimeout(()=>{if(cur.name!=='splash')return;go(S.mode?'inicio':(S.onboarded?'ingreso':'onb'),{},{replace:true});},1800);
+SCREENS.splash=()=>`<section class="screen splash" id="spl"><div class="sp-glow" aria-hidden="true"></div>
+ <svg class="sp-route" id="sproute" aria-hidden="true"><path fill="none" stroke="#49ACE5" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 12" opacity=".75"/><circle r="7" fill="#F2947A" class="sp-dot"/></svg>
+ <div class="sp-center"><img class="sp-logo" src="img/logo.webp" alt="Logo de TRAZA"><div class="by sp-by">BY ZEROS3 TRAVEL COMPANY</div>
+ <div class="lema sp-lema" data-notr>${(isEN()?'Trace your Guayaquil':'Traza tu Guayaquil').split(' ').map((w,i)=>`<span style="--w:${i}">${w}</span>`).join(' ')}<i class="sp-line"></i></div><div class="loader" aria-hidden="true"></div></div>
+ <img class="sp-sky" src="img/skyline.webp" alt="" aria-hidden="true"></section>`;
+AFTER.splash=()=>{const spr=()=>{const sv=document.getElementById('sproute'),lg=document.querySelector('.sp-logo'),ce=document.querySelector('.sp-center');if(sv&&lg&&ce&&lg.offsetHeight){const W=sv.clientWidth||innerWidth,H=sv.clientHeight||innerHeight;
+  const tipX=ce.offsetLeft+lg.offsetLeft+lg.offsetWidth/2,tipY=ce.offsetTop+lg.offsetTop+lg.offsetHeight*0.95;
+  sv.setAttribute('viewBox',`0 0 ${W} ${H}`);sv.querySelector('path').setAttribute('d',`M -20 ${H-80} C ${W*0.18} ${H*0.8}, ${W*0.0} ${tipY+H*0.1}, ${W*0.2} ${tipY+4} S ${tipX-50} ${tipY-6}, ${tipX-8} ${tipY}`);
+  const c=sv.querySelector('circle');c.setAttribute('cx',tipX);c.setAttribute('cy',tipY);c.style.transformOrigin=`${tipX}px ${tipY}px`;}};{const lg=document.querySelector('.sp-logo');if(lg&&lg.complete&&lg.naturalHeight)spr();else if(lg)lg.addEventListener('load',spr,{once:true});}setTimeout(()=>{const e=document.getElementById('spl');if(e)e.classList.add('out');},2500);setTimeout(()=>{if(cur.name!=='splash')return;go(S.mode?'inicio':(S.onboarded?'ingreso':'onb'),{},{replace:true});},2850);};
 
 const ONB=[['img/onb1.webp','Recorre la ciudad','Explora Guayaquil con un mapa ilustrado y rutas pensadas para ti.'],['img/onb2.webp','Descubre lo auténtico','Escucha la historia de cada lugar y encuentra dónde comer cerca.'],['img/onb3.webp','Traza tu Guayaquil','Guarda tus fotos como recuerdos y gana un sello en cada lugar.']];
 SCREENS.onb=({i=0})=>`<section class="screen"><div class="pad stack gap24" style="flex:1;padding-block:calc(16px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px))">
