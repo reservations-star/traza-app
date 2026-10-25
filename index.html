@@ -322,6 +322,13 @@ a.list-item,a.list-item *{text-decoration:none}
 .eat-b{display:flex;flex-direction:column;gap:3px;padding:12px}.eat-b b{color:var(--navy);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mal-zone{position:absolute;padding:0;border-radius:8px;background:transparent;cursor:pointer;transition:background .2s,box-shadow .2s}
 .mal-zone:hover{background:rgba(70,115,90,.10);box-shadow:inset 0 0 0 2px rgba(70,115,90,.35)}.mal-zone:active{background:rgba(70,115,90,.18)}
+.rip-host{overflow:hidden;isolation:isolate}
+.ripple{position:absolute;border-radius:50%;transform:scale(0);opacity:1;pointer-events:none;animation:ripple .55s ease-out forwards;z-index:0}
+@keyframes ripple{to{transform:scale(1);opacity:0}}
+.tab.bump svg{animation:tabbump .45s cubic-bezier(.2,1.6,.4,1)}@keyframes tabbump{0%{transform:translateY(0) scale(1)}40%{transform:translateY(-5px) scale(1.15)}100%{transform:none}}
+.pop svg{animation:popit .4s cubic-bezier(.2,1.6,.4,1)}@keyframes popit{0%{transform:scale(.6)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+[data-like].liked.pop{position:relative}[data-like].liked.pop::after{content:"";position:absolute;left:-2px;top:50%;width:26px;height:26px;margin-top:-13px;border-radius:50%;border:2px solid var(--terra);animation:likering .5s ease-out forwards;pointer-events:none}@keyframes likering{0%{transform:scale(.3);opacity:1}100%{transform:scale(1.6);opacity:0}}
+.btn-primary,.btn-terra{box-shadow:0 4px 12px rgba(22,82,119,.18)}@media (hover:hover){.btn:hover{transform:translateY(-1px)}}.btn:active{transform:scale(.96)}
 .out-pill{align-self:flex-start;font-size:11px;font-weight:600;color:var(--terra-dk);background:#FBE9E3;border-radius:999px;padding:2px 8px}
 .sv-card{display:flex;align-items:center;background:var(--white);border-radius:var(--r-m);box-shadow:0 1px 4px rgba(0,0,0,.06);padding:10px 6px 10px 10px}
 .sv-main{display:flex;align-items:center;gap:14px;flex:1;min-width:0;text-align:left;color:inherit;text-decoration:none}
@@ -786,7 +793,8 @@ function render(){
   app.querySelectorAll('[data-back]').forEach(b=>b.addEventListener('click',back));
   app.querySelectorAll('[data-place]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();go('ficha',{id:b.dataset.place});}));
 }
-const tabbar=act=>`<nav class="tabbar" aria-label="Navegación principal">${[['inicio','home','Inicio'],['mapa','map','Mapa'],['rutas','route','Rutas'],['recuerdos','photo','Recuerdos'],['perfil','user','Perfil']].map(([k,ic,l])=>`<button class="tab" data-go="${k}" ${k===act?'aria-current="page"':''}>${I(ic)}${l}</button>`).join('')}</nav>`;
+const tabbar=act=>{setTimeout(()=>{window.__lastTab=act;},0);return tabbarHTML(act);};
+const tabbarHTML=act=>`<nav class="tabbar" aria-label="Navegación principal">${[['inicio','home','Inicio'],['mapa','map','Mapa'],['rutas','route','Rutas'],['recuerdos','photo','Recuerdos'],['perfil','user','Perfil']].map(([k,ic,l])=>`<button class="tab${k===act&&window.__lastTab!==act?' bump':''}" data-go="${k}" ${k===act?'aria-current="page"':''}>${I(ic)}${l}</button>`).join('')}</nav>`;
 
 /* ---------- Avisos y hojas ---------- */
 function toast(msg){let t=app.querySelector('.toast');if(!t){t=document.createElement('div');t.className='toast';app.appendChild(t);}t.textContent=msg;t.classList.toggle('low',!!document.getElementById('mw'));requestAnimationFrame(()=>t.classList.add('show'));clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2400);}
@@ -1462,7 +1470,7 @@ AFTER.rutas=()=>{document.getElementById('vr').onclick=()=>{showRoute=true;go('m
 SCREENS.recuerdos=({tab='mios'})=>{const mems=allMems();const withMem=new Set(mems.map(m=>m.place));
  const cardM=(m,i,comm)=>{const p=PLACES[m.place];const liked=!comm&&S.liked[m.id];const d=m.date?new Date(m.date):null;
   return `<article class="card memory"><div class="photo"><img src="${m.img}" alt="Recuerdo en ${p.nombre}"><span class="where">${I('pin','svg-s')}${IMG_LBL[m.place]}</span></div>
-  <div class="acts"><button data-like="${comm?'':m.id}" class="${liked?'liked':''}" aria-label="Me gusta">${I(liked?'heartf':'heart')}${(m.likes||0)+(liked?1:0)}</button><button aria-label="Comentar" data-cm="${comm?'c'+i:m.id}">${I('chat')}<span class="cmn">${cmCount(comm?'c'+i:m.id)||''}</span></button><button aria-label="Compartir" data-sh="${comm?'':m.id}">${I('share')}</button>
+  <div class="acts"><button data-like="${comm?'':m.id}" class="${liked?'liked':''}${liked&&window.__likePop===m.id?' pop':''}" aria-label="Me gusta">${I(liked?'heartf':'heart')}${(m.likes||0)+(liked?1:0)}</button><button aria-label="Comentar" data-cm="${comm?'c'+i:m.id}">${I('chat')}<span class="cmn">${cmCount(comm?'c'+i:m.id)||''}</span></button><button aria-label="Compartir" data-sh="${comm?'':m.id}">${I('share')}</button>
    <span style="margin-left:auto" class="small muted row gap4">${comm?`<span class="example">Ejemplo</span>`:I(m.pub?'globe':'lock','svg-s')+(m.pub?'Público':'Privado')}</span></div>
   <div class="stack gap4" style="padding:8px 14px 14px">${comm?`<b class="small" style="color:var(--navy)">${m.who}</b>`:''}<p style="font-size:14px">${esc(m.text||'')}</p>${d?`<span class="small muted">${d.toLocaleDateString('es-EC',{day:'numeric',month:'short',year:'numeric'})}</span>`:''}</div></article>`;};
  return `<section class="screen"><div class="scroll"><div class="pad stack gap16" style="padding-block:calc(20px + env(safe-area-inset-top,0px)) 96px">
@@ -1474,7 +1482,7 @@ SCREENS.recuerdos=({tab='mios'})=>{const mems=allMems();const withMem=new Set(me
  :`<p class="small muted">Recuerdos públicos de otros viajeros con #TrazaTuGuayaquil. Las publicaciones de esta pestaña son ejemplos del prototipo.</p>${COMMUNITY.map((m,i)=>cardM(m,i,true)).join('')}`}
  </div></div><button class="fab" id="fab" aria-label="Tomar foto">${I('camera')}</button>${tabbar('recuerdos')}</section>`;};
 AFTER.recuerdos=()=>{document.getElementById('fab').onclick=()=>{draft={};go('camara');};const n=document.getElementById('nuevo');if(n)n.onclick=()=>{draft={};go('camara');};
- app.querySelectorAll('[data-like]').forEach(b=>b.onclick=()=>{const id=b.dataset.like;if(!id){toast('Te gusta este recuerdo');return;}S.liked[id]=!S.liked[id];save();render();});
+ app.querySelectorAll('[data-like]').forEach(b=>b.onclick=()=>{const id=b.dataset.like;if(!id){toast('Te gusta este recuerdo');return;}S.liked[id]=!S.liked[id];save();window.__likePop=S.liked[id]?id:null;render();});
  app.querySelectorAll('[data-cm]').forEach(b=>b.onclick=()=>commentSheet(b.dataset.cm,b));
  app.querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{const m=allMems().find(x=>x.id===b.dataset.sh);if(!m){toast('Solo puedes compartir tus propios recuerdos');return;}draft={place:m.place,photo:m.img,text:m.text,date:m.date};go('compartir');});};
 
@@ -1645,6 +1653,14 @@ function viewer(G,k,title){const o=document.createElement('div');o.className='vi
  o.querySelector('.v-x').onclick=close;o.querySelector('.v-prev').onclick=()=>show(k-1);o.querySelector('.v-next').onclick=()=>show(k+1);
  let x0=null;st.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;},{passive:true});st.addEventListener('touchend',e=>{if(x0===null)return;const d=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(d)>50)show(k+(d<0?1:-1));});
  show(k);}
+
+/* ---------- Animación de botones: onda al tocar y pop al activar ---------- */
+(()=>{const RIP='.btn,.opt,.list-item,.promo-card,.eat-card,.fact,.tx-guide,.pp-card,.place-card,.icon-btn,.ct-row,.ar-card,.arma-cta,.filter,.chip-btn,.td-body,.sv-main';
+ document.addEventListener('pointerdown',e=>{const b=e.target.closest(RIP);if(!b||b.disabled)return;const r=b.getBoundingClientRect();const d=Math.max(r.width,r.height)*2;
+  const w=document.createElement('span');w.className='ripple';w.style.width=w.style.height=d+'px';w.style.left=(e.clientX-r.left-d/2)+'px';w.style.top=(e.clientY-r.top-d/2)+'px';
+  const dark=getComputedStyle(b).backgroundColor.match(/\d+/g);const lum=dark?(+dark[0]*.3+ +dark[1]*.59+ +dark[2]*.11):255;w.style.background=lum<140&&(!dark||dark[3]!=='0')?'rgba(255,255,255,.35)':'rgba(22,82,119,.14)';
+  if(getComputedStyle(b).position==='static')b.style.position='relative';b.classList.add('rip-host');b.appendChild(w);setTimeout(()=>w.remove(),600);},{passive:true});
+ document.addEventListener('click',e=>{const b=e.target.closest('[aria-pressed],[data-like],.bm-r,#bm,#pcSave,#pSave,#csv');if(!b)return;setTimeout(()=>{b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop');},0);});})();
 
 /* ---------- Arrastrar listas horizontales con el mouse (en celular ya se deslizan con el dedo) ---------- */
 (()=>{const SEL='.filters,.hscroll,.gallery,.stories';let el=null,x0=0,s0=0,moved=false;
