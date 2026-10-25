@@ -339,6 +339,18 @@ a.list-item,a.list-item *{text-decoration:none}
 .memory .photo{cursor:pointer;user-select:none}.memory .photo img{transition:transform .6s ease}@media (hover:hover){.memory:hover .photo img{transform:scale(1.04)}}
 .bigheart{position:absolute;left:50%;top:50%;width:96px;height:96px;margin:-48px 0 0 -48px;color:#fff;filter:drop-shadow(0 4px 14px rgba(0,0,0,.35));animation:bigheart .85s cubic-bezier(.2,1.4,.4,1) forwards;pointer-events:none;z-index:2}.bigheart svg{width:100%;height:100%}.bigheart svg path{fill:#F2947A;stroke:#fff}
 @keyframes bigheart{0%{transform:scale(0);opacity:0}25%{transform:scale(1.15);opacity:1}45%{transform:scale(.95)}75%{transform:scale(1);opacity:1}100%{transform:scale(1.1) translateY(-20px);opacity:0}}
+.fabs.in>*{animation:fabin .5s cubic-bezier(.2,1.2,.4,1) both}.fabs.in>*:nth-child(2){animation-delay:.07s}.fabs.in>*:nth-child(3){animation-delay:.14s}.fabs.in>*:nth-child(4){animation-delay:.21s}.fabs.in>*:nth-child(5){animation-delay:.28s}
+@keyframes fabin{from{opacity:0;transform:translateX(40px) scale(.7)}to{opacity:1;transform:none}}
+.chip-in{animation:rise .45s cubic-bezier(.2,.8,.3,1) both;animation-delay:calc(var(--i,0)*45ms)}
+.chip-pop{animation:chippop .4s cubic-bezier(.2,1.6,.4,1)}@keyframes chippop{0%{transform:scale(.85)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+.pin-in .poi-ic,.lm.pin-in img{animation:pinin .45s cubic-bezier(.2,1.6,.4,1) both;animation-delay:var(--d,0ms)}@keyframes pinin{0%{scale:0;translate:0 10px;opacity:0}100%{scale:1;translate:0 0;opacity:1}}
+.tapb .poi-ic,.lm.tapb img{animation:tapb .45s cubic-bezier(.2,1.6,.4,1)}@keyframes tapb{0%{scale:1;translate:0 0}35%{scale:1.3;translate:0 -6px}100%{scale:1;translate:0 0}}
+#trz.on{position:relative;overflow:visible}#trz.on::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--terra);animation:fabpulse 2s ease-out infinite;pointer-events:none}
+#trz.spin1 svg{animation:spin1 .5s cubic-bezier(.3,1.3,.5,1)}@keyframes spin1{from{transform:rotate(-180deg) scale(.6)}to{transform:none}}
+#lay.flip svg{animation:flip .5s ease}@keyframes flip{0%{transform:perspective(200px) rotateX(0)}50%{transform:perspective(200px) rotateX(180deg) scale(.9)}100%{transform:perspective(200px) rotateX(360deg)}}
+#loc.busy svg{animation:locspin 1s linear infinite}@keyframes locspin{to{transform:rotate(360deg)}}
+#loc.live{color:var(--sky)}#loc.live svg{animation:locping 2.4s ease-in-out infinite}@keyframes locping{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.hist-chip{animation:histin .5s .3s cubic-bezier(.2,1.2,.4,1) both}@keyframes histin{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
 .out-pill{align-self:flex-start;font-size:11px;font-weight:600;color:var(--terra-dk);background:#FBE9E3;border-radius:999px;padding:2px 8px}
 .sv-card{display:flex;align-items:center;background:var(--white);border-radius:var(--r-m);box-shadow:0 1px 4px rgba(0,0,0,.06);padding:10px 6px 10px 10px}
 .sv-main{display:flex;align-items:center;gap:14px;flex:1;min-width:0;text-align:left;color:inherit;text-decoration:none}
@@ -1230,6 +1242,15 @@ SCREENS.mapa=({sel})=>`<section class="screen"><div class="map-wrap${nightMap?' 
  <div class="sheet-card" id="pc"></div><div class="sheet-card" id="tp"></div>${promoStrip()}
 </div>${tabbar('mapa')}</section>`;
 AFTER.mapa=({sel})=>{
+ {const fb=document.getElementById('fabs');if(fb&&window.__lastTab!=='mapa')fb.classList.add('in');
+  const fs=document.querySelectorAll('.filter');if(window.__lastTab!=='mapa')fs.forEach((f,i)=>{f.style.setProperty('--i',i);f.classList.add('chip-in');});
+  {const sel=document.querySelector('.filter[aria-pressed="true"]'),row=document.querySelector('.filters');if(sel&&row&&sel.dataset.f!=='Todos'){row.scrollLeft=sel.offsetLeft-row.clientWidth/2+sel.offsetWidth/2;}}
+  if(window.__filterAnim){window.__filterAnim=false;const on=document.querySelector('.filter[aria-pressed="true"],.filter.on');if(on)on.classList.add('chip-pop');
+   document.querySelectorAll('.poi:not(.dim),.lm:not(.dim)').forEach((m,i)=>{m.style.setProperty('--d',(i%12)*25+'ms');m.classList.add('pin-in');});}
+  const tz=document.getElementById('trz');if(tz)tz.addEventListener('click',()=>{tz.classList.remove('spin1');void tz.offsetWidth;tz.classList.add('spin1');});
+  const ly=document.getElementById('lay');if(ly)ly.addEventListener('click',()=>{ly.classList.remove('flip');void ly.offsetWidth;ly.classList.add('flip');});
+  ['zin','zout'].forEach(k=>{const z=document.getElementById(k);if(z)z.addEventListener('click',()=>{z.classList.remove('pop');void z.offsetWidth;z.classList.add('pop');});});
+  document.getElementById('mw')&&document.getElementById('mw').addEventListener('click',e=>{const q=e.target.closest('.poi,.lm');if(q){q.classList.remove('tapb');void q.offsetWidth;q.classList.add('tapb');}},true);}
  const mw=document.getElementById('mw'),world=document.getElementById('world');
  const minZ=()=>Math.max(mw.clientWidth/MW,(mw.clientHeight-130)/(MH+NY));
  function clamp(){const vw=mw.clientWidth,vh=mw.clientHeight;mapView.z=Math.max(minZ(),mapView.z);const sw=MW*mapView.z,sh=(MH+NY)*mapView.z;
@@ -1274,7 +1295,7 @@ AFTER.mapa=({sel})=>{
  document.getElementById('zin').onclick=()=>zoomAt(mapView.z*1.35,mw.clientWidth/2,mw.clientHeight/2,true);
  document.getElementById('zout').onclick=()=>zoomAt(mapView.z/1.35,mw.clientWidth/2,mw.clientHeight/2,true);
  document.getElementById('srch').onclick=openSearch;
- document.querySelectorAll('.filter').forEach(b=>b.onclick=()=>{mapFilter=b.dataset.f;const n=Object.values(PLACES).filter(p=>matches(p.id)).length+POIS.filter(q=>q.cats.includes(mapFilter)).length;render();toast(mapFilter==='Todos'?'Mostrando todos los lugares':`${n} resultado${n===1?'':'s'} de ${mapFilter.toLowerCase()}`);});
+ document.querySelectorAll('.filter').forEach(b=>b.onclick=()=>{mapFilter=b.dataset.f;window.__filterAnim=true;const n=Object.values(PLACES).filter(p=>matches(p.id)).length+POIS.filter(q=>q.cats.includes(mapFilter)).length;render();toast(mapFilter==='Todos'?'Mostrando todos los lugares':`${n} resultado${n===1?'':'s'} de ${mapFilter.toLowerCase()}`);});
  document.getElementById('lay').onclick=()=>sheet(`<h2 class="h2">Capas del mapa</h2>
   <button class="opt" id="l1">${I(trace.length?'map':'check')}<span class="stack gap4"><b style="color:var(--navy)">Solo lugares</b><span class="small muted">Mapa limpio, sin caminos</span></span></button>
   <button class="opt" id="l2">${I(trace.length?'check':'route')}<span class="stack gap4"><b style="color:var(--navy)">Ruta del centro</b><span class="small muted">Camino a pie por las calles, de Las Peñas a la Catedral</span></span></button>
@@ -1765,7 +1786,7 @@ function startLive(centerFirst){if(!navigator.geolocation||liveId!==null)return;
   const{latitude:la,longitude:lo,accuracy:acc}=pos.coords;const near=nearest(la,lo);meNear=near;meAcc=acc;
   const[cx,cy]=gpsToMap(la,lo);
   if(near.d>6000||!gpsToMap.inside){meFar=true;meLive=false;['me','meacc'].forEach(k=>{const e=document.getElementById(k);if(e&&!recording())e.classList.add('hid');});offChip(near);return;}
-  meFar=false;meLive=true;offChip(null);if(recording())return;
+  meFar=false;meLive=true;offChip(null);{const lb=document.getElementById('loc');if(lb){lb.classList.remove('busy');lb.classList.add('live');}}if(recording())return;
   mePos={x:cx,y:cy};const me=document.getElementById('me');if(me){me.classList.remove('hid');me.style.left=cx+'px';me.style.top=cy+'px';}
   const ac=document.getElementById('meacc');if(ac){const r=Math.min(260,Math.max(20,acc*PXM));ac.classList.remove('hid');ac.style.left=cx+'px';ac.style.top=cy+'px';ac.style.width=ac.style.height=(r*2)+'px';}
   if(liveFirst){liveFirst=false;if(AFTER.mapa.center)AFTER.mapa.center(cx,cy);}},
@@ -1776,7 +1797,7 @@ function offChip(near){let c=document.getElementById('offchip');if(!near){if(c)c
 function locMe(){if(!navigator.geolocation){meSheet('Tu navegador no comparte la ubicación.');return;}
  if(meLive){if(AFTER.mapa.center)AFTER.mapa.center(mePos.x,mePos.y);const n=meNear;if(n)toast(n.d<150?`Estás en ${n.p.nombre}`:`Estás a ${Math.round(n.d)} m de ${n.p.nombre}`);return;}
  if(meFar){const n=meNear;meSheet(n?`Estás a ${(n.d/1000).toFixed(1).replace('.',',')} km de ${n.p.nombre}, fuera del centro histórico que muestra el mapa. Tu punto aparecerá cuando llegues.`:'Estás fuera del centro histórico de Guayaquil. Tu punto aparecerá en el mapa cuando llegues.');return;}
- toast('Buscando tu ubicación…');
+ toast('Buscando tu ubicación…');const lb=document.getElementById('loc');if(lb){lb.classList.add('busy');setTimeout(()=>lb.classList.remove('busy'),6000);}
  navigator.geolocation.getCurrentPosition(pos=>{const n=nearest(pos.coords.latitude,pos.coords.longitude);
    gpsToMap(pos.coords.latitude,pos.coords.longitude);if(n.d>6000||!gpsToMap.inside){meFar=true;offChip(n);meSheet(`Estás a ${(n.d/1000).toFixed(1).replace('.',',')} km de ${n.p.nombre}, fuera del centro histórico que muestra el mapa. Tu punto aparecerá cuando llegues.`);return;}
    stopLive();startLive(true);},
