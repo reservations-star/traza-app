@@ -401,6 +401,13 @@ a.list-item,a.list-item *{text-decoration:none}
 .otp input.ok{border-color:var(--green)!important;background:var(--green-soft);color:var(--green-text);animation:okflip .4s ease both;animation-delay:calc(var(--j)*60ms)}@keyframes okflip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
 .okb{background:var(--green)!important;color:#fff!important}
 .lang button{transition:background .25s,color .25s}
+.nxt{position:relative;overflow:hidden;isolation:isolate}
+.nx-fill{position:absolute;left:0;top:0;bottom:0;width:100%;background:rgba(255,255,255,.14);transform-origin:left;transform:scaleX(var(--p,0));animation:nxfill .6s .3s cubic-bezier(.2,.8,.3,1) both;transition:transform .3s cubic-bezier(.2,.8,.3,1);z-index:-1;pointer-events:none}
+@keyframes nxfill{from{transform:scaleX(var(--p0,0))}to{transform:scaleX(var(--p,0))}}
+.nx-l{transition:transform .25s}.nx-arr{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.18);transition:transform .25s,background .25s;animation:nxnudge 2.2s 1.2s ease-in-out infinite}
+@keyframes nxnudge{0%,70%,100%{transform:translateX(0)}80%{transform:translateX(5px)}90%{transform:translateX(0)}}
+@media (hover:hover){.nxt:hover .nx-arr{transform:translateX(5px);background:rgba(255,255,255,.3);animation:none}.nxt:hover .nx-l{transform:translateX(-3px)}}
+.nxt.go .nx-arr{animation:nxgo .3s ease-in forwards}.nxt.go .nx-l{transform:translateX(-8px)}@keyframes nxgo{0%{transform:translateX(0)}100%{transform:translateX(80px);opacity:0}}
 .out-pill{align-self:flex-start;font-size:11px;font-weight:600;color:var(--terra-dk);background:#FBE9E3;border-radius:999px;padding:2px 8px}
 .sv-card{display:flex;align-items:center;background:var(--white);border-radius:var(--r-m);box-shadow:0 1px 4px rgba(0,0,0,.06);padding:10px 6px 10px 10px}
 .sv-main{display:flex;align-items:center;gap:14px;flex:1;min-width:0;text-align:left;color:inherit;text-decoration:none}
@@ -939,10 +946,10 @@ SCREENS.onb=({i=0})=>`<section class="screen"><div class="pad stack gap24" style
  <div class="onb-frame ${window.__onbDir==='back'?'from-l':'from-r'}" id="onbf"><img class="onb-img" src="${ONB[i][0]}" alt="" draggable="false"></div>
  <div class="stack gap12" style="text-align:center"><h1 class="h1 rise" style="--i:2">${ONB[i][1]}</h1><p class="muted rise" style="--i:3">${ONB[i][2]}</p></div>
  <div class="stack gap16" style="margin-top:auto"><div class="dots">${ONB.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>
- <button class="btn btn-primary btn-block rise${i===2?' shine cta-pulse':''}" style="--i:4" id="next">${i<2?'Siguiente':'Comenzar'}</button></div></div></section>`;
+ <button class="btn btn-primary btn-block nxt rise${i===2?' shine cta-pulse':''}" style="--i:4;--p:${(i+1)/3};--p0:${i/3}" id="next"><span class="nx-fill"></span><span class="nx-l">${i<2?'Siguiente':'Comenzar'}</span><span class="nx-arr">${I(i<2?'chev':'check','svg-s')}</span></button></div></div></section>`;
 AFTER.onb=({i=0})=>{const done=()=>{S.onboarded=true;save();go(S.mode?'inicio':'ingreso',{},{replace:true});};
  const to=(n,dir)=>{window.__onbDir=dir;const f=document.getElementById('onbf');if(f){f.classList.add(dir==='back'?'out-r':'out-l');setTimeout(()=>go('onb',{i:n},{replace:true}),180);}else go('onb',{i:n},{replace:true});};
- document.getElementById('skip').onclick=done;document.getElementById('next').onclick=()=>i<2?to(i+1,'next'):done();
+ document.getElementById('skip').onclick=done;document.getElementById('next').onclick=e=>{const b=e.currentTarget;if(b.classList.contains('go'))return;b.style.setProperty('--p',(i+2)/3);b.classList.add('go');try{navigator.vibrate&&navigator.vibrate(12);}catch(_){}setTimeout(()=>i<2?to(i+1,'next'):done(),260);};
  const f=document.getElementById('onbf');let x0=null;f.addEventListener('pointerdown',e=>{x0=e.clientX;});f.addEventListener('pointerup',e=>{if(x0===null)return;const d=e.clientX-x0;x0=null;if(d<-50&&i<2)to(i+1,'next');else if(d>50&&i>0)to(i-1,'back');});};
 
 SCREENS.ingreso=()=>`<section class="screen"><div class="scroll stack"><div class="pad stack gap16" style="padding-block:calc(28px + env(safe-area-inset-top,0px)) 16px;text-align:center;align-items:center">
