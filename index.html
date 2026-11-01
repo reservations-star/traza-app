@@ -89,13 +89,14 @@ p{margin:0;line-height:1.5}
 @keyframes lshine{0%{background-position:150% 0}30%,100%{background-position:-60% 0}}
 .tlogo.jump{animation:ljump .7s cubic-bezier(.3,1.4,.5,1)!important}
 @keyframes ljump{0%{transform:none}20%{transform:scale(1.08,.9) translateY(4px)}45%{transform:scale(.94,1.1) translateY(-18px)}70%{transform:scale(1.04,.96) translateY(0)}100%{transform:none}}
+.sp-word{display:block;width:180px;height:auto;margin-top:4px;animation:wordrev .8s .95s cubic-bezier(.3,.8,.3,1) both}@keyframes wordrev{from{clip-path:inset(0 100% 0 0);transform:translateY(6px);opacity:.2}to{clip-path:inset(0 0 0 0);transform:none;opacity:1}}
 .sp-by{animation:track 1s 1s cubic-bezier(.2,.8,.3,1) both}@keyframes track{from{letter-spacing:.8em;opacity:0}to{letter-spacing:.22em;opacity:1}}
 .sp-lema{position:relative;padding-bottom:8px}.sp-lema span{display:inline-block;animation:wordin .5s cubic-bezier(.2,1.3,.4,1) both;animation-delay:calc(1.25s + var(--w)*.15s)}@keyframes wordin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .sp-line{position:absolute;left:10%;right:10%;bottom:0;height:3px;border-radius:2px;background:var(--terra);transform-origin:left;animation:line .6s 1.75s ease-out both}@keyframes line{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 .splash .loader{position:relative;bottom:auto;margin-top:18px;animation:fadein .4s 1.4s both}@keyframes fadein{from{opacity:0}to{opacity:1}}
 .sp-sky{position:absolute;left:0;right:0;bottom:0;width:100%;opacity:.9;animation:skyup 1.2s .2s cubic-bezier(.2,.8,.3,1) both;pointer-events:none}@keyframes skyup{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:.9}}
 .splash.out .sp-center{animation:spout .35s ease-in forwards}.splash.out{animation:fadeout .35s ease-in forwards}@keyframes spout{to{transform:scale(1.08)}}@keyframes fadeout{to{opacity:0}}
-.splash .by{letter-spacing:.22em;font-size:11px;color:var(--gray);margin-top:12px}
+.splash .by{letter-spacing:.22em;font-size:11px;color:var(--gray);margin-top:6px}
 .splash .lema{font-size:16px;color:var(--navy);font-weight:500}
 .loader{width:120px;height:3px;border-radius:3px;background:var(--line);overflow:hidden;position:absolute;bottom:calc(60px + env(safe-area-inset-bottom,0px))}
 .loader::after{content:"";display:block;height:100%;width:40%;background:var(--navy);animation:load 1.4s ease-in-out infinite}
@@ -932,7 +933,7 @@ function tLogo(w,beam,cls=''){return `<span class="tlogo ${cls}" style="width:${
 document.addEventListener('click',e=>{const l=e.target.closest('.tlogo');if(!l)return;l.classList.remove('jump');void l.offsetWidth;l.classList.add('jump');try{navigator.vibrate&&navigator.vibrate([10,30,10]);}catch(_){}});
 SCREENS.splash=()=>`<section class="screen splash" id="spl"><div class="sp-glow" aria-hidden="true"></div>
  <svg class="sp-route" id="sproute" aria-hidden="true"><path fill="none" stroke="#49ACE5" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 12" opacity=".75"/><circle r="7" fill="#F2947A" class="sp-dot"/></svg>
- <div class="sp-center">${tLogo(150,true,'sp-logo')}<div class="by sp-by">BY ZEROS3 TRAVEL COMPANY</div>
+ <div class="sp-center">${tLogo(150,true,'sp-logo')}<img class="sp-word" src="img/logo-word.webp" alt="TRAZA" width="180" height="43" draggable="false"><div class="by sp-by">BY ZEROS3 TRAVEL COMPANY</div>
  <div class="lema sp-lema" data-notr>${(isEN()?'Trace your Guayaquil':'Traza tu Guayaquil').split(' ').map((w,i)=>`<span style="--w:${i}">${w}</span>`).join(' ')}<i class="sp-line"></i></div><div class="loader" aria-hidden="true"></div></div>
  <img class="sp-sky" src="img/skyline.webp" alt="" aria-hidden="true"></section>`;
 AFTER.splash=()=>{const spr=()=>{const sv=document.getElementById('sproute'),lg=document.querySelector('.sp-logo'),ce=document.querySelector('.sp-center');if(sv&&lg&&ce&&lg.offsetHeight){const W=sv.clientWidth||innerWidth,H=sv.clientHeight||innerHeight;
