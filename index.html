@@ -180,6 +180,7 @@ a.list-item,a.list-item *{text-decoration:none}
 .lm{position:absolute;padding:0;transition:opacity .25s,transform .2s}
 .lm img{width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
 .lm:active{transform:scale(.96)}
+.lbl.tap{cursor:pointer}.lbl.tap:active{scale:.94}
 .lbl{position:absolute;transform:translateX(-50%);white-space:nowrap;background:var(--white);color:var(--navy);font-size:10px;font-weight:600;border-radius:10px;padding:3px 8px;box-shadow:0 2px 6px rgba(0,0,0,.16);transition:opacity .25s}
 .dim{opacity:.28;pointer-events:none}
 .pads .tap{cursor:pointer}
@@ -1308,7 +1309,7 @@ SCREENS.mapa=({sel})=>`<section class="screen"><div class="map-wrap${nightMap?' 
   <svg id="trsvg" style="position:absolute;left:0;top:${-NY}px;pointer-events:none;overflow:visible" viewBox="0 ${-NY} ${MW} ${MH+NY}" width="${MW}" height="${MH+NY}">${traceSVG()}</svg>
   <svg id="tracksvg" style="position:absolute;left:0;top:${-NY}px;pointer-events:none;overflow:visible" viewBox="0 ${-NY} ${MW} ${MH+NY}" width="${MW}" height="${MH+NY}">${trackSVG()}</svg>
   ${(()=>{const seen={};return LM.filter(l=>STAMP_IDS.includes(l.id)&&vis(l.id)&&!seen[l.id]&&(seen[l.id]=1)).map(l=>`<span class="stamp-ok" style="left:${l.lx-15}px;top:${l.ly-34}px" title="Sello conseguido">${I('check','svg-s')}</span>`).join('');})()}
-  ${LM.map(l=>`<span class="lbl ${matches(l.id)?'':'dim'}" style="left:${l.lx}px;top:${l.ly}px">${l.lbl}</span>`).join('')}
+  ${LM.map(l=>`<span class="lbl tap ${matches(l.id)?'':'dim'}" data-lm="${l.id}" ${l.k?`data-k="${l.k}"`:''} style="left:${l.lx}px;top:${l.ly}px">${l.lbl}</span>`).join('')}
   <span class="lbl-sub ${matches('historico')?'':'dim'}" style="left:1612px;top:338px">Samborondón · 20 min en auto</span>
   ${POIS.map((q,i)=>`<button class="poi${q.svc?' svc':''}${isClient()&&aliado(q.n)?' ali':''} ${mapFilter==='Todos'||q.cats.includes(mapFilter)?'':'dim'}${trace.includes('p:'+i)?' sel':''}" data-poi="${i}" style="left:${q.x}px;top:${q.y}px;--c:${q.c}" aria-label="${q.n}"><span class="poi-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${POI_IC[q.ic]}</svg></span><span class="poi-t">${q.n}</span></button>`).join('')}
   <span style="position:absolute;left:1336px;top:1180px;writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--f-display);font-style:italic;font-size:26px;color:#fff;opacity:.95">Río Guayas</span>
