@@ -573,7 +573,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 
 /* ---------- Datos ---------- */
 const PLACES={
- penas:{id:'penas',nombre:'Las Peñas',corto:'Las Peñas',sub:'Cerro Santa Ana',cats:['Cultura','Fotografía'],tag:'Cultura',img:'img/penas.webp',dist:'a 1,2 km',dur:'1 h',horario:'Abierto todo el día',precio:'Gratis',lat:-2.1824,lng:-79.8762,
+ penas:{id:'penas',audio:'audio/penas.mp3',audioDur:56,nombre:'Las Peñas',corto:'Las Peñas',sub:'Cerro Santa Ana',cats:['Cultura','Fotografía'],tag:'Cultura',img:'img/penas.webp',dist:'a 1,2 km',dur:'1 h',horario:'Abierto todo el día',precio:'Gratis',lat:-2.1824,lng:-79.8762,
   sobre:'El barrio más antiguo de Guayaquil, al pie del cerro Santa Ana. Sus escalones numerados suben entre casas de colores, galerías y cafés hasta el faro.',
   historia:'Bienvenido a Las Peñas, el barrio más antiguo de Guayaquil. Sube por los cuatrocientos cuarenta y cuatro escalones numerados del cerro Santa Ana. A cada lado verás casas de madera pintadas de colores, galerías de arte y pequeños cafés. Arriba te espera el faro, y desde ahí toda la ciudad y el río Guayas. Cada escalón guarda una historia. Así empieza tu traza.',
   galeria:['img/gal/penas-1.webp','img/gal/penas-2.webp','img/foto-penas.jpg'],rest:[['Cafés de las escalinatas','Café y snacks · 100 m','coffee']]},
@@ -892,11 +892,20 @@ const mapsLink=p=>`https://www.google.com/maps/dir/?api=1&destination=${p.lat},$
 /* ---------- Audio (narración con voz del dispositivo) ---------- */
 let speaking=null;
 function wordsDur(t){return Math.max(20,Math.round(t.split(/\s+/).length/2.4));}
+const recorded=p=>!!(p.audio&&!isEN());
+const audioDur=p=>recorded(p)?p.audioDur:wordsDur(p.historia);
 const fmt=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
 function playAudio(p,onTick,onEnd){
   stopAudio();
-  const dur=wordsDur(p.historia);const st={p,t0:Date.now(),dur,paused:false,el:0};
+  const dur=audioDur(p);const st={p,t0:Date.now(),dur,paused:false,el:0};
   speaking=st;
+  if(recorded(p)){
+    const a=new Audio(p.audio);st.a=a;a.onended=()=>{if(speaking===st)finish();};
+    a.play().catch(()=>toast('No se pudo reproducir el audio'));
+    st.iv=setInterval(()=>{if(st.paused)return;const d=Math.round(a.duration)||dur;st.el=Math.min(d,a.currentTime);onTick&&onTick(st.el,d);},250);
+    function finishA(){clearInterval(st.iv);if(speaking===st)speaking=null;onEnd&&onEnd();}
+    const finish=finishA;st.finish=finish;return st;
+  }
   if('speechSynthesis' in window){
     try{const u=new SpeechSynthesisUtterance(tr(p.historia));u.lang=isEN()?'en-US':'es-ES';u.rate=1;
       const v=speechSynthesis.getVoices().find(v=>(isEN()?/^en/i:/^es/i).test(v.lang));if(v)u.voice=v;
@@ -906,8 +915,8 @@ function playAudio(p,onTick,onEnd){
   function finish(){clearInterval(st.iv);if(speaking===st)speaking=null;onEnd&&onEnd();}
   st.finish=finish;return st;
 }
-function togglePause(){if(!speaking)return;const st=speaking;st.paused=!st.paused;try{st.paused?speechSynthesis.pause():speechSynthesis.resume();}catch(e){}if(!st.paused){st.t0=Date.now()-st.el*1000;}return st.paused;}
-function stopAudio(){if(speaking){clearInterval(speaking.iv);speaking=null;}try{speechSynthesis.cancel();}catch(e){}}
+function togglePause(){if(!speaking)return;const st=speaking;st.paused=!st.paused;if(st.a){st.paused?st.a.pause():st.a.play();return st.paused;}try{st.paused?speechSynthesis.pause():speechSynthesis.resume();}catch(e){}if(!st.paused){st.t0=Date.now()-st.el*1000;}return st.paused;}
+function stopAudio(){if(speaking){clearInterval(speaking.iv);if(speaking.a){speaking.a.pause();speaking.a.src='';}speaking=null;}try{speechSynthesis.cancel();}catch(e){}}
 
 /* ---------- Pantallas ---------- */
 const SCREENS={};const AFTER={};
@@ -1525,12 +1534,12 @@ function openPoiCard(i){const P=POIS[i];const pc=document.getElementById('pc');i
  const sb=pc.querySelector('#pcSave');if(sb)sb.onclick=()=>{const on=toggleR(P.n,P.ic==='coffee'?'Café y bar':'Restaurante');sb.setAttribute('aria-pressed',on);sb.innerHTML=I(on?'bookf':'book','svg-s')+(on?'Guardado':'Guardar');if(isEN())trNode(sb);};
  pc.querySelector('#pcInfo').onclick=()=>poiSheet(i,null,true);
  pc.querySelector('#pcClose').onclick=()=>{pc.classList.remove('open');document.getElementById('fabs').style.bottom=fabBase();};}
-function audioWidget(host,p,onChange){const dur=wordsDur(p.historia);
+function audioWidget(host,p,onChange){const dur=audioDur(p);
  const idle=()=>{host.innerHTML=`<button class="audio-btn"><span class="play">${I('play','svg-s')}</span>Escuchar historia · ${fmt(dur)}</button>`;host.querySelector('button').onclick=start;onChange&&onChange();};
  const start=()=>{host.innerHTML=`<div class="audio"><div class="row gap8"><button class="audio-btn" style="padding:0;background:none" id="pp" aria-label="Pausar"><span class="play">${I('pause','svg-s')}</span></button><b class="small" style="color:var(--navy);flex:1">Historia de ${p.corto}</b><span class="small muted" id="tm">0:00 / ${fmt(dur)}</span></div><div class="bar"><i id="br"></i></div></div>`;onChange&&onChange();
   playAudio(p,(el,d)=>{const br=host.querySelector('#br'),tm=host.querySelector('#tm');if(br)br.style.width=(el/d*100)+'%';if(tm)tm.textContent=`${fmt(Math.floor(el))} / ${fmt(d)}`;},idle);
   host.querySelector('#pp').onclick=()=>{const paused=togglePause();host.querySelector('#pp .play').innerHTML=I(paused?'play':'pause','svg-s');};
-  if(!('speechSynthesis' in window))toast('Este navegador no tiene voz; el audio final se grabará con narrador');};
+  if(!recorded(p)&&!('speechSynthesis' in window))toast('Este navegador no tiene voz; el audio final se grabará con narrador');};
  idle();}
 
 /* ---------- Ficha ---------- */
