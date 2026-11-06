@@ -245,6 +245,7 @@ a.list-item,a.list-item *{text-decoration:none}
 
 /* Ficha */
 .hero{height:280px;background:linear-gradient(180deg,var(--sky-soft),var(--cream-2));display:grid;place-items:center;position:relative;flex:none}
+.thumb.photo{padding:0;overflow:hidden}.thumb.photo img{width:100%;height:100%;max-width:none;max-height:none;object-fit:cover;filter:none}
 .hero.photo img{max-width:none;max-height:none;width:100%;height:100%;object-fit:cover;filter:none}
 .hero.photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 35%);pointer-events:none}
 .hero img{max-width:78%;max-height:220px;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.15))}
@@ -1405,7 +1406,7 @@ AFTER.mapa=({sel})=>{
  if(sel){const L=LM.find(l=>l.id===sel);if(L)centerOn(L.lx,L.ly-40,false);openCard(sel);}
 };
 function openCard(id){const p=PLACES[id];const pc=document.getElementById('pc');if(!pc)return;stopAudio();
- pc.innerHTML=`<button class="grab" id="pcClose" aria-label="Cerrar tarjeta"></button><div class="pc"><div class="thumb"><img src="${p.img}" alt=""></div><div class="stack gap8" style="flex:1;min-width:0">
+ pc.innerHTML=`<button class="grab" id="pcClose" aria-label="Cerrar tarjeta"></button><div class="pc"><div class="thumb${p.hero?' photo':''}"><img src="${p.hero||p.img}" alt=""></div><div class="stack gap8" style="flex:1;min-width:0">
   <h3 class="h3" style="font-size:19px">${p.nombre}</h3><div id="aud"></div>
   <div class="row gap8" style="flex-wrap:wrap"><span class="small muted">${p.tag} · ${p.dist} · ${p.dur}</span><span class="open-pill">${p.horario.startsWith('Abierto')?'Abierto':p.horario.split('·')[0].trim()}</span></div>
   <div class="row" style="justify-content:flex-end"><button class="btn btn-primary btn-s" data-place="${id}">Ver lugar</button></div></div></div>`;
