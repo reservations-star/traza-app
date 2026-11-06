@@ -613,11 +613,16 @@ const IMG_LBL={penas:'Las Peñas · Cerro Santa Ana',malecon:'Malecón Simón Bo
 const CONTACT={tel:'+593 99 538 0868',wa:'+593 99 269 7596',email:'reservations@zeros3travel.com',horario:'Lunes a domingo, 08:00 – 20:00',driver:{nombre:'',tel:''}};
 const GUIDE={nombre:'Carlos M.',ini:'CM',idiomas:'Español · English',hoy:{hora:'9:00',lugar:'Escalinata Diego Noboa, Las Peñas',place:'penas',plan:'Las Peñas y Museo del Cacao'}};
 const SEED_MEM=[
- {id:'s1',place:'penas',img:'img/foto-penas.jpg',text:'Atardecer subiendo los 444 escalones. La brisa del río y los colores de las casas hacen que cada paso valga la pena.',date:'2026-10-13T17:40',pub:false,likes:24,seed:true},
- {id:'s2',place:'malecon',img:'img/foto-malecon.jpg',text:'Paseo matutino junto al río Guayas, con un jugo fresco frente al agua.',date:'2026-10-12T09:15',pub:true,likes:48,seed:true}];
+ {id:'s1',place:'penas',img:'img/gal/penas-portada.webp',text:'Atardecer subiendo los 444 escalones. La brisa del río y los colores de las casas hacen que cada paso valga la pena.',date:'2026-10-13T17:40',pub:false,likes:24,seed:true},
+ {id:'s2',place:'malecon',img:'img/gal/malecon-4.webp',text:'Paseo matutino junto al río Guayas, con un jugo fresco frente al agua.',date:'2026-10-12T09:15',pub:true,likes:48,seed:true}];
 const COMMUNITY=[
- {who:'Camila R.',place:'malecon',img:'img/foto-malecon.jpg',text:'La Perla al atardecer es otra cosa. #TrazaTuGuayaquil',likes:132},
- {who:'Andrés M.',place:'penas',img:'img/foto-penas.jpg',text:'Llegué al escalón 444. ¡Valió cada paso!',likes:87}];
+ {who:'Camila R.',place:'malecon',img:'img/gal/malecon-2.webp',text:'Subimos a La Perla: la vista del río desde arriba es otra cosa. #TrazaTuGuayaquil',likes:132},
+ {who:'Andrés M.',place:'penas',img:'img/gal/penas-5.webp',text:'Llegué al escalón 444. ¡Valió cada paso!',likes:87},
+ {who:'Jorge P.',place:'seminario',img:'img/gal/seminario-3.webp',text:'Saludando a las iguanas del Parque Seminario. ¡Son enormes! #TrazaTuGuayaquil',likes:96},
+ {who:'Grupo Canadá 2026',place:'seminario',img:'img/gal/seminario-6.webp',text:'Foto grupal frente a la Catedral con nuestro guía de ZEROS3.',likes:154},
+ {who:'Mary L.',place:'plaza',img:'img/gal/plaza-3.webp',text:'Conociendo el salón de sesiones del Palacio Municipal. Qué historia guarda este lugar.',likes:61},
+ {who:'Sofía V.',place:'cacao',img:'img/gal/cacao-8.webp',text:'Aprendí cómo se cosechaba la pepa de oro. ¡El museo es precioso!',likes:73},
+ {who:'Daniel T.',place:'historico',img:'img/gal/historico-4.webp',text:'Bailes típicos en el Parque Histórico. Así se vive la tradición de la costa.',likes:58}];
 
 /* ---------- Estado ---------- */
 const def={mode:null,name:'Dennisse',email:'',visited:{},track:[],geo:{},mems:[],saved:[],savedR:[],myRoute:null,liked:{},comments:{},onboarded:false,lang:'ES'};
@@ -1606,7 +1611,7 @@ SCREENS.recuerdos=({tab='mios'})=>{const mems=allMems();const withMem=new Set(me
  return `<section class="screen"><div class="scroll"><div class="pad stack gap16" style="padding-block:calc(20px + env(safe-area-inset-top,0px)) 96px">
  <h1 class="h1">Recuerdos</h1>
  <div class="seg slide" role="group" data-on="${window.__segPrev===undefined?(tab==='com'?1:0):window.__segPrev}" data-to="${tab==='com'?1:0}"><button aria-pressed="${tab==='mios'}" data-go="recuerdos" data-p='{"tab":"mios"}'>Mis recuerdos</button><button aria-pressed="${tab==='com'}" data-go="recuerdos" data-p='{"tab":"com"}'>Comunidad</button></div>
- ${tab==='mios'?`<div class="stories"><button class="story rise" style="--i:0" id="nuevo"><span class="ring add">${I('plus')}</span>Nuevo</button>${STAMP_IDS.map((id,k)=>`<button class="story rise" style="--i:${k+1}" data-place="${id}"><span class="ring${withMem.has(id)?' has':''}" style="${withMem.has(id)?'':'border-color:var(--line)'}"><img src="${PLACES[id].img}" alt=""></span>${PLACES[id].corto}</button>`).join('')}</div>
+ ${tab==='mios'?`<div class="stories"><button class="story rise" style="--i:0" id="nuevo"><span class="ring add">${I('plus')}</span>Nuevo</button>${STAMP_IDS.map((id,k)=>`<button class="story rise" style="--i:${k+1}" data-place="${id}"><span class="ring${withMem.has(id)?' has':''}" style="${withMem.has(id)?'':'border-color:var(--line)'}"><img src="${PLACES[id].hero||PLACES[id].img}" alt=""${PLACES[id].hero?' style="object-fit:cover"':''}></span>${PLACES[id].corto}</button>`).join('')}</div>
  <div class="card stack gap8" style="padding:14px"><div class="row between"><b style="font-family:var(--f-display);color:var(--navy)">Tu traza</b><span class="small" style="color:var(--green-text)">#TrazaTuGuayaquil</span></div><span class="small muted">${STAMP_IDS.filter(i=>withMem.has(i)).length} de 5 lugares con recuerdos</span><div class="progress"><i class="grow" style="width:${STAMP_IDS.filter(i=>withMem.has(i)).length*20}%"></i></div></div>
  ${mems.map((m,i)=>cardM(m,i,false)).join('')}`
  :`<p class="small muted">Recuerdos públicos de otros viajeros con #TrazaTuGuayaquil. Las publicaciones de esta pestaña son ejemplos del prototipo.</p>${COMMUNITY.map((m,i)=>cardM(m,i,true)).join('')}`}
