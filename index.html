@@ -245,6 +245,8 @@ a.list-item,a.list-item *{text-decoration:none}
 
 /* Ficha */
 .hero{height:280px;background:linear-gradient(180deg,var(--sky-soft),var(--cream-2));display:grid;place-items:center;position:relative;flex:none}
+.hero.photo img{max-width:none;max-height:none;width:100%;height:100%;object-fit:cover;filter:none}
+.hero.photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),transparent 35%);pointer-events:none}
 .hero img{max-width:78%;max-height:220px;object-fit:contain;filter:drop-shadow(0 8px 14px rgba(0,0,0,.15))}
 .hero .tl{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:max(14px,env(safe-area-inset-left,0px))}
 .hero .tr{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));right:max(14px,env(safe-area-inset-right,0px));display:flex;gap:8px}
@@ -582,7 +584,7 @@ const PLACES={
   sobre:'Paseo de 2,5 km a orillas del río Guayas, con jardines, monumentos, miradores y la rueda La Perla. En La Rotonda se recuerda el encuentro de Bolívar y San Martín.',
   historia:'Yo soy el río Guayas, y yo vi nacer esta ciudad. Por este malecón llegaron barcos, crecieron puertos y hubo muchas despedidas. Camina entre las palmeras hasta La Rotonda, donde se recuerda el encuentro de dos libertadores, Bolívar y San Martín, en mil ochocientos veintidós. Y si subes a La Perla, me verás desde lo alto. Acércate, tengo más historias para ti.',
   galeria:['img/gal/malecon-1.webp','img/gal/malecon-2.webp','img/gal/malecon-3.webp','img/foto-malecon.jpg'],rest:[['La Central','Restaurante · calle Panamá','fork'],['Puerto Ancla','Mariscos · calle Panamá','fork']]},
- cacao:{id:'cacao',audio:'audio/cacao.mp3',audioDur:37,nombre:'Museo del Cacao',corto:'Cacao',sub:'Calle Panamá',cats:['Cultura','Gastronomía'],tag:'Cultura',img:'img/cacao.webp',dist:'a 900 m',dur:'45 min',horario:'Mar a dom · 10:00 – 17:00',precio:'Gratis · aporte voluntario',lat:-2.1888,lng:-79.8812,
+ cacao:{id:'cacao',hero:'img/gal/cacao-fachada.webp',audio:'audio/cacao.mp3',audioDur:37,nombre:'Museo del Cacao',corto:'Cacao',sub:'Calle Panamá',cats:['Cultura','Gastronomía'],tag:'Cultura',img:'img/cacao.webp',dist:'a 900 m',dur:'45 min',horario:'Mar a dom · 10:00 – 17:00',precio:'Gratis · aporte voluntario',lat:-2.1888,lng:-79.8812,
   sobre:'La historia de la “pepa de oro”: cómo el cacao de esta tierra llegó al mundo. En el tercer piso funciona el Bar Juliana.',
   historia:'Antes del chocolate, hubo una semilla que hizo historia. Al cacao de esta región lo llamaron la pepa de oro, porque llevó el nombre de esta tierra a todo el mundo. En este museo verás cómo se cultiva, se seca y se transforma el grano. Y al final, recuerda: cada chocolate empieza en una mazorca como esta.',
   galeria:['img/gal/cacao-1.webp','img/gal/cacao-4.webp','img/gal/cacao-7.webp','img/gal/cacao-8.webp','img/gal/cacao-5.webp','img/gal/cacao-6.webp','img/gal/cacao-2.webp','img/gal/cacao-3.webp'],rest:[['La Central','Restaurante · calle Panamá','fork'],['Bar Juliana','Cócteles · 3.er piso del museo','coffee']]},
@@ -1559,7 +1561,7 @@ function audioWidget(host,p,onChange){const dur=audioDur(p);
 
 /* ---------- Ficha ---------- */
 SCREENS.ficha=({id})=>{const p=PLACES[id];const sv=S.saved.includes(id);
- return `<section class="screen"><div class="scroll"><div class="hero"><img src="${p.img}" alt="${p.nombre}">
+ return `<section class="screen"><div class="scroll"><div class="hero${p.hero?' photo':''}"><img src="${p.hero||p.img}" alt="${p.nombre}">
  <div class="tl"><button class="icon-btn" data-back aria-label="Volver">${I('back')}</button></div>
  <div class="tr"><button class="icon-btn" id="bm" aria-label="Guardar lugar" aria-pressed="${sv}">${I(sv?'bookf':'book')}</button><button class="icon-btn" id="sh" aria-label="Compartir lugar">${I('share')}</button></div></div>
  <div class="sheet-body pad stack gap16"><span class="chip" style="align-self:flex-start">${p.tag}</span>
