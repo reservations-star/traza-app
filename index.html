@@ -577,7 +577,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 
 /* ---------- Datos ---------- */
 const PLACES={
- penas:{id:'penas',audio:'audio/penas.mp3',audioDur:56,nombre:'Las Peñas',corto:'Las Peñas',sub:'Cerro Santa Ana',cats:['Cultura','Fotografía'],tag:'Cultura',img:'img/penas.webp',dist:'a 1,2 km',dur:'1 h',horario:'Abierto todo el día',precio:'Gratis',lat:-2.1824,lng:-79.8762,
+ penas:{id:'penas',hero:'img/gal/penas-portada.webp',heroPos:'50% 30%',audio:'audio/penas.mp3',audioDur:56,nombre:'Las Peñas',corto:'Las Peñas',sub:'Cerro Santa Ana',cats:['Cultura','Fotografía'],tag:'Cultura',img:'img/penas.webp',dist:'a 1,2 km',dur:'1 h',horario:'Abierto todo el día',precio:'Gratis',lat:-2.1824,lng:-79.8762,
   sobre:'El barrio más antiguo de Guayaquil, al pie del cerro Santa Ana. Sus escalones numerados suben entre casas de colores, galerías y cafés hasta el faro.',
   historia:'Bienvenido a Las Peñas, el barrio más antiguo de Guayaquil. Sube por los cuatrocientos cuarenta y cuatro escalones numerados del cerro Santa Ana. A cada lado verás casas de madera pintadas de colores, galerías de arte y pequeños cafés. Arriba te espera el faro, y desde ahí toda la ciudad y el río Guayas. Cada escalón guarda una historia. Así empieza tu traza.',
   galeria:['img/gal/penas-1.webp','img/gal/penas-5.webp','img/gal/penas-3.webp','img/gal/penas-2.webp','img/gal/penas-6.webp','img/gal/penas-7.webp','img/gal/penas-8.webp','img/gal/penas-4.webp'],rest:[['Cafés de las escalinatas','Café y snacks · 100 m','coffee']]},
@@ -1562,7 +1562,7 @@ function audioWidget(host,p,onChange){const dur=audioDur(p);
 
 /* ---------- Ficha ---------- */
 SCREENS.ficha=({id})=>{const p=PLACES[id];const sv=S.saved.includes(id);
- return `<section class="screen"><div class="scroll"><div class="hero${p.hero?' photo':''}"><img src="${p.hero||p.img}" alt="${p.nombre}">
+ return `<section class="screen"><div class="scroll"><div class="hero${p.hero?' photo':''}"><img src="${p.hero||p.img}" alt="${p.nombre}"${p.heroPos?` style="object-position:${p.heroPos}"`:''}>
  <div class="tl"><button class="icon-btn" data-back aria-label="Volver">${I('back')}</button></div>
  <div class="tr"><button class="icon-btn" id="bm" aria-label="Guardar lugar" aria-pressed="${sv}">${I(sv?'bookf':'book')}</button><button class="icon-btn" id="sh" aria-label="Compartir lugar">${I('share')}</button></div></div>
  <div class="sheet-body pad stack gap16"><span class="chip" style="align-self:flex-start">${p.tag}</span>
