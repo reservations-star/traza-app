@@ -989,7 +989,7 @@ AFTER.ingreso=()=>{
  document.getElementById('f').onsubmit=e=>{e.preventDefault();const v=document.getElementById('email').value.trim();
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){const m=document.getElementById('msg');m.textContent='Escribe un correo válido, por ejemplo: nombre@gmail.com';m.style.color='var(--terra-dk)';const fl=document.querySelector('#f .field');fl.classList.remove('shake');void fl.offsetWidth;fl.classList.add('shake');try{navigator.vibrate&&navigator.vibrate(60);}catch(_){}return;}
   S.email=v;save();const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;btn.innerHTML='<span class="spin"></span>Enviando código…';
-  sendCode(v).then(st=>{btn.disabled=false;if(st==='error'){const m=document.getElementById('msg');m.textContent='No pudimos enviar el código. Revisa tu conexión e inténtalo otra vez.';m.style.color='var(--terra-dk)';btn.innerHTML='Enviar código '+I('chev','svg-s');return;}go('verif',{st});});};
+  sendCode(v).then(st=>{btn.disabled=false;if(st==='error'){const m=document.getElementById('msg');m.textContent=navigator.onLine?'No pudimos enviar el código. Revisa tu conexión e inténtalo otra vez.':'Sin conexión: necesitas internet solo para recibir el código. Mientras tanto puedes explorar sin reserva.';m.style.color='var(--terra-dk)';btn.innerHTML='Enviar código '+I('chev','svg-s');return;}go('verif',{st});});};
  document.getElementById('exp').onclick=()=>{S.mode='explorador';S.name='Explorador';save();go('inicio',{},{replace:true});};
  document.getElementById('en').onclick=()=>setLang('EN');document.getElementById('es').onclick=()=>setLang('ES');};
 
@@ -1011,7 +1011,7 @@ AFTER.verif=()=>{const ins=[...document.querySelectorAll('#otp input')];ins[0].f
   S.otp=null;S.name=nameFromEmail(S.email);S.askName=true;S.mode='cliente';save();
   ins.forEach((x,j)=>{x.style.setProperty('--j',j);x.classList.add('ok');});okb.innerHTML=I('check','svg-s')+(isEN()?'Verified':'Verificado');okb.classList.add('okb');try{navigator.vibrate&&navigator.vibrate(30);}catch(_){}
   setTimeout(()=>{stack=[];go('inicio',{},{replace:true});},750);};
- const rs=document.getElementById('resend');if(rs)rs.onclick=async()=>{rs.disabled=true;rs.textContent='Enviando…';const st=await sendCode(S.email);toast(st==='sent'?'Te enviamos un código nuevo':'No pudimos enviar el código');
+ const rs=document.getElementById('resend');if(rs)rs.onclick=async()=>{rs.disabled=true;rs.textContent='Enviando…';const st=await sendCode(S.email);toast(st==='sent'?'Te enviamos un código nuevo':(navigator.onLine?'No pudimos enviar el código':'Sin conexión: conéctate para recibir el código'));
   let t=30;const iv=setInterval(()=>{rs.textContent=`Reenviar en ${t--} s`;if(t<0){clearInterval(iv);rs.disabled=false;rs.textContent='Reenviar código';}},1000);};};
 
 function saludo(){const h=+new Date().toLocaleString('en-US',{timeZone:'America/Guayaquil',hour:'numeric',hour12:false});return h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';}
@@ -2100,6 +2100,21 @@ try{speechSynthesis.getVoices();}catch(e){}
 /* ?demo en el enlace: empieza desde cero (bienvenida + ingreso), ideal para presentar */
 if(/[?&]demo\b/.test(location.search)){S.onboarded=false;S.mode=null;S.otp=null;save();try{history.replaceState(null,'',location.pathname);}catch(_){}}
 go('splash',{},{replace:true});
+
+/* ---------- Sin internet: la app se guarda en el celular (service worker) ---------- */
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
+ window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(()=>navigator.serviceWorker.ready).then(reg=>{
+   const ask=()=>{const sw=navigator.serviceWorker.controller||reg.active;if(sw&&navigator.onLine)sw.postMessage('precache');};ask();});
+  navigator.serviceWorker.addEventListener('message',e=>{const d=e.data||{};
+   if(d.t==='ready'&&S.offlineVer!==d.version){const first=!S.offlineVer;S.offlineVer=d.version;save();if(first)toast(isEN()?'Ready: TRAZA now works without internet':'Listo: TRAZA ya funciona sin internet');}});});}
+window.addEventListener('offline',()=>toast(isEN()?'No connection · TRAZA keeps working':'Sin conexión · TRAZA sigue funcionando'));
+window.addEventListener('online',()=>{toast(isEN()?'Back online':'Conexión restablecida');fixLabels();
+ if(navigator.serviceWorker&&navigator.serviceWorker.controller)navigator.serviceWorker.controller.postMessage('precache');});
+/* Recuerdos guardados sin internet: al volver la señal se completa su dirección */
+async function fixLabels(){if(!navigator.onLine)return;let ch=false;
+ for(const m of S.mems||[]){if(m.place==='otro'&&m.loc&&m.loc.raw){const l=await reverseGeo(m.loc.lat,m.loc.lng);if(!l.raw){m.loc=l;ch=true;}}}
+ if(ch){save();if(cur&&cur.name==='recuerdos')render();}}
+setTimeout(fixLabels,3000);
 </script>
 
 </body>
