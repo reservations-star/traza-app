@@ -613,6 +613,13 @@ const IMG_LBL={penas:'Las Peñas · Cerro Santa Ana',malecon:'Malecón Simón Bo
 /* Guía asignado a la reserva (datos de ejemplo del prototipo: cambiar por los reales de ZEROS3) */
 /* Contacto de la agencia (teléfono real de ZEROS3). WhatsApp del guía: número de Dennisse */
 const CONTACT={tel:'+593 99 538 0868',wa:'+593 99 269 7596',email:'reservations@zeros3travel.com',horario:'Lunes a domingo, 08:00 – 20:00',driver:{nombre:'',tel:''}};
+/* Viaje de demostración: siempre empieza ayer, así hoy es el día 2 de 4 (las fechas siguen el calendario real) */
+const TRIP={n:4,today:2};
+function tripDay(i){const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()+i-(TRIP.today-1));return d;}
+function dLbl(d,wd=true){const E=isEN();const o=wd?{weekday:'short',day:'numeric',month:'short'}:{day:'numeric',month:'short'};
+ let t=d.toLocaleDateString(E?'en-US':'es-EC',o).replace(/\./g,'').replace(',','');return E?t:t.replace(/^\w/,c=>c.toUpperCase());}
+function tripRange(){const a=tripDay(0),b=tripDay(TRIP.n-1);const E=isEN();
+ if(a.getMonth()===b.getMonth())return E?`${dLbl(a,false)} – ${b.getDate()}`:`${a.getDate()} – ${dLbl(b,false)}`;return `${dLbl(a,false)} – ${dLbl(b,false)}`;}
 const GUIDE={nombre:'Carlos M.',ini:'CM',idiomas:'Español · English',hoy:{hora:'9:00',lugar:'Escalinata Diego Noboa, Las Peñas',place:'penas',plan:'Las Peñas y Museo del Cacao'}};
 const SEED_MEM=[
  {id:'s1',place:'penas',img:'img/gal/penas-portada.webp',text:'Atardecer subiendo los 444 escalones. La brisa del río y los colores de las casas hacen que cada paso valga la pena.',date:'2026-10-13T17:40',pub:false,likes:24,seed:true},
@@ -1023,18 +1030,18 @@ function tdSum(){const n=HOY.filter((h,k)=>tdDone(h,k)).length;return n===HOY.le
 const DATOS=[['penas','444','escalones numerados suben el cerro Santa Ana hasta el faro.'],['malecon','1931','año en que se inauguró la Torre Morisca, el reloj del Malecón.'],['cacao','N.º 1','Ecuador fue el mayor exportador de cacao del mundo en el auge de 1870–1925.'],['seminario','1937','año en que se terminó la Catedral actual; la primera era de madera.'],['plaza','1929','año en que se terminó el Palacio Municipal de Francisco Maccaferri.']];
 SCREENS.inicio=()=>{const vc=visitedCount();const lugares=['penas','malecon','cacao','seminario','historico'];
  return `<section class="screen"><div class="scroll"><div class="pad stack gap24" style="padding-block:calc(20px + env(safe-area-inset-top,0px)) 24px">
- <div class="row between gap12"><div class="stack gap4"><span class="hi-kick">${isClient()?'Día 2 de tu viaje · Guayaquil':'Guayaquil te espera'}</span><h1 class="h1">${saludo()}, ${esc(S.name)}</h1></div>
+ <div class="row between gap12"><div class="stack gap4"><span class="hi-kick">${isClient()?(isEN()?`Day ${TRIP.today} of your trip · Guayaquil`:`Día ${TRIP.today} de tu viaje · Guayaquil`):'Guayaquil te espera'}</span><h1 class="h1">${saludo()}, ${esc(S.name)}</h1></div>
   <button data-go="perfil" aria-label="Perfil">${avatar(46,'box-shadow:0 2px 8px rgba(0,0,0,.12)')}</button></div>
  <button class="search" id="srch">${I('search')}Busca lugares, hoteles, cafés…</button>
  ${isClient()?`<div class="tripx"><img class="tx-art" src="img/trip-art.webp" alt="" aria-hidden="true">
-  <div class="tx-top"><span class="tx-pill"><i></i>En ruta activa</span><span class="tx-date">Guayaquil · 12 – 15 oct</span></div>
+  <div class="tx-top"><span class="tx-pill"><i></i>En ruta activa</span><span class="tx-date">Guayaquil · ${tripRange()}</span></div>
   <h3 class="tx-h">Mi viaje con ZEROS3</h3><span class="tx-bar"></span>
   <div class="tx-stay"><span class="tx-ic">${I('bed','svg-s')}</span><span class="stack"><span class="tx-lbl">Alojamiento</span><b>Hotel del Parque, Samborondón</b></span></div>
   <button class="tx-guide" id="guia"><span class="tx-av">${GUIDE.ini}</span><span class="stack" style="flex:1;min-width:0;text-align:left;gap:3px"><span class="tx-lbl2">Tu guía</span><b class="tx-name" data-notr>${GUIDE.nombre}</b><span class="tx-l tx-time">${I('clock','svg-s')}Hoy ${GUIDE.hoy.hora}</span><span class="tx-l">${I('pin','svg-s')}${GUIDE.hoy.lugar}</span></span><span class="tx-go">${I('chev','svg-s')}</span></button>
-  <div class="tx-foot"><button class="tx-itin" id="itin">Ver itinerario ${I('chev','svg-s')}</button><span class="tx-day"><i></i>Día 2 de 4</span></div></div>`
+  <div class="tx-foot"><button class="tx-itin" id="itin">Ver itinerario ${I('chev','svg-s')}</button><span class="tx-day"><i></i>${isEN()?`Day ${TRIP.today} of ${TRIP.n}`:`Día ${TRIP.today} de ${TRIP.n}`}</span></div></div>`
  :`<div class="trip"><span class="pill">Modo explorador</span><h3 style="margin-top:12px">Explora Guayaquil a tu ritmo</h3><p class="small" style="opacity:.85;margin-top:6px">Mapa, historias en audio y recuerdos gratis. Con ZEROS3 desbloqueas sellos, guía y descuentos.</p>
   <button class="btn btn-s" id="exper" style="background:#fff;color:var(--navy);margin-top:14px">Conocer experiencias ZEROS3</button></div>`}
- ${isClient()?`<div class="stack gap12"><div class="row between"><h2 class="h2">Hoy en tu traza</h2><span class="small muted">Mar 13 oct</span></div>
+ ${isClient()?`<div class="stack gap12"><div class="row between"><h2 class="h2">Hoy en tu traza</h2><span class="small muted">${dLbl(tripDay(TRIP.today-1))}</span></div>
   <div class="today">${HOY.map((h,k)=>{const done=tdDone(h,k);return `<div class="td-row${done?' done':''}"><span class="td-time">${h.t}</span><button class="td-dot" data-td="${k}" role="checkbox" aria-checked="${done}" aria-label="Marcar ${esc(h.n)} como hecho">${I('check','svg-s')}</button><button class="td-body" ${h.place?`data-place="${h.place}"`:`data-poin="${esc(h.poi)}"`}><b>${h.n}</b><span class="small muted">${h.d}</span></button>${h.tag?`<span class="td-tag">${h.tag}</span>`:''}</div>`;}).join('')}</div>
   <span class="small muted" id="tdsum" style="text-align:center">${tdSum()}</span></div>`:''}
  <div class="stack gap12"><div class="row between"><h2 class="h2">Tu pasaporte</h2><button class="small muted" data-go="pasaporte">Ver todo</button></div>
@@ -1053,7 +1060,7 @@ SCREENS.inicio=()=>{const vc=visitedCount();const lugares=['penas','malecon','ca
  </div></div>${tabbar('inicio')}</section>`;};
 function guideSheet(){const g=GUIDE;
  sheet(`<div class="row gap16"><span class="g-av big">${g.ini}</span><div class="stack gap4"><span class="small muted">Tu guía ZEROS3</span><h2 class="h2" style="margin:0">${g.nombre}</h2><span class="small muted">${I('globe','svg-s')} ${g.idiomas}</span></div></div>
- <div class="card stack gap8" style="padding:14px;border:1px solid var(--line)"><b style="color:var(--navy)">Hoy · Día 2</b>
+ <div class="card stack gap8" style="padding:14px;border:1px solid var(--line)"><b style="color:var(--navy)">${isEN()?`Today · Day ${TRIP.today}`:`Hoy · Día ${TRIP.today}`}</b>
   <div class="row gap8 small">${I('clock','svg-s')}Encuentro a las ${g.hoy.hora}</div><div class="row gap8 small">${I('pin','svg-s')}${g.hoy.lugar}</div><div class="row gap8 small">${I('route','svg-s')}${g.hoy.plan}</div></div>
  <p class="small muted" style="margin:0">Tu guía te acompaña en los recorridos del itinerario. Para cambios de horario o dudas, escribe a la agencia.</p>
  <button class="btn btn-primary" id="gmap">${I('map','svg-s')}Ver punto de encuentro</button>
@@ -1066,7 +1073,7 @@ AFTER.inicio=()=>{document.getElementById('srch').onclick=openSearch;
   const sm=document.getElementById('tdsum');if(sm){sm.textContent=tdSum();if(isEN())trNode(sm);}});
  const ha=document.getElementById('haud');if(ha){const id=STAMP_IDS.find(x=>!vis(x))||'penas';audioWidget(ha,PLACES[id]);}
  if(S.askName){S.askName=false;save();setTimeout(()=>sheet(`<div class="stack gap12" style="text-align:center;align-items:center">${avatar(60)}<h2 class="h2" style="margin:0">¡Bienvenido a TRAZA!</h2><p class="small muted" style="margin:0">Tomamos tu nombre del correo. ¿Así quieres que te llamemos?</p><label class="field" style="width:100%"><input id="nm0" maxlength="30" value="${esc(S.name)}" autocomplete="name" aria-label="Tu nombre"></label><button class="btn btn-primary btn-block" id="nm0ok">Continuar</button></div>`,{center:true,onOpen:(o,close)=>{o.querySelector('#nm0ok').onclick=()=>{const v=o.querySelector('#nm0').value.trim();if(v)S.name=v;save();close();render();};}}),350);}const gu=document.getElementById('guia');if(gu)gu.onclick=guideSheet;
- const it=document.getElementById('itin');if(it)it.onclick=()=>sheet(`<h2 class="h2">Itinerario · Mi viaje con ZEROS3</h2><button class="opt" id="ig"><span class="g-av" style="background:var(--navy);color:#fff">${GUIDE.ini}</span><span class="stack gap4" style="flex:1"><b style="color:var(--navy)">Guía: ${GUIDE.nombre}</b><span class="small muted">${GUIDE.idiomas}</span></span>${I('chev','svg-s')}</button>${[['Lun 12 oct','Malecón Simón Bolívar y La Perla','Llegada y recorrido guiado'],['Mar 13 oct','Las Peñas y Museo del Cacao','Hoy · Día 2'],['Mié 14 oct','Parque Seminario y Catedral','Almuerzo en la calle Panamá'],['Jue 15 oct','Parque Histórico','Traslado en auto · 20 min']].map(d=>`<div class="row gap12" style="align-items:flex-start"><span class="chip" style="flex:none">${d[0]}</span><span class="stack gap4"><b style="color:var(--navy)">${d[1]}</b><span class="small muted">${d[2]}</span></span></div>`).join('')}<button class="btn btn-ghost" data-close>Cerrar</button>`,{onOpen:(o,close)=>o.querySelector('#ig').onclick=()=>{close();setTimeout(guideSheet,220);}});
+ const it=document.getElementById('itin');if(it)it.onclick=()=>sheet(`<h2 class="h2">Itinerario · Mi viaje con ZEROS3</h2><button class="opt" id="ig"><span class="g-av" style="background:var(--navy);color:#fff">${GUIDE.ini}</span><span class="stack gap4" style="flex:1"><b style="color:var(--navy)">Guía: ${GUIDE.nombre}</b><span class="small muted">${GUIDE.idiomas}</span></span>${I('chev','svg-s')}</button>${[['Malecón Simón Bolívar y La Perla','Llegada y recorrido guiado'],['Las Peñas y Museo del Cacao',''],['Parque Seminario y Catedral','Almuerzo en la calle Panamá'],['Parque Histórico','Traslado en auto · 20 min']].map((d,i)=>[dLbl(tripDay(i)),d[0],i===TRIP.today-1?(isEN()?`Today · Day ${i+1}`:`Hoy · Día ${i+1}`):d[1]]).map(d=>`<div class="row gap12" style="align-items:flex-start"><span class="chip" style="flex:none">${d[0]}</span><span class="stack gap4"><b style="color:var(--navy)">${d[1]}</b><span class="small muted">${d[2]}</span></span></div>`).join('')}<button class="btn btn-ghost" data-close>Cerrar</button>`,{onOpen:(o,close)=>o.querySelector('#ig').onclick=()=>{close();setTimeout(guideSheet,220);}});
  const ex=document.getElementById('exper');if(ex)ex.onclick=openExperiencias;};
 
 /* Lugares turísticos fuera del mapa ilustrado (se encuentran con el buscador). Datos verificados en fuentes públicas; horarios pueden cambiar. */
