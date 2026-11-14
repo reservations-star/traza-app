@@ -530,6 +530,43 @@ a.list-item,a.list-item *{text-decoration:none}
 .select{user-select:all;background:var(--cream);border-radius:var(--r-s);padding:10px 12px;font-weight:600;color:var(--navy)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (min-width:600px){#app{margin-block:0}}
+
+/* Asistente virtual */
+.ai-fab{position:absolute;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--navy));color:#fff;display:grid;place-items:center;box-shadow:0 8px 20px rgba(22,82,119,.35);z-index:8;border:0}
+.ai-fab::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--sky);opacity:0;animation:aiPulse 2.8s ease-out infinite}
+.ai-fab .svg{width:28px;height:28px}
+@keyframes aiPulse{0%{transform:scale(.9);opacity:.7}70%{transform:scale(1.25);opacity:0}100%{opacity:0}}
+.icon-btn.ai-mapbtn{background:linear-gradient(135deg,var(--sky),var(--navy));color:#fff}
+.screen.ai{background:var(--cream)}
+.ai-top{display:flex;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;border-bottom:1px solid var(--line);background:var(--white)}
+.ai-name{color:var(--navy);font-family:'Source Serif 4',Georgia,serif;font-size:19px}
+.ai-av{width:38px;height:38px;flex:none;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--navy));color:#fff;display:grid;place-items:center}
+.ai-av .svg{width:20px;height:20px}
+.ai-log{display:flex;flex-direction:column;gap:12px;padding:16px}
+.ai-msg{display:flex;gap:8px;align-items:flex-end;max-width:100%;animation:aiIn .25s ease-out}
+.ai-msg .ai-av{width:28px;height:28px}.ai-msg .ai-av .svg{width:15px;height:15px}
+.ai-msg.me{justify-content:flex-end}
+.ai-b{background:var(--white);border:1px solid var(--line);border-radius:18px 18px 18px 6px;padding:10px 13px;font-size:14.5px;line-height:1.45;color:#22313d;max-width:84%}
+.ai-msg.me .ai-b{background:var(--navy);color:#fff;border-color:var(--navy);border-radius:18px 18px 6px 18px}
+.ai-b b{color:var(--navy)}.ai-b em{color:var(--terra-dk);font-style:normal;font-weight:600}
+.ai-list{margin:8px 0 2px;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.ai-list li.nx{color:var(--navy);font-weight:600}
+.ai-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ai-act{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--navy);color:var(--navy);background:var(--white);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600}
+.ai-act:active{background:var(--sky-soft)}
+.ai-card{display:flex;align-items:center;gap:10px;width:100%;text-align:left;margin-top:10px;background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:8px;color:var(--navy)}
+.ai-card img{width:52px;height:52px;border-radius:10px;object-fit:cover;flex:none}
+.ai-card span{display:flex;flex-direction:column;flex:1;min-width:0}.ai-card small{color:var(--gray);font-size:12px}
+.ai-typing{display:flex;gap:4px;padding:14px 16px}.ai-typing i{width:7px;height:7px;border-radius:50%;background:var(--gray-2);animation:aiDot 1s infinite}
+.ai-typing i:nth-child(2){animation-delay:.15s}.ai-typing i:nth-child(3){animation-delay:.3s}
+@keyframes aiDot{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+@keyframes aiIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ai-bottom{background:var(--white);border-top:1px solid var(--line);padding:8px 0 calc(10px + env(safe-area-inset-bottom,0px))}
+.ai-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 16px 8px;scrollbar-width:none}.ai-chips::-webkit-scrollbar{display:none}
+.ai-chip{white-space:nowrap;background:var(--sky-soft);color:var(--navy);border:0;font-weight:600}
+.ai-in{display:flex;gap:8px;padding:0 12px 0 16px}
+.ai-in input{flex:1;min-width:0;border:1px solid var(--line);border-radius:999px;padding:12px 16px;font:inherit;font-size:15px;background:var(--cream)}
+.ai-send{width:46px;height:46px;border-radius:50%;border:0;background:var(--navy);color:#fff;display:grid;place-items:center;flex:none}
 </style>
 </head>
 <body>
@@ -1057,7 +1094,7 @@ SCREENS.inicio=()=>{const vc=visitedCount();const lugares=['penas','malecon','ca
  <div class="stack gap12"><div class="row between"><h2 class="h2">${isClient()?'Para comer':'Para comer cerca'}</h2><span class="small muted">${isClient()?'Aliados ZEROS3':'Gastronomía local'}</span></div>
   ${isClient()?`<div class="hscroll eats">${ALIADOS.map(a=>`<button class="eat-card" data-poin="${esc(a.n)}"><span class="eat-ph${a.logo&&!a.cover?' logo':''}" style="${a.logo?`background:${a.bg}`:''}"><img src="${a.logo||a.img||'img/puerto.webp'}" alt="Logo de ${esc(a.n)}" loading="lazy"><span class="eat-off">${esc(a.offer)}</span></span><span class="eat-b"><b>${esc(a.n)}</b><span class="small muted">${esc(a.tipo||'')} · Puerto Santa Ana</span></span></button>`).join('')}</div>`
   :[['La Central','Restaurante · calle Panamá','fork'],['Bar Juliana','Cócteles · Museo del Cacao','coffee'],['Puerto Ancla','Mariscos · calle Panamá','fork']].map(r=>`<button class="card list-item" data-poin="${esc(r[0])}"><span class="ico">${I(r[2])}</span><span class="stack gap4" style="flex:1;min-width:0"><b style="color:var(--navy)">${r[0]}</b><span class="small muted">${r[1]}</span></span>${I('chev','svg-s')}</button>`).join('')}</div>
- </div></div>${tabbar('inicio')}</section>`;};
+ </div></div><button class="ai-fab" id="aiFab" aria-label="Asistente virtual Trazi">${I('spark')}</button>${tabbar('inicio')}</section>`;};
 function guideSheet(){const g=GUIDE;
  sheet(`<div class="row gap16"><span class="g-av big">${g.ini}</span><div class="stack gap4"><span class="small muted">Tu guía ZEROS3</span><h2 class="h2" style="margin:0">${g.nombre}</h2><span class="small muted">${I('globe','svg-s')} ${g.idiomas}</span></div></div>
  <div class="card stack gap8" style="padding:14px;border:1px solid var(--line)"><b style="color:var(--navy)">${isEN()?`Today · Day ${TRIP.today}`:`Hoy · Día ${TRIP.today}`}</b>
@@ -1337,7 +1374,7 @@ SCREENS.mapa=({sel})=>`<section class="screen"><div class="map-wrap${nightMap?' 
  <div class="map-top"><button class="search" id="srch">${I('search')}Busca lugares, hoteles, cafés…</button>
   <div class="filters" role="group" aria-label="Filtros">${['Todos','Cultura','Mar','Naturaleza','Fotografía','Gastronomía','Hoteles'].map(f=>`<button class="filter" aria-pressed="${f===mapFilter}" data-f="${f}">${f}</button>`).join('')}</div>
   <div style="position:relative;height:40px"><button class="hist-chip" data-lm="historico"><img src="img/historico.webp" alt="">Parque Histórico →</button>${recBar()}</div></div>
- <div class="fabs" id="fabs"><button class="icon-btn${traceMode?' on':''}" id="trz" aria-label="Trazar mi camino" aria-pressed="${traceMode}">${I('route')}</button><button class="icon-btn" id="loc" aria-label="Mi ubicación">${I('target')}</button><button class="icon-btn" id="lay" aria-label="Capas del mapa">${I('layers')}</button>
+ <div class="fabs" id="fabs"><button class="icon-btn ai-mapbtn" id="aiMap" aria-label="Asistente virtual Trazi">${I('spark')}</button><button class="icon-btn${traceMode?' on':''}" id="trz" aria-label="Trazar mi camino" aria-pressed="${traceMode}">${I('route')}</button><button class="icon-btn" id="loc" aria-label="Mi ubicación">${I('target')}</button><button class="icon-btn" id="lay" aria-label="Capas del mapa">${I('layers')}</button>
   <div class="zoom"><button id="zin" aria-label="Acercar">${I('plus')}</button><button id="zout" aria-label="Alejar">${I('minus')}</button></div></div>
  <div class="sheet-card" id="pc"></div><div class="sheet-card" id="tp"></div>${promoStrip()}
 </div>${tabbar('mapa')}</section>`;
@@ -2107,6 +2144,127 @@ try{speechSynthesis.getVoices();}catch(e){}
 /* ?demo en el enlace: empieza desde cero (bienvenida + ingreso), ideal para presentar */
 if(/[?&]demo\b/.test(location.search)){S.onboarded=false;S.mode=null;S.otp=null;save();try{history.replaceState(null,'',location.pathname);}catch(_){}}
 go('splash',{},{replace:true});
+
+
+/* ---------- Asistente virtual «Trazi»: responde con los datos de la app, sin internet ---------- */
+P.spark='<path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>';
+P.send='<path d="M4 12l16-8-6 16-2.5-6.5z"/>';
+const AI={name:'Trazi',log:[],busy:false};
+const ai_T=(es,en)=>isEN()?en:es;
+const ai_nrm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[¿?¡!.,;:()]/g,' ').replace(/\s+/g,' ').trim();
+const ai_has=(t,ws)=>ws.some(w=>(' '+t+' ').includes(' '+w+' ')||(w.includes(' ')&&t.includes(w)));
+const ai_AL={penas:['penas','pena','cerro santa ana','cerro','faro','escalinata','escalones','444','numa pompilio'],
+ malecon:['malecon','perla','la perla','rotonda','simon bolivar','malecon 2000','rueda'],
+ cacao:['cacao','museo del cacao','chocolate','juliana','bar juliana','pepa de oro'],
+ seminario:['seminario','iguana','iguanas','parque de las iguanas'],
+ historico:['historico','parque historico','samborondon'],
+ plaza:['plaza','administracion','municipio','palacio municipal','gobernacion'],
+ puerto:['puerto','puerto santa ana','astillero','julio jaramillo'],
+ catedral:['catedral','misa','misas','destino de luz']};
+function ai_findPlace(t){for(const [id,ws] of Object.entries(ai_AL))if(ai_has(t,ws))return id;return null;}
+const ai_pName=id=>id==='catedral'?(isEN()?'Cathedral':'Catedral'):PLACES[id].nombre;
+function ai_pCard(id){if(id==='catedral')return `<button class="ai-card" data-act="cat"><img src="img/catedral.webp" alt=""><span><b>${ai_pName(id)}</b><small>${esc(TICKETS.catedral.horario||'')}</small></span>${I('chev','svg-s')}</button>`;
+ const p=PLACES[id];return `<button class="ai-card" data-act="ficha:${id}"><img src="${p.img}" alt=""><span><b>${p.nombre}</b><small>${esc(p.horario)} · ${esc(p.precio)}</small></span>${I('chev','svg-s')}</button>`;}
+const ai_btn=(act,label,ic)=>`<button class="ai-act" data-act="${esc(act)}">${ic?I(ic,'svg-s'):''}${label}</button>`;
+const ai_acts=(...b)=>`<div class="ai-acts">${b.join('')}</div>`;
+function ai_nowMin(){const d=new Date();return d.getHours()*60+d.getMinutes();}
+const ai_tMin=s=>{const[a,b]=s.split(':').map(Number);return a*60+b;};
+
+function ai_geoNow(){return new Promise(res=>{if(!navigator.geolocation){res(null);return;}
+ navigator.geolocation.getCurrentPosition(p=>res(p.coords),()=>res(null),{enableHighAccuracy:true,timeout:8000,maximumAge:30000});});}
+
+async function ai_answer(q){const t=ai_nrm(q);const id=ai_findPlace(t);const cli=isClient();
+ if(ai_has(t,['emergencia','auxilio','policia','robo','robaron','ambulancia','911','emergency','accidente','herido']))
+  return ai_T('Si es una emergencia, llama al 911 (ECU 911). Después avisa a ZEROS3 para que te ayudemos.','If it is an emergency, call 911 (ECU 911). Then let ZEROS3 know so we can help.')+ai_acts(ai_btn('tel:911',ai_T('Llamar al 911','Call 911'),'phone'),ai_btn('go:contacto',ai_T('Contactar a ZEROS3','Contact ZEROS3'),'chat'));
+ if(ai_has(t,['gracias','thanks','thank you','genial','perfecto','excelente']))return ai_T('¡Con gusto! Disfruta tu traza por Guayaquil.','You’re welcome! Enjoy your trail through Guayaquil.');
+ if(t.split(' ').length<=3&&ai_has(t,['hola','buenas','buenos dias','buenas tardes','buenas noches','hey','hi','hello','ola']))return ai_greet();
+ if(ai_has(t,['ingles','english','idioma','language','espanol','spanish']))return ai_T('Puedo cambiar el idioma de toda la app.','I can switch the whole app’s language.')+ai_acts(ai_btn('lang',isEN()?'Español':'English','globe'));
+ if(ai_has(t,['hoy','plan','itinerario','que hago','agenda','today','programa','que sigue','siguiente','next']))return ai_planHoy(cli);
+ if(ai_has(t,['guia','pickup','recoge','recogen','recoger','carlos','conductor','chofer']))return cli
+  ?ai_T(`Tu guía es ${GUIDE.nombre}. Hoy te recoge a las ${GUIDE.hoy.hora} en el lobby del Hotel del Parque. Cada día el recorrido empieza con el pickup en tu hotel.`,`Your guide is ${GUIDE.nombre}. Today the pickup is at ${GUIDE.hoy.hora} in the Hotel del Parque lobby. Every day starts with a hotel pickup.`)+ai_acts(ai_btn('wa',ai_T('Escribir a mi guía','Message my guide'),'wa'),ai_btn('guide',ai_T('Ver detalles','See details'),'user'))
+  :ai_T('El guía y el pickup en el hotel son parte de los paquetes de ZEROS3. Si quieres reservar uno, escríbenos.','The guide and hotel pickup are part of ZEROS3 packages. Message us to book one.')+ai_acts(ai_btn('go:contacto',ai_T('Contactar a ZEROS3','Contact ZEROS3'),'chat'));
+ if(ai_has(t,['cerca','cercano','cercanos','alrededor','near','nearby','donde estoy','aqui cerca']))return await ai_cerca();
+ if(ai_has(t,['donde como','que como','para comer','donde puedo comer','donde almorzar','comer','comida','almuerzo','almorzar','cena','cenar','restaurante','restaurantes','hambre','desayuno','food','eat','lunch','dinner','beber','tomar algo','bar']))return ai_comer(id,cli);
+ if(ai_has(t,['sello','sellos','pasaporte','premio','recompensa','stamp','stamps','passport']))return ai_sellos(cli);
+ if(ai_has(t,['recomienda','recomiendame','recomendacion','que visito','que ver','que puedo ver','sugiere','sugerencia','que mas','aburrido','recommend','what to see','what should']))return ai_recomienda(cli);
+ if(ai_has(t,['foto','fotos','recuerdo','recuerdos','camara','photo','memory']))return ai_T('Toma una foto y TRAZA detecta dónde estás para guardarla como recuerdo.','Take a photo and TRAZA detects where you are to save it as a memory.')+ai_acts(ai_btn('go:camara',ai_T('Abrir cámara','Open camera'),'camera'),ai_btn('go:recuerdos',ai_T('Ver mis recuerdos','My memories'),'gallery'));
+ if(ai_has(t,['ruta','rutas','tour','recorrido','arma','armar'])&&!id)return ai_T('Tienes la ruta sugerida del centro o puedes armar la tuya con los lugares que quieras.','Try the suggested downtown route or build your own.')+ai_acts(ai_btn('go:rutas',ai_T('Ver rutas','See routes'),'route'),ai_btn('go:arma',ai_T('Arma tu ruta','Build your route'),'plus'));
+ if(ai_has(t,['agencia','zeros3','contactar','contacto','whatsapp','telefono','llamar','reservar','reserva','paquete']))return ai_T('Puedes escribir o llamar a ZEROS3 desde aquí.','You can message or call ZEROS3 from here.')+ai_acts(ai_btn('go:contacto',ai_T('Contactar a ZEROS3','Contact ZEROS3'),'chat'));
+ if(ai_has(t,['bano','banos','servicios higienicos','toilet','restroom','bathroom']))return ai_T('No tengo la lista de baños públicos. En el Malecón Simón Bolívar hay baños a lo largo del paseo, y los museos y centros comerciales también tienen.','I don’t have a list of public restrooms. The Malecón Simón Bolívar has restrooms along the promenade, and museums and malls have them too.');
+ if(id){
+  if(ai_has(t,['horario','hora','horas','abre','abren','abierto','abierta','cierra','cierran','open','close','hours','misa','misas','cuando']))return ai_horario(id);
+  if(ai_has(t,['precio','precios','cuesta','cuanto','entrada','pagar','pago','gratis','costo','price','cost','ticket','tickets','vale']))return ai_precio(id);
+  if(ai_has(t,['llegar','llego','como voy','ir','voy','camino','direccion','donde queda','donde esta','ubicacion','how do i get','directions','get to']))return ai_llegar(id);
+  if(ai_has(t,['historia','audio','escuchar','cuentame','cuenta','sobre','que es','info','informacion','story','about']))return ai_info(id,true);
+  return ai_info(id,false);}
+ if(ai_has(t,['horario','abre','abierto','cierra','hours','open']))return ai_T('Estos son los horarios de los lugares de TRAZA:','These are the opening hours of TRAZA places:')+`<ul class="ai-list">${Object.values(PLACES).map(p=>`<li><b>${p.nombre}:</b> ${esc(p.horario)}</li>`).join('')}<li><b>${ai_pName('catedral')}:</b> ${esc(TICKETS.catedral.horario)}</li></ul>`;
+ if(ai_has(t,['precio','cuesta','cuanto','entrada','gratis','price','cost']))return ai_T('Casi todo es gratis. Solo el Parque Histórico ($4 adultos, $2 niños) y el recorrido de la Catedral ($3) tienen costo.','Almost everything is free. Only the Parque Histórico ($4 adults, $2 kids) and the Cathedral tour ($3) charge.');
+ return ai_T('No tengo esa información todavía. Puedo ayudarte con horarios, precios, cómo llegar, qué hay cerca, dónde comer o tu plan de hoy. Si es otra cosa, tu guía o ZEROS3 te ayudan.','I don’t have that information yet. I can help with hours, prices, directions, what’s nearby, where to eat or today’s plan. For anything else, your guide or ZEROS3 can help.')
+  +ai_acts(cli?ai_btn('wa',ai_T('Escribir a mi guía','Message my guide'),'wa'):'',ai_btn('go:contacto',ai_T('Contactar a ZEROS3','Contact ZEROS3'),'chat'));}
+
+function ai_greet(){const n=(S.name||'').split(' ')[0];return ai_T(`¡Hola${n?' '+esc(n):''}! Soy ${AI.name}, tu asistente de TRAZA. Pregúntame por horarios, precios, cómo llegar, qué hay cerca o tu plan de hoy. Funciono incluso sin internet.`,`Hi${n?' '+esc(n):''}! I’m ${AI.name}, your TRAZA assistant. Ask me about hours, prices, directions, what’s nearby or today’s plan. I work even without internet.`);}
+function ai_planHoy(cli){if(!cli)return ai_T('Te sugiero la ruta del centro: Las Peñas, Malecón, Museo del Cacao y Parque Seminario. Se recorre a pie en unas 4 horas.','I suggest the downtown route: Las Peñas, Malecón, Cacao Museum and Parque Seminario. About 4 hours on foot.')+ai_acts(ai_btn('go:rutas',ai_T('Ver la ruta','See the route'),'route'));
+ const n=ai_nowMin();const nx=HOY.findIndex(h=>ai_tMin(h.t)>=n-30);
+ return ai_T(`Hoy es el día ${TRIP.today} de tu viaje (${dLbl(tripDay(TRIP.today-1))}):`,`Today is day ${TRIP.today} of your trip (${dLbl(tripDay(TRIP.today-1))}):`)
+  +`<ul class="ai-list">${HOY.map((h,k)=>`<li${k===nx?' class="nx"':''}><b>${h.t}</b> ${tr(h.n)}${k===nx?` · <em>${ai_T('lo siguiente','up next')}</em>`:''}</li>`).join('')}</ul>`
+  +ai_acts(ai_btn('itin',ai_T('Ver itinerario completo','Full itinerary'),'book'),ai_btn('guide',ai_T('Mi guía','My guide'),'user'));}
+async function ai_cerca(){const c=await ai_geoNow();
+ if(!c)return ai_T('No pude leer tu ubicación. Activa el permiso de ubicación del celular y vuelve a preguntar.','I couldn’t read your location. Turn on location permission and ask again.');
+ const L=[...Object.values(PLACES).map(p=>({id:p.id,d:dist(c.latitude,c.longitude,p.lat,p.lng)})),{id:'catedral',d:dist(c.latitude,c.longitude,-2.1958,-79.8836)}].sort((a,b)=>a.d-b.d);
+ if(L[0].d>6000)return ai_T(`Estás a ${fmtKm(L[0].d)} de ${ai_pName(L[0].id)}, fuera del centro de Guayaquil. Cuando llegues te digo qué tienes cerca.`,`You are ${fmtKm(L[0].d)} from ${ai_pName(L[0].id)}, outside downtown Guayaquil. When you arrive I’ll tell you what’s nearby.`)+ai_acts(ai_btn('go:mapa',ai_T('Ver el mapa','Open map'),'map'));
+ return ai_T('Esto es lo más cercano a ti:','Here’s what’s closest to you:')+L.slice(0,3).map(x=>ai_pCard(x.id).replace('</small>',` · ${fmtKm(x.d)}</small>`)).join('');}
+function ai_comer(id,cli){const near=id&&PLACES[id]&&PLACES[id].rest&&PLACES[id].rest.length?ai_T(`Cerca de ${ai_pName(id)}: `,`Near ${ai_pName(id)}: `)+PLACES[id].rest.map(r=>r[0]).join(', ')+'.<br>':'';
+ return near+(cli?ai_T('Con tu viaje ZEROS3 tienes beneficios en estos restaurantes aliados de Puerto Santa Ana:','Your ZEROS3 trip includes perks at these partner restaurants in Puerto Santa Ana:'):ai_T('Estos restaurantes de Puerto Santa Ana son aliados de TRAZA:','These Puerto Santa Ana restaurants are TRAZA partners:'))
+  +`<ul class="ai-list">${ALIADOS.map(a=>`<li><b>${esc(a.n)}</b> · ${esc(a.tipo)}${cli?` · <em>${esc(a.offer)}</em>`:''}</li>`).join('')}</ul>`
+  +ai_acts(...ALIADOS.slice(0,2).map(a=>ai_btn('poi:'+a.n,a.n.split(' ')[0]==='Trattoria'?'La Scarpetta':a.n.replace(' Cucina Italiana',''),'fork')),ai_btn('go:mapa',ai_T('Ver en el mapa','See on map'),'map'));}
+function ai_sellos(cli){if(!cli)return ai_T('El pasaporte de sellos es para viajeros de ZEROS3: al visitar los 5 lugares ganan 15 % de descuento en su próximo viaje.','The stamp passport is for ZEROS3 travelers: visiting all 5 places earns 15% off their next trip.')+ai_acts(ai_btn('go:contacto',ai_T('Quiero viajar con ZEROS3','Travel with ZEROS3'),'chat'));
+ const got=STAMP_IDS.filter(i=>S.visited[i]);const miss=STAMP_IDS.filter(i=>!S.visited[i]);
+ if(!miss.length)return ai_T('¡Completaste los 5 sellos! Tienes 15 % de descuento en tu próximo viaje con ZEROS3.','You completed all 5 stamps! You have 15% off your next ZEROS3 trip.')+ai_acts(ai_btn('go:pasaporte',ai_T('Ver pasaporte','See passport'),'gift'));
+ return ai_T(`Tienes ${got.length} de 5 sellos. Te faltan: ${miss.map(ai_pName).join(', ')}. Al completar los 5 ganas 15 % de descuento en tu próximo viaje.`,`You have ${got.length} of 5 stamps. Missing: ${miss.map(ai_pName).join(', ')}. Complete all 5 for 15% off your next trip.`)+ai_acts(ai_btn('go:pasaporte',ai_T('Ver pasaporte','See passport'),'gift'),ai_btn('ficha:'+miss[0],ai_pName(miss[0]),'pin'));}
+function ai_recomienda(cli){const miss=STAMP_IDS.filter(i=>!(cli&&S.visited[i]));const h=new Date().getHours();
+ let pick=miss.find(i=>{const hr=PLACES[i].horario;return !/10:00 – 17:00/.test(hr)||(h>=10&&h<17);})||miss[0]||'puerto';
+ if(h>=17&&miss.includes('malecon'))pick='malecon';
+ const why={penas:ai_T('sube al faro al atardecer: la vista del río es la mejor de la ciudad','climb to the lighthouse at sunset: the best river view in town'),malecon:ai_T('camina hasta La Rotonda y sube a La Perla para ver el río desde arriba','walk to La Rotonda and ride La Perla for a view over the river'),cacao:ai_T('conoce la historia de la pepa de oro y termina en el Bar Juliana','learn the story of the golden bean and finish at Bar Juliana'),seminario:ai_T('las iguanas te esperan frente a la Catedral','the iguanas are waiting in front of the Cathedral'),historico:ai_T('casas patrimoniales, manglar y animales, a 20 min en auto','heritage houses, mangroves and wildlife, 20 min by car'),puerto:ai_T('cierra el día en Puerto Santa Ana, con restaurantes frente al río','end the day at Puerto Santa Ana, with riverside restaurants')};
+ return ai_T(`Te recomiendo ${ai_pName(pick)}: ${why[pick]||''}.`,`I recommend ${ai_pName(pick)}: ${why[pick]||''}.`)+ai_pCard(pick)+ai_acts(ai_btn('how:'+pick,ai_T('Cómo llegar','Directions'),'nav'),ai_btn('ficha:'+pick,ai_T('Escuchar su historia','Hear its story'),'head'));}
+function ai_horario(id){if(id==='catedral'){const m=typeof MISAS!=='undefined'?MISAS:null;return ai_T(`Catedral: ${TICKETS.catedral.horario}. La iglesia está abierta para visitar sin límite de tiempo.`,`Cathedral: ${TICKETS.catedral.horario}. The church is open to visit with no time limit.`)+ai_acts(ai_btn('cat',ai_T('Ver horario de misas','Mass schedule'),'clock'));}
+ const p=PLACES[id];const tk=TICKETS[id]||{};return `<b>${p.nombre}</b>: ${esc(tk.horario||p.horario)}.`+(tk.duracion?ai_T(` Tiempo de visita: ${esc(tk.duracion)}.`,` Visit time: ${esc(tk.duracion)}.`):'')+ai_pCard(id);}
+function ai_precio(id){const tk=TICKETS[id]||{};if(id==='catedral')return ai_T(`Recorrido Destino de Luz: ${tk.adulto}; niños y adultos mayores: ${tk.reducido}. Incluye ${tk.incluye.toLowerCase()}.`,`Destino de Luz tour: ${tk.adulto}; kids and seniors: ${tk.reducido}. Includes ${tk.incluye.toLowerCase()}.`)+ai_acts(ai_btn('cat',ai_T('Ver Catedral','See Cathedral'),'ticket'));
+ const p=PLACES[id];return `<b>${p.nombre}</b> · ${ai_T('adultos','adults')}: ${esc(tk.adulto||p.precio)}${tk.reducido&&tk.reducido!==tk.adulto?` · ${esc(tk.reducido)}`:''}.`+(tk.incluye?ai_T(` Incluye: ${esc(tk.incluye)}.`,` Includes: ${esc(tk.incluye)}.`):'')+ai_pCard(id);}
+function ai_llegar(id){if(id==='catedral')return ai_T('La Catedral está frente al Parque Seminario, en Chimborazo y 10 de Agosto.','The Cathedral faces Parque Seminario, at Chimborazo and 10 de Agosto.')+ai_acts(ai_btn('how:seminario',ai_T('Trazar camino','Get directions'),'nav'));
+ return (id==='historico'?ai_T('El Parque Histórico está en Samborondón, cruzando el puente: unos 20 min en auto.','Parque Histórico is in Samborondón, across the bridge: about 20 min by car.'):ai_T(`Te trazo el camino a ${ai_pName(id)} en el mapa.`,`I’ll draw the way to ${ai_pName(id)} on the map.`))+ai_acts(ai_btn('how:'+id,ai_T('Trazar camino','Get directions'),'nav'),ai_btn('ficha:'+id,ai_T('Ver ficha','See place'),'pin'));}
+function ai_info(id,story){if(id==='catedral')return ai_T('La Catedral Metropolitana está frente al Parque Seminario. Tiene el recorrido Destino de Luz por sus vitrales y torres.','The Metropolitan Cathedral faces Parque Seminario. Its Destino de Luz tour covers the stained glass and towers.')+ai_pCard(id);
+ const p=PLACES[id];return esc(tr(p.sobre))+ai_pCard(id)+ai_acts(ai_btn('ficha:'+id,ai_T('Escuchar su historia','Hear its story'),'head'),ai_btn('how:'+id,ai_T('Cómo llegar','Directions'),'nav'));}
+
+const AI_Q=()=>isClient()?[ai_T('¿Qué hago hoy?','What’s my plan today?'),ai_T('¿Qué hay cerca?','What’s nearby?'),ai_T('¿Dónde como?','Where can I eat?'),ai_T('Recomiéndame un lugar','Recommend a place'),ai_T('Mis sellos','My stamps'),ai_T('Mi guía','My guide')]
+ :[ai_T('¿Qué hay cerca?','What’s nearby?'),ai_T('Recomiéndame un lugar','Recommend a place'),ai_T('¿Dónde como?','Where can I eat?'),ai_T('Horarios','Opening hours'),ai_T('¿Cuánto cuesta?','Prices'),ai_T('Contactar a ZEROS3','Contact ZEROS3')];
+const aiAvatar=()=>`<span class="ai-av">${I('spark')}</span>`;
+function aiMsgHTML(m){return m.me?`<div class="ai-msg me"><div class="ai-b">${esc(m.h)}</div></div>`:`<div class="ai-msg">${aiAvatar()}<div class="ai-b">${m.h}</div></div>`;}
+SCREENS.asistente=()=>{if(!AI.log.length)AI.log.push({h:ai_greet()});
+ return `<section class="screen ai"><div class="ai-top"><button class="icon-btn" data-back aria-label="Volver" style="box-shadow:none;background:none">${I('back')}</button>
+ ${aiAvatar()}<div class="stack" style="min-width:0"><b class="ai-name">${AI.name}</b><span class="small muted">${ai_T('Asistente de TRAZA · funciona sin internet','TRAZA assistant · works offline')}</span></div></div>
+ <div class="scroll" id="aiScroll"><div class="ai-log" id="aiLog">${AI.log.map(aiMsgHTML).join('')}</div></div>
+ <div class="ai-bottom"><div class="ai-chips" id="aiChips">${AI_Q().map(q=>`<button class="chip ai-chip" data-q="${esc(q)}">${q}</button>`).join('')}</div>
+ <form class="ai-in" id="aiForm" autocomplete="off"><input id="aiTx" type="text" maxlength="160" placeholder="${ai_T('Escribe tu pregunta…','Type your question…')}" aria-label="${ai_T('Pregunta para el asistente','Question for the assistant')}"><button class="ai-send" aria-label="${ai_T('Enviar','Send')}">${I('send')}</button></form></div></section>`;};
+async function aiAsk(q){q=String(q||'').trim();if(!q||AI.busy)return;AI.busy=true;
+ const log=document.getElementById('aiLog');const sc=document.getElementById('aiScroll');
+ AI.log.push({me:true,h:q});log.insertAdjacentHTML('beforeend',aiMsgHTML({me:true,h:q}));
+ log.insertAdjacentHTML('beforeend',`<div class="ai-msg" id="aiTyping">${aiAvatar()}<div class="ai-b ai-typing"><i></i><i></i><i></i></div></div>`);sc.scrollTop=sc.scrollHeight;
+ const t0=Date.now();let h;try{h=await ai_answer(q);}catch(e){h=ai_T('Algo salió mal. Intenta de nuevo.','Something went wrong. Try again.');}
+ await new Promise(r=>setTimeout(r,Math.max(0,650-(Date.now()-t0))));
+ const ty=document.getElementById('aiTyping');if(ty)ty.remove();AI.log.push({h});if(AI.log.length>40)AI.log.splice(1,AI.log.length-40);
+ if(document.getElementById('aiLog')){document.getElementById('aiLog').insertAdjacentHTML('beforeend',aiMsgHTML({h}));const s2=document.getElementById('aiScroll');s2.scrollTop=s2.scrollHeight;}
+ AI.busy=false;}
+AFTER.asistente=()=>{const sc=document.getElementById('aiScroll');sc.scrollTop=sc.scrollHeight;
+ document.getElementById('aiForm').onsubmit=e=>{e.preventDefault();const i=document.getElementById('aiTx');const v=i.value;i.value='';aiAsk(v);};
+ document.getElementById('aiChips').onclick=e=>{const b=e.target.closest('[data-q]');if(b)aiAsk(b.dataset.q);};
+ document.getElementById('aiLog').onclick=e=>{const b=e.target.closest('[data-act]');if(!b)return;e.stopPropagation();const [k,...r]=b.dataset.act.split(':');const v=r.join(':');
+  if(k==='ficha')go('ficha',{id:v});else if(k==='how')howTo(v);else if(k==='go')go(v);else if(k==='poi'){const i=poiByName(v);if(i>=0)poiSheet(i,null);}
+  else if(k==='cat'){if(typeof catedralSheet==='function')catedralSheet();}
+  else if(k==='tel')location.href='tel:'+v;else if(k==='guide')guideSheet();
+  else if(k==='itin'){go('inicio');setTimeout(()=>{const it=document.getElementById('itin');if(it)it.click();},400);}
+  else if(k==='wa'){if(pendingNum(CONTACT.wa)){toast('Número de WhatsApp pendiente');return;}window.open('https://wa.me/'+CONTACT.wa.replace(/\D/g,'')+'?text='+encodeURIComponent('Hola '+GUIDE.nombre+', soy '+S.name+' (viaje con ZEROS3).'),'_blank');}
+  else if(k==='lang'){S.lang=isEN()?'ES':'EN';save();AI.log=[];render();}};};
+document.addEventListener('click',e=>{const b=e.target.closest('#aiFab,#aiMap');if(b){e.stopPropagation();go('asistente');}});
 
 /* ---------- Sin internet: la app se guarda en el celular (service worker) ---------- */
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
