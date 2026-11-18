@@ -670,6 +670,47 @@ function dLbl(d,wd=true){const E=isEN();const o=wd?{weekday:'short',day:'numeric
  let t=d.toLocaleDateString(E?'en-US':'es-EC',o).replace(/\./g,'').replace(',','');return E?t:t.replace(/^\w/,c=>c.toUpperCase());}
 function tripRange(){const a=tripDay(0),b=tripDay(TRIP.n-1);const E=isEN();
  if(a.getMonth()===b.getMonth())return E?`${dLbl(a,false)} – ${b.getDate()}`:`${a.getDate()} – ${dLbl(b,false)}`;return `${dLbl(a,false)} – ${dLbl(b,false)}`;}
+/* ---------- Base de datos simulada de ZEROS3 (compartida por la app y el panel de agencia en el mismo dispositivo) ---------- */
+const TDB_KEY='traza_db_v1';
+function tdbIso(off){const d=new Date();d.setDate(d.getDate()+off);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function tdbSeed(){const T=tdbIso,now=Date.now(),h=3600e3;
+ return {v:1,seq:6,
+  usuarios:[{id:'op',rol:'operador',nombre:'Dennisse Santos',cargo:'Reservas y operaciones',pin:'0303'},
+   {id:'maybel',rol:'guia',nombre:'Maybel Gálvez',cargo:'Guía ZEROS3',pin:'1111',tel:'+593 99 850 5181'},
+   {id:'samantha',rol:'guia',nombre:'Samantha Muñoz',cargo:'Guía ZEROS3',pin:'2222',tel:'+593 96 778 4572'}],
+  pasajeros:[
+   {id:'P1',codigo:'ZS3-0001',nombre:'Dennisse Santos',email:'dennissesantos10@gmail.com',alt:'dsantoss2@unemi.edu.ec',tel:'+593 99 269 7596',hotel:'oroverde',guia:'maybel',pax:1,llegada:T(-1),salida:T(1),
+    pickups:[{id:'k1',d:T(0),t:'08:30',k:'t',n:'Las Peñas y Museo del Cacao',e:'pendiente'},{id:'k2',d:T(1),t:'04:45',k:'v',a:'LATAM',f:'LA1362',rt:'GYE-UIO',n:'Lleva tu documento de identidad',e:'pendiente'}]},
+   {id:'P2',codigo:'ZS3-0002',nombre:'Ana López',email:'ana.lopez@gmail.com',tel:'+593 98 123 4567',hotel:'hilton',guia:'samantha',pax:2,llegada:T(-2),salida:T(2),
+    pickups:[{id:'k3',d:T(0),t:'09:00',k:'t',n:'Parque Histórico',e:'recogido'},{id:'k4',d:T(1),t:'08:30',k:'t',n:'Malecón y Plaza de la Administración',e:'pendiente'},{id:'k5',d:T(2),t:'10:40',k:'v',a:'Avianca',f:'AV8372',rt:'GYE-BOG',e:'pendiente'}]},
+   {id:'P3',codigo:'ZS3-0003',nombre:'Grupo Canadá 2026 · Emily Brown',email:'emily.brown@gmail.com',tel:'+1 416 555 0182',hotel:'wyndham',guia:'maybel',pax:8,llegada:T(-1),salida:T(3),
+    pickups:[{id:'k6',d:T(0),t:'14:00',k:'t',n:'Malecón Simón Bolívar y La Perla',e:'pendiente'},{id:'k7',d:T(1),t:'09:00',k:'t',n:'Parque Histórico',e:'pendiente'},{id:'k8',d:T(3),t:'06:10',k:'v',a:'LATAM',f:'LA1428',rt:'GYE-GPS',e:'pendiente'}]},
+   {id:'P4',codigo:'ZS3-0004',nombre:'María José Torres',email:'mj.torres@outlook.com',tel:'+593 96 555 2210',hotel:'parque',guia:'samantha',pax:3,llegada:T(0),salida:T(4),
+    pickups:[{id:'k9',d:T(0),t:'11:20',k:'x',n:'Recepción en el aeropuerto · llegada desde Quito',e:'pendiente'},{id:'k10',d:T(1),t:'09:30',k:'t',n:'Las Peñas y Malecón',e:'pendiente'}]},
+   {id:'P5',codigo:'ZS3-0005',nombre:'Jorge Andrade',email:'jorge.andrade@yahoo.com',tel:'+593 99 777 1020',hotel:'unipark',guia:'',pax:1,llegada:T(1),salida:T(3),
+    pickups:[{id:'k11',d:T(1),t:'15:30',k:'x',n:'Recepción en el aeropuerto',e:'pendiente'}]}],
+  actividad:[
+   {pax:'P2',ts:now-30*h,tipo:'acceso',det:'Entró a TRAZA con su correo'},
+   {pax:'P2',ts:now-29*h,tipo:'guia',det:'Eligió a Samantha Muñoz'},
+   {pax:'P2',ts:now-26*h,tipo:'sello',det:'Malecón Simón Bolívar',lugar:'malecon'},
+   {pax:'P2',ts:now-25*h,tipo:'qr',det:'21 Gramos · 10% de descuento'},
+   {pax:'P2',ts:now-3*h,tipo:'sello',det:'Parque Histórico',lugar:'historico'},
+   {pax:'P2',ts:now-2.5*h,tipo:'recuerdo',det:'Publicó un recuerdo',lugar:'historico'},
+   {pax:'P3',ts:now-20*h,tipo:'acceso',det:'Entró a TRAZA con su correo'},
+   {pax:'P3',ts:now-19*h,tipo:'ruta',det:'Armó su ruta: Las Peñas → Malecón → Parque Seminario'},
+   {pax:'P3',ts:now-18*h,tipo:'sello',det:'Las Peñas',lugar:'penas'},
+   {pax:'P3',ts:now-17*h,tipo:'recorrido',det:'Grabó un recorrido de 2,1 km'},
+   {pax:'P3',ts:now-16*h,tipo:'asistente',det:'¿Dónde como cerca del Malecón?'},
+   {pax:'P1',ts:now-5*h,tipo:'acceso',det:'Entró a TRAZA con su correo'}]};}
+function tdbLoad(){try{const d=JSON.parse(localStorage.getItem(TDB_KEY)||'null');if(d&&d.v===1)return d;}catch(_){}const d=tdbSeed();tdbSave(d);return d;}
+function tdbSave(d){try{localStorage.setItem(TDB_KEY,JSON.stringify(d));}catch(_){}}
+function tdbReset(){const d=tdbSeed();tdbSave(d);return d;}
+function tdbFindPax(email){email=String(email||'').trim().toLowerCase();if(!email)return null;return tdbLoad().pasajeros.find(p=>p.email.toLowerCase()===email||(p.alt||'').toLowerCase()===email)||null;}
+function tdbLog(paxId,tipo,det,lugar){if(!paxId)return;const d=tdbLoad();d.actividad.push({pax:paxId,ts:Date.now(),tipo,det:String(det||'').slice(0,140),lugar:lugar||''});if(d.actividad.length>2000)d.actividad=d.actividad.slice(-2000);tdbSave(d);}
+function tdbUpdatePax(paxId,fn){const d=tdbLoad();const p=d.pasajeros.find(x=>x.id===paxId);if(p){fn(p);tdbSave(d);}return p;}
+function paxToRes(p){S.paxId=p.id;S.res={h:p.hotel,hn:p.hotelOtro||'',g:p.guia||'',p:(p.pickups||[]).map(k=>({d:k.d,t:k.t,k:k.k||'t',f:k.f||'',a:k.a||'',rt:k.rt||'',n:k.n||''}))};if(p.guia)S.guide=p.guia;}
+function refreshPax(){if(!S.paxId)return;const p=tdbLoad().pasajeros.find(x=>x.id===S.paxId);if(p){paxToRes(p);save();}}
+function logAct(tipo,det,lugar){if(S.paxId)tdbLog(S.paxId,tipo,det,lugar);}
 /* Hoteles con los que trabaja ZEROS3 (la agencia lo asigna desde agencia.html o el viajero lo elige) */
 const HOTELS=[{id:'parque',n:'Hotel del Parque',z:'Samborondón · Parque Histórico'},{id:'oroverde',n:'Hotel Oro Verde',z:'Centro · Av. 9 de Octubre'},
  {id:'hilton',n:'Hilton Colón Guayaquil',z:'Norte · Av. Francisco de Orellana'},{id:'sheraton',n:'Sheraton Guayaquil',z:'Norte · junto al Mall del Sol'},
@@ -698,7 +739,7 @@ function curGuide(){return GUIDES.find(g=>g.id===S.guide)||null;}
 function guideWA(g,msg){g=g||curGuide()||GUIDES[0];window.open('https://wa.me/'+g.tel.replace(/\D/g,'')+'?text='+encodeURIComponent(msg||('Hola '+g.nombre.split(' ')[0]+', soy '+S.name+' (viaje con ZEROS3).')),'_blank');}
 const GUIDE0={hora:'8:30',lugar:'Pickup en el lobby del Hotel del Parque',poi:'Hotel del Parque',place:'penas',plan:'Las Peñas y Museo del Cacao'};
 const GUIDE={get nombre(){const g=curGuide();return g?g.nombre:(isEN()?'Choose your guide':'Elige tu guía');},get ini(){const g=curGuide();return g?g.ini:'+';},get tel(){const g=curGuide();return g?g.tel:'';},idiomas:'',get hoy(){const p=nextPickup();if(!p)return GUIDE0;const h=resHotel();
- return {hora:fmtHora(p.t),dia:fmtDia(p),lugar:pkLugar(),poi:h.n,place:'penas',plan:pkTitulo(p)+(p.rt?' · '+pkRuta(p):''),pk:p};}};
+ return {hora:fmtHora(p.t),dia:fmtDia(p),lugar:p.k==='x'?(p.n||(isEN()?'Transfer':'Traslado')):pkLugar(),poi:h.n,place:'penas',plan:pkTitulo(p)+(p.rt?' · '+pkRuta(p):''),pk:p};}};
 const SEED_MEM=[
  {id:'s1',place:'penas',img:'img/gal/penas-portada.webp',text:'Atardecer subiendo los 444 escalones. La brisa del río y los colores de las casas hacen que cada paso valga la pena.',date:'2026-10-13T17:40',pub:false,likes:24,seed:true},
  {id:'s2',place:'malecon',img:'img/gal/malecon-4.webp',text:'Paseo matutino junto al río Guayas, con un jugo fresco frente al agua.',date:'2026-10-12T09:15',pub:true,likes:48,seed:true}];
@@ -1087,6 +1128,9 @@ SCREENS.ingreso=()=>`<section class="screen"><div class="scroll stack"><div clas
 AFTER.ingreso=()=>{
  document.getElementById('f').onsubmit=e=>{e.preventDefault();const v=document.getElementById('email').value.trim();
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){const m=document.getElementById('msg');m.textContent='Escribe un correo válido, por ejemplo: nombre@gmail.com';m.style.color='var(--terra-dk)';const fl=document.querySelector('#f .field');fl.classList.remove('shake');void fl.offsetWidth;fl.classList.add('shake');try{navigator.vibrate&&navigator.vibrate(60);}catch(_){}return;}
+  const pax=tdbFindPax(v);
+  if(!pax){const m=document.getElementById('msg');m.innerHTML=isEN()?'We couldn’t find a ZEROS3 booking with this email. Check it’s the email of your booking, explore without a booking or <button class="lnk" data-go="contacto">contact ZEROS3</button>.':'No encontramos una reserva de ZEROS3 con este correo. Revisa que sea el correo de tu reserva, explora sin reserva o <button class="lnk" data-go="contacto">escríbenos</button>.';m.style.color='var(--terra-dk)';const fl=document.querySelector('#f .field');fl.classList.remove('shake');void fl.offsetWidth;fl.classList.add('shake');return;}
+  S.pendingPax=pax.id;
   S.email=v;save();const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;btn.innerHTML='<span class="spin"></span>Enviando código…';
   sendCode(v).then(st=>{btn.disabled=false;if(st==='error'){const m=document.getElementById('msg');m.textContent=navigator.onLine?'No pudimos enviar el código. Revisa tu conexión e inténtalo otra vez.':'Sin conexión: necesitas internet solo para recibir el código. Mientras tanto puedes explorar sin reserva.';m.style.color='var(--terra-dk)';btn.innerHTML='Enviar código '+I('chev','svg-s');return;}go('verif',{st});});};
  document.getElementById('exp').onclick=()=>{S.mode='explorador';S.name='Explorador';save();go('inicio',{},{replace:true});};
@@ -1107,7 +1151,9 @@ AFTER.verif=()=>{const ins=[...document.querySelectorAll('#otp input')];ins[0].f
   inp.onpaste=e=>{const t=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,6);if(t){e.preventDefault();t.split('').forEach((c,j)=>ins[j]&&(ins[j].value=c));chk();}};});
  document.getElementById('ok').onclick=()=>{const code=ins.map(i=>i.value).join('');if(code.length<6){toast('Completa los 6 dígitos');return;}
   if(mailReady()&&!codeOk(code)){const m=document.getElementById('vmsg');m.textContent='El código no es correcto o ya venció. Revisa tu correo o pide uno nuevo.';m.style.color='var(--terra-dk)';const ot=document.getElementById('otp');ot.classList.remove('shake');void ot.offsetWidth;ot.classList.add('shake');try{navigator.vibrate&&navigator.vibrate([60,40,60]);}catch(_){}ins.forEach(i=>i.value='');ins[0].focus();chk();return;}
-  S.otp=null;S.name=nameFromEmail(S.email);S.askName=true;S.mode='cliente';save();
+  S.otp=null;S.name=nameFromEmail(S.email);S.askName=true;S.mode='cliente';
+  {const px=S.pendingPax&&tdbLoad().pasajeros.find(x=>x.id===S.pendingPax);if(px){paxToRes(px);S.name=px.nombre.split(' · ').pop().split(' ')[0];S.askName=false;S.pendingPax=null;tdbLog(px.id,'acceso','Entró a TRAZA con su correo');}}
+  save();
   ins.forEach((x,j)=>{x.style.setProperty('--j',j);x.classList.add('ok');});okb.innerHTML=I('check','svg-s')+(isEN()?'Verified':'Verificado');okb.classList.add('okb');try{navigator.vibrate&&navigator.vibrate(30);}catch(_){}
   setTimeout(()=>{stack=[];go('inicio',{},{replace:true});},750);};
  const rs=document.getElementById('resend');if(rs)rs.onclick=async()=>{rs.disabled=true;rs.textContent='Enviando…';const st=await sendCode(S.email);toast(st==='sent'?'Te enviamos un código nuevo':(navigator.onLine?'No pudimos enviar el código':'Sin conexión: conéctate para recibir el código'));
@@ -1122,7 +1168,7 @@ function hoyList(){const r=S.res;if(!r)return HOY0;const t=new Date();const td=`
  const ps=(r.p||[]).filter(p=>p.d===td).sort((a,b)=>pkDate(a)-pkDate(b));const h=resHotel();
  if(!ps.length){if(!(r.p||[]).length)return [{...HOY0[0],poi:h.n,d:(isEN()?'Your guide picks you up at the ':'Tu guía te recoge en el lobby del ')+h.n+(isEN()?' lobby':'')},...HOY0.slice(1)];
   const nx=nextPickup();return [{t:'—',poi:h.n,n:isEN()?'Free day to explore':'Día libre para explorar',d:nx?(isEN()?'Next pickup: ':'Próximo pickup: ')+fmtDia(nx)+' '+fmtHora(nx.t)+(nx.k==='v'?' · '+[nx.a,nx.f].filter(Boolean).join(' '):''):(isEN()?'Use the map and audio stories':'Usa el mapa y las historias en audio')}];}
- const out=ps.map(p=>({t:p.t.replace(/^0/,''),poi:h.n,n:p.k==='v'?(isEN()?'Pickup to the airport':'Pickup al aeropuerto'):(isEN()?'Hotel pickup':'Pickup en tu hotel'),d:p.k==='v'?([p.a,p.f].filter(Boolean).join(' ')+(p.rt?' · '+pkRuta(p):'')):(isEN()?'Lobby of ':'Lobby del ')+h.n,tag:p.k==='v'?(isEN()?'Flight':'Vuelo'):'Guía'}));
+ const out=ps.map(p=>({t:p.t.replace(/^0/,''),poi:h.n,n:p.k==='v'?(isEN()?'Pickup to the airport':'Pickup al aeropuerto'):p.k==='x'?(isEN()?'Transfer':'Traslado'):(isEN()?'Hotel pickup':'Pickup en tu hotel'),d:p.k==='v'?([p.a,p.f].filter(Boolean).join(' ')+(p.rt?' · '+pkRuta(p):'')):p.k==='x'?(p.n||''):(isEN()?'Lobby of ':'Lobby del ')+h.n,tag:p.k==='v'?(isEN()?'Flight':'Vuelo'):p.k==='x'?(isEN()?'Transfer':'Traslado'):'Guía'}));
  return ps.some(p=>p.k==='v')?out:[...out,...HOY0.slice(1)];}
 const tdKey=k=>'d2-'+k;
 function tdDone(h,k){const t=(S.todo||{})[tdKey(k)];return t===undefined?!!(h.place&&vis(h.place)):t;}
@@ -1160,9 +1206,9 @@ SCREENS.inicio=()=>{const vc=visitedCount();const lugares=['penas','malecon','ca
  </div></div><button class="ai-fab" id="aiFab" aria-label="Asistente virtual Trazi">${I('spark')}</button>${tabbar('inicio')}</section>`;};
 function pkCards(){const r=S.res,ps=(r.p||[]).slice().sort((a,b)=>pkDate(a)-pkDate(b)),nx=nextPickup(),h=resHotel();
  return `<div class="card stack gap8" style="padding:14px;border:1px solid var(--line)"><div class="row between"><b style="color:var(--navy)">${isEN()?'Your hotel':'Tu hotel'}</b><button class="ct-chg small" id="chgh">${isEN()?'Change':'Cambiar'}</button></div><div class="row gap8 small" data-notr>${I('bed','svg-s')}<span><b>${esc(h.n)}</b>${h.z?' · '+esc(h.z):''}</span></div></div>
- ${ps.length?`<div class="stack gap8"><b style="color:var(--navy)">${isEN()?'Your pickups':'Tus pickups'}</b>${ps.map(p=>`<div class="pk-row${p===nx?' nx':''}"><span class="pk-t"><b>${fmtHora(p.t)}</b><small>${fmtDia(p)}</small></span><span class="stack gap4" style="flex:1;min-width:0"><b data-notr>${esc(pkTitulo(p))}</b><span class="small muted" data-notr>${esc(pkLugar())}${p.rt?'<br>'+esc(pkRuta(p)):''}${p.n?'<br>'+esc(p.n):''}</span></span>${p===nx?`<span class="td-tag">${isEN()?'Next':'Próximo'}</span>`:''}</div>`).join('')}</div>`:''}`;}
+ ${ps.length?`<div class="stack gap8"><b style="color:var(--navy)">${isEN()?'Your pickups':'Tus pickups'}</b>${ps.map(p=>`<div class="pk-row${p===nx?' nx':''}"><span class="pk-t"><b>${fmtHora(p.t)}</b><small>${fmtDia(p)}</small></span><span class="stack gap4" style="flex:1;min-width:0"><b data-notr>${esc(pkTitulo(p))}</b><span class="small muted" data-notr>${p.k==='x'?esc(p.n||''):esc(pkLugar())+(p.n?'<br>'+esc(p.n):'')}${p.rt?'<br>'+esc(pkRuta(p)):''}</span></span>${p===nx?`<span class="td-tag">${isEN()?'Next':'Próximo'}</span>`:''}</div>`).join('')}</div>`:''}`;}
 function hotelSheet(){const r=S.res||{};sheet(`<h2 class="h2">${isEN()?'Where are you staying?':'¿Dónde te hospedas?'}</h2><div class="stack gap8">${HOTELS.map(h=>`<button class="opt" data-hid="${h.id}">${I('bed','svg-s')}<span class="stack gap4" style="flex:1;text-align:left"><b data-notr>${h.n}</b><span class="small muted" data-notr>${h.z}</span></span>${r.h===h.id?I('check','svg-s'):''}</button>`).join('')}</div>`,
- {onOpen:(o,close)=>o.querySelectorAll('[data-hid]').forEach(b=>b.onclick=()=>{S.res=S.res||{p:[]};S.res.h=b.dataset.hid;S.res.hn='';save();toast((isEN()?'Hotel: ':'Hotel: ')+resHotel().n);close();if(cur==='inicio')render();})});}
+ {onOpen:(o,close)=>o.querySelectorAll('[data-hid]').forEach(b=>b.onclick=()=>{S.res=S.res||{p:[]};S.res.h=b.dataset.hid;S.res.hn='';save();if(S.paxId){tdbUpdatePax(S.paxId,p=>p.hotel=b.dataset.hid);logAct('hotel','Cambió su hotel a '+resHotel().n);}toast((isEN()?'Hotel: ':'Hotel: ')+resHotel().n);close();if(cur==='inicio')render();})});}
 function guideSheet(){const g=GUIDE,cg=curGuide();
  const cards=GUIDES.map(x=>{const on=cg&&cg.id===x.id;return `<div class="gd-card${on?' on':''}" data-gid="${x.id}"><button class="gd-pick" data-gpick="${x.id}"><span class="g-av" style="background:${on?'var(--navy)':'var(--sky-soft)'};color:${on?'#fff':'var(--navy)'}">${x.ini}</span><span class="stack gap4" style="flex:1;min-width:0;text-align:left"><b style="color:var(--navy)" data-notr>${x.nombre}</b><span class="small muted">${on?(isEN()?'Your guide':'Tu guía'):(isEN()?'ZEROS3 guide · tap to choose':'Guía ZEROS3 · toca para elegir')}</span></span><span class="gd-radio">${on?I('check','svg-s'):''}</span></button>
   <div class="row gap8"><button class="btn btn-s gd-wa" data-gwa="${x.id}">${I('wa','svg-s')}WhatsApp</button><button class="btn btn-s btn-ghost gd-tel" data-gtel="${x.id}">${I('phone','svg-s')}${isEN()?'Call':'Llamar'}</button><span class="small muted" style="margin-left:auto;white-space:nowrap;font-size:12px" data-notr>${x.tel.replace('+593 ','0')}</span></div></div>`;}).join('');
@@ -1176,7 +1222,7 @@ function guideSheet(){const g=GUIDE,cg=curGuide();
  {onOpen:(o,close)=>{o.querySelector('#gmap').onclick=()=>{close();const i=poiByName(g.hoy.poi);if(i>=0)setTimeout(()=>poiSheet(i,null),220);else window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(g.hoy.poi+' Guayaquil'),'_blank');};
   o.querySelector('#gmail').onclick=()=>{close();go('contacto');};
   const ch=o.querySelector('#chgh');if(ch)ch.onclick=()=>{close();setTimeout(hotelSheet,220);};
-  o.querySelectorAll('[data-gpick]').forEach(b=>b.onclick=()=>{S.guide=b.dataset.gpick;save();const x=curGuide();toast(isEN()?`${x.nombre} is your guide`:`${x.nombre} será tu guía`);close();if(cur==='inicio')render();setTimeout(guideSheet,260);});
+  o.querySelectorAll('[data-gpick]').forEach(b=>b.onclick=()=>{S.guide=b.dataset.gpick;save();if(S.paxId){tdbUpdatePax(S.paxId,p=>p.guia=S.guide);logAct('guia','Eligió a '+curGuide().nombre);}const x=curGuide();toast(isEN()?`${x.nombre} is your guide`:`${x.nombre} será tu guía`);close();if(cur==='inicio')render();setTimeout(guideSheet,260);});
   o.querySelectorAll('[data-gwa]').forEach(b=>b.onclick=()=>guideWA(GUIDES.find(x=>x.id===b.dataset.gwa)));
   o.querySelectorAll('[data-gtel]').forEach(b=>b.onclick=()=>{location.href='tel:'+GUIDES.find(x=>x.id===b.dataset.gtel).tel.replace(/\s/g,'');});}});}
 AFTER.inicio=()=>{document.getElementById('srch').onclick=openSearch;
@@ -1623,7 +1669,7 @@ function fabBase(){const st=document.getElementById('promo');return st&&!st.hidd
 function promoStrip(){if(!ALIADOS.length||!isClient())return'';return `<div class="promo" id="promo"><div class="promo-h"><span>Promocionado</span><span class="promo-dots" id="pdots">${ALIADOS.map((a,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</span></div><div class="promo-row" id="prow">${ALIADOS.map(a=>{const i=poiByName(a.n);const P=POIS[i];if(!P)return'';
  return `<button class="promo-card" data-poin="${esc(a.n)}">${a.logo?`<span class="promo-logo" style="background:${a.bg}"><img src="${a.logo}" alt=""></span>`:`<span class="sv-ic" style="width:40px;height:40px;border-radius:10px;color:${P.c}">${PIc(P.ic)}</span>`}<span class="stack" style="min-width:0;text-align:left"><b>${esc(a.n)}</b><span class="promo-off">${esc(a.offer)}</span></span><span class="promo-go">Ver oferta ${I('chev','svg-s')}</span></button>`;}).join('')}</div></div>`;}
 function couponCode(n){const src=(S.email||'explorador')+'|'+n;let h=2166136261;for(const ch of src){h^=ch.charCodeAt(0);h=Math.imul(h,16777619);}const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789';let c='';h>>>=0;for(let i=0;i<6;i++){c+=A[h%A.length];h=Math.floor(h/A.length)||(h*7+13);}return c;}
-function qrSheet(a){const code=couponCode(a.n);const data=`TRAZA|ZEROS3|${a.n}|${a.offer}|${code}|${S.email||''}|hasta ${a.until}`;
+function qrSheet(a){logAct('qr',a.n+' · '+a.offer);const code=couponCode(a.n);const data=`TRAZA|ZEROS3|${a.n}|${a.offer}|${code}|${S.email||''}|hasta ${a.until}`;
  sheet(`<div class="stack gap12" style="align-items:center;text-align:center"><span class="out-pill" style="align-self:center">Beneficio ZEROS3</span><h2 class="h2" style="margin:0">${esc(a.n)}</h2><b style="color:var(--terra-dk);font-size:18px">${esc(a.offer)}</b>
  <div class="qr-box">${QR.svg(data,5)}</div><div class="qr-code" data-notr>${code}</div>
  <p class="small muted" style="margin:0">Muestra este código al pagar. ${esc(a.detail)} Válido hasta el ${esc(a.until)}.</p>
@@ -1783,7 +1829,7 @@ AFTER.arma=()=>{const sc=app.querySelector('.scroll');const keep=()=>{const y=sc
  app.querySelectorAll('[data-ar]').forEach(b=>b.onclick=()=>{const id=b.dataset.ar,i=armaSel.indexOf(id);if(i>=0){armaSel.splice(i,1);window.__arLast=null;}else{armaSel.push(id);window.__arLast=id;}keep();});
  app.querySelectorAll('[data-per]').forEach(b=>b.onclick=()=>{armaPer=+b.dataset.per;keep();});
  const nr=document.getElementById('arNear');if(nr)nr.onclick=()=>{armaSel=nearOrder(armaSel);keep();toast('Orden ajustado para caminar menos');};
- document.getElementById('arGo').onclick=()=>{S.myRoute={sel:armaSel.slice(),per:armaPer};save();armaSel=null;go('miruta',{},{replace:true});};};
+ document.getElementById('arGo').onclick=()=>{S.myRoute={sel:armaSel.slice(),per:armaPer};logAct('ruta','Armó su ruta: '+armaSel.map(i=>PLACES[i]?PLACES[i].nombre:i).join(' → '));save();armaSel=null;go('miruta',{},{replace:true});};};
 SCREENS.miruta=()=>{const R=S.myRoute;const days=splitDays(R.sel,R.per);
  return `<section class="screen"><div class="row gap12 pad" style="padding-block:calc(12px + env(safe-area-inset-top,0px)) 8px"><button class="icon-btn" data-back aria-label="Volver" style="box-shadow:none;background:none">${I('back')}</button><h1 class="h2">Mi ruta</h1></div>
  <div class="scroll"><div class="pad stack gap12" style="padding-bottom:24px">
@@ -1997,7 +2043,7 @@ function refreshTrackUI(){const el=document.getElementById('tracksvg');if(el)el.
 function placeMe(x,y){mePos={x,y};const me=document.getElementById('me');if(me){me.classList.remove('hid');me.style.left=x+'px';me.style.top=y+'px';}if(followMe&&document.getElementById('mw')&&AFTER.mapa.center)AFTER.mapa.center(x,y);}
 function addPoint(x,y){S.track=S.track||[];const l=S.track[S.track.length-1];if(!l||Math.hypot(x-l[0],y-l[1])>6){S.track.push([+x.toFixed(1),+y.toFixed(1)]);if(S.track.length>4000)S.track.shift();save();}placeMe(x,y);refreshTrackUI();}
 function unlock(id){if(!PLACES[id])return;
- if(STAMP_IDS.includes(id)&&isClient()){if(S.visited[id])return;S.visited[id]=new Date().toISOString().slice(0,10);save();try{navigator.vibrate&&navigator.vibrate([120,60,120]);}catch(e){}stampOverlay(id);return;}
+ if(STAMP_IDS.includes(id)&&isClient()){if(S.visited[id])return;S.visited[id]=new Date().toISOString().slice(0,10);save();logAct('sello',PLACES[id].nombre,id);try{navigator.vibrate&&navigator.vibrate([120,60,120]);}catch(e){}stampOverlay(id);return;}
  if(arrived[id])return;arrived[id]=1;toast(`Llegaste a ${PLACES[id].nombre}${STAMP_IDS.includes(id)?' · los sellos son para viajeros ZEROS3':''}`);}
 function checkGeo(la,lo){Object.keys(GEO).forEach(id=>{const g=geoOf(id);if(g.pts.some(p=>dist(la,lo,p[0],p[1])<=g.r))unlock(id);});}
 function startTracking(){if(!navigator.geolocation){toast('Tu celular no comparte la ubicación');return;}stopSim();followMe=true;S.track=[];save();let warned=false;
@@ -2034,7 +2080,7 @@ function locMe(){if(!navigator.geolocation){meSheet('Tu navegador no comparte la
 function meSheet(msg){sheet(`<h2 class="h2" style="margin:0">Mi ubicación</h2><p class="small muted" style="margin:0">${msg}</p>
  <button class="btn btn-primary" id="msRec">${I('route','svg-s')}Mi recorrido y sellos</button><button class="btn btn-ghost" data-close>Cerrar</button>`,{onOpen:(o,close)=>{o.querySelector('#msRec').onclick=()=>{close();setTimeout(recSheet,220);};}});}
 function stopSim(){if(simTimer){clearInterval(simTimer);simTimer=null;}}
-function stopTracking(msg){if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null;}stopSim();refreshTrackUI();if(msg)toast(`Recorrido guardado · ${fmtKm(trackLen())}`);}
+function stopTracking(msg){if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null;}stopSim();refreshTrackUI();if(msg){toast(`Recorrido guardado · ${fmtKm(trackLen())}`);logAct('recorrido','Grabó un recorrido de '+fmtKm(trackLen()));}}
 function simulateWalk(){stopTracking(false);S.track=[];save();followMe=true;
  const keys=CENTER;let path=[];for(let i=1;i<keys.length;i++){const r=shortest(LMK[keys[i-1]].node,LMK[keys[i]].node);path.push(...(path.length?r.pts.slice(1):r.pts));}
  const dense=[];for(let i=1;i<path.length;i++){const[a,b]=[path[i-1],path[i]];const n=Math.max(1,Math.round(Math.hypot(b[0]-a[0],b[1]-a[1])/14));for(let k=0;k<n;k++)dense.push([a[0]+(b[0]-a[0])*k/n,a[1]+(b[1]-a[1])*k/n]);}dense.push(path[path.length-1]);
@@ -2124,7 +2170,7 @@ AFTER.nuevo=()=>{const tx=document.getElementById('tx');tx.oninput=()=>{draft.te
  document.getElementById('vpub').onclick=()=>{draft.pub=true;render();};document.getElementById('vpri').onclick=()=>{draft.pub=false;render();};
  const mk=document.getElementById('mk');if(mk)mk.onclick=()=>{draft.mark=!draft.mark;mk.setAttribute('aria-checked',draft.mark);};
  document.getElementById('pub').onclick=()=>{const m={id:'m'+Date.now(),place:draft.place,loc:draft.place==='otro'?draft.loc:undefined,img:draft.photo,text:(draft.text||'').trim()||`Mi recuerdo en ${placeOf(draft.place,draft.loc).nombre}.`,date:draft.date,pub:draft.pub,likes:0};
-  S.mems.unshift(m);let nuevo=false;if(draft.mark&&isClient()&&PLACES[draft.place]&&!S.visited[draft.place]){S.visited[draft.place]=new Date().toISOString().slice(0,10);nuevo=true;}
+  S.mems.unshift(m);logAct('recuerdo','Publicó un recuerdo en '+placeOf(draft.place,draft.loc).nombre,draft.place);let nuevo=false;if(draft.mark&&isClient()&&PLACES[draft.place]&&!S.visited[draft.place]){S.visited[draft.place]=new Date().toISOString().slice(0,10);nuevo=true;logAct('sello',PLACES[draft.place].nombre,draft.place);}
   save();if(S.mems.length>6){/* limita el espacio del navegador */S.mems=S.mems.slice(0,6);save();}
   draft.text=m.text;go('compartir',{nuevo:nuevo?draft.place:null},{replace:true});};};
 
@@ -2219,7 +2265,7 @@ const perfilMenu=()=>app.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{
 /* ---------- Inicio de la app ---------- */
 try{speechSynthesis.getVoices();}catch(e){}
 /* ?demo en el enlace: empieza desde cero (bienvenida + ingreso), ideal para presentar */
-loadRes();
+loadRes();refreshPax();
 if(/[?&]demo\b/.test(location.search)){S.onboarded=false;S.mode=null;S.otp=null;save();try{history.replaceState(null,'',location.pathname);}catch(_){}}
 go('splash',{},{replace:true});
 
@@ -2325,7 +2371,7 @@ SCREENS.asistente=()=>{if(!AI.log.length)AI.log.push({h:ai_greet()});
  <div class="scroll" id="aiScroll"><div class="ai-log" id="aiLog">${AI.log.map(aiMsgHTML).join('')}</div></div>
  <div class="ai-bottom"><div class="ai-chips" id="aiChips">${AI_Q().map(q=>`<button class="chip ai-chip" data-q="${ai_e(q)}">${q}</button>`).join('')}</div>
  <form class="ai-in" id="aiForm" autocomplete="off"><input id="aiTx" type="text" maxlength="160" placeholder="${ai_T('Escribe tu pregunta…','Type your question…')}" aria-label="${ai_T('Pregunta para el asistente','Question for the assistant')}"><button class="ai-send" aria-label="${ai_T('Enviar','Send')}">${I('send')}</button></form></div></section>`;};
-async function aiAsk(q){q=String(q||'').trim();if(!q||AI.busy)return;AI.busy=true;
+async function aiAsk(q){q=String(q||'').trim();if(!q||AI.busy)return;logAct('asistente',q);AI.busy=true;
  const log=document.getElementById('aiLog');const sc=document.getElementById('aiScroll');
  AI.log.push({me:true,h:q});log.insertAdjacentHTML('beforeend',aiMsgHTML({me:true,h:q}));
  log.insertAdjacentHTML('beforeend',`<div class="ai-msg" id="aiTyping">${aiAvatar()}<div class="ai-b ai-typing"><i></i><i></i><i></i></div></div>`);sc.scrollTop=sc.scrollHeight;

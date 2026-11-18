@@ -1,55 +1,101 @@
 <!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Panel de agencia · TRAZA</title><meta name="robots" content="noindex">
+<title>ZEROS3 · Sistema de agencia</title><meta name="robots" content="noindex">
 <style>
-:root{--navy:#165277;--sky:#4FA3D1;--terra:#F2947A;--terra-dk:#C8654B;--cream:#F7F5F0;--line:#E6E1D6;--gray:#6B7785;--white:#fff;--ok:#2E8B57}
+:root{--navy:#165277;--navy2:#0F3D5A;--sky:#4FA3D1;--sky-soft:#E3F1F9;--terra:#F2947A;--terra-dk:#C8654B;--cream:#F7F5F0;--line:#E6E1D6;--gray:#6B7785;--white:#fff;--ok:#2E8B57;--ok-soft:#E3F3EA;--warn:#B7791F;--warn-soft:#FBF0DC}
 *{box-sizing:border-box}body{margin:0;background:var(--cream);color:#22313d;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-header{background:var(--navy);color:#fff;padding:18px 20px}header h1{margin:0;font:600 22px Georgia,serif}header p{margin:4px 0 0;opacity:.8;font-size:13px}
-main{max-width:760px;margin:0 auto;padding:16px}
+button{font:inherit;cursor:pointer}
+.top{background:var(--navy);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:5}
+.top h1{margin:0;font:600 18px Georgia,serif;flex:1}.top small{display:block;opacity:.75;font:12px system-ui}
+.who{display:flex;align-items:center;gap:8px;font-size:13px}.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.av.n{background:var(--sky-soft);color:var(--navy)}.av.t{background:var(--terra);color:#fff}.av.w{background:#fff;color:var(--navy)}
+.out{background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:999px;padding:6px 12px;font-size:13px}
+nav.tabs{display:flex;gap:4px;padding:10px 14px;overflow-x:auto;background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:62px;z-index:4}
+nav.tabs button{border:0;background:none;padding:8px 14px;border-radius:999px;color:var(--gray);font-weight:600;white-space:nowrap}
+nav.tabs button.on{background:var(--navy);color:#fff}
+main{max-width:980px;margin:0 auto;padding:16px}
 .card{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
-.card h2{margin:0 0 12px;font:600 17px Georgia,serif;color:var(--navy)}
+h2{margin:0 0 12px;font:600 18px Georgia,serif;color:var(--navy)}h3{margin:0;font-size:15px;color:var(--navy)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:14px}.kpi b{display:block;font:600 28px Georgia,serif;color:var(--navy)}.kpi span{font-size:13px;color:var(--gray)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
+.muted{color:var(--gray)}.small{font-size:13px}
+.list>*+*{border-top:1px solid var(--line)}
+.item{display:flex;gap:12px;align-items:center;padding:12px 4px;width:100%;background:none;border:0;text-align:left;color:inherit}
+.item .grow{flex:1;min-width:0}.item b{color:var(--navy)}
+.tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--sky-soft);color:var(--navy);white-space:nowrap}
+.tag.ok{background:var(--ok-soft);color:var(--ok)}.tag.w{background:var(--warn-soft);color:var(--warn)}.tag.v{background:#FDE9E3;color:var(--terra-dk)}
+.btn{border:0;border-radius:999px;padding:10px 16px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.bp{background:var(--navy);color:#fff}.bg{background:#fff;color:var(--navy);border:1px solid var(--navy)}.bw{background:#25D366;color:#fff}.bt{background:var(--terra);color:#fff}.bs{padding:7px 12px;font-size:13px}
 label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:var(--navy)}
-input,select,textarea{font:inherit;font-weight:400;color:#22313d;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;width:100%}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
-.pk{border:1px dashed var(--line);border-radius:12px;padding:12px;margin-bottom:10px;position:relative}
-.pk .del{position:absolute;top:8px;right:8px;border:0;background:none;color:var(--terra-dk);font-size:13px;cursor:pointer}
-.btn{border:0;border-radius:999px;padding:11px 18px;font:600 14px inherit;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-.btn-p{background:var(--navy);color:#fff}.btn-g{background:#fff;color:var(--navy);border:1px solid var(--navy)}.btn-w{background:#25D366;color:#fff}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.out{display:none}.out.on{display:block}
-.link{word-break:break-all;background:var(--cream);border-radius:10px;padding:10px;font-size:12px}
-.qr{display:flex;justify-content:center;padding:10px}.qr svg{width:220px;height:220px}
-.hint{font-size:12px;color:var(--gray);font-weight:400}
-.prev{border-left:4px solid var(--terra);padding:8px 12px;background:var(--cream);border-radius:0 10px 10px 0;font-size:14px}
+input,select{font:inherit;font-weight:400;color:#22313d;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;width:100%}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.pk{border:1px dashed var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--terra)}
+.chart .r{display:grid;grid-template-columns:150px 1fr 30px;gap:8px;align-items:center;font-size:13px;margin:6px 0}
+.tl{position:relative;padding-left:18px}.tl:before{content:'';position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:var(--line)}
+.tl .e{position:relative;padding:6px 0}.tl .e:before{content:'';position:absolute;left:-17px;top:11px;width:10px;height:10px;border-radius:50%;background:var(--sky)}
+.tl .e.sello:before{background:var(--terra)}.tl .e.acceso:before{background:var(--navy)}
+.login{max-width:440px;margin:0 auto;padding:28px 18px;text-align:center}
+.login h1{font:600 26px Georgia,serif;color:var(--navy);margin:8px 0 4px}
+.roles{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+.role{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;text-align:left}
+.role.on{border-color:var(--navy);box-shadow:0 0 0 2px rgba(22,82,119,.15)}
+.pin{display:flex;gap:10px;justify-content:center;margin:16px 0}.pin input{width:52px;height:56px;text-align:center;font-size:22px;border-radius:12px}
+.modal{position:fixed;inset:0;background:rgba(10,30,45,.45);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.modal.on{display:flex}.sheet{background:var(--cream);width:100%;max-width:760px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:18px}
+@media(min-width:800px){.modal{align-items:center}.sheet{border-radius:20px}}
+.demo{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:8px 12px;font-size:12px;margin-bottom:14px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;transition:.25s;z-index:30}.toast.on{opacity:1}
+.qr svg{width:200px;height:200px}
 </style></head><body>
-<header><h1>TRAZA · Panel de agencia</h1><p>ZEROS3 Travel Company · arma el viaje del pasajero y envíale su enlace personal</p></header>
-<main>
-<div class="card"><h2>Pasajero</h2><div class="grid">
- <label>Nombre<input id="n" placeholder="Ej. Ana López"></label>
- <label>WhatsApp del pasajero <span class="hint">(opcional, para enviarle el enlace)</span><input id="tel" inputmode="tel" placeholder="Ej. 0991234567"></label>
-</div></div>
-<div class="card"><h2>Hospedaje y guía</h2><div class="grid">
- <label>Hotel<select id="h"></select></label>
- <label id="hnw" style="display:none">Nombre del hotel<input id="hn" placeholder="Escribe el hotel"></label>
- <label>Guía<select id="g"><option value="">Que el pasajero elija</option><option value="maybel">Maybel Gálvez</option><option value="samantha">Samantha Muñoz</option></select></label>
-</div></div>
-<div class="card"><h2>Pickups</h2><div id="pks"></div>
- <button class="btn btn-g" id="add">+ Agregar pickup</button></div>
-<div class="card"><button class="btn btn-p" id="gen">Generar enlace del pasajero</button>
- <div class="out" id="out" style="margin-top:14px">
-  <div class="prev" id="prev"></div>
-  <div class="qr" id="qr"></div>
-  <div class="link" id="link"></div>
-  <div class="row" style="margin-top:12px"><button class="btn btn-g" id="copy">Copiar enlace</button><button class="btn btn-w" id="wa">Enviar por WhatsApp</button><a class="btn btn-g" id="open" target="_blank">Probar enlace</a></div>
-  <p class="hint">El pasajero abre el enlace (o escanea el QR) y TRAZA le muestra su hotel, sus pickups, su vuelo y su guía. Queda guardado en su celular y funciona sin internet.</p>
- </div></div>
-</main>
+<div id="app"></div><div class="modal" id="modal"><div class="sheet" id="sheet"></div></div><div class="toast" id="toast"></div>
 <script>
+/* ---------- Base de datos simulada de ZEROS3 (compartida por la app y el panel de agencia en el mismo dispositivo) ---------- */
+const TDB_KEY='traza_db_v1';
+function tdbIso(off){const d=new Date();d.setDate(d.getDate()+off);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function tdbSeed(){const T=tdbIso,now=Date.now(),h=3600e3;
+ return {v:1,seq:6,
+  usuarios:[{id:'op',rol:'operador',nombre:'Dennisse Santos',cargo:'Reservas y operaciones',pin:'0303'},
+   {id:'maybel',rol:'guia',nombre:'Maybel Gálvez',cargo:'Guía ZEROS3',pin:'1111',tel:'+593 99 850 5181'},
+   {id:'samantha',rol:'guia',nombre:'Samantha Muñoz',cargo:'Guía ZEROS3',pin:'2222',tel:'+593 96 778 4572'}],
+  pasajeros:[
+   {id:'P1',codigo:'ZS3-0001',nombre:'Dennisse Santos',email:'dennissesantos10@gmail.com',alt:'dsantoss2@unemi.edu.ec',tel:'+593 99 269 7596',hotel:'oroverde',guia:'maybel',pax:1,llegada:T(-1),salida:T(1),
+    pickups:[{id:'k1',d:T(0),t:'08:30',k:'t',n:'Las Peñas y Museo del Cacao',e:'pendiente'},{id:'k2',d:T(1),t:'04:45',k:'v',a:'LATAM',f:'LA1362',rt:'GYE-UIO',n:'Lleva tu documento de identidad',e:'pendiente'}]},
+   {id:'P2',codigo:'ZS3-0002',nombre:'Ana López',email:'ana.lopez@gmail.com',tel:'+593 98 123 4567',hotel:'hilton',guia:'samantha',pax:2,llegada:T(-2),salida:T(2),
+    pickups:[{id:'k3',d:T(0),t:'09:00',k:'t',n:'Parque Histórico',e:'recogido'},{id:'k4',d:T(1),t:'08:30',k:'t',n:'Malecón y Plaza de la Administración',e:'pendiente'},{id:'k5',d:T(2),t:'10:40',k:'v',a:'Avianca',f:'AV8372',rt:'GYE-BOG',e:'pendiente'}]},
+   {id:'P3',codigo:'ZS3-0003',nombre:'Grupo Canadá 2026 · Emily Brown',email:'emily.brown@gmail.com',tel:'+1 416 555 0182',hotel:'wyndham',guia:'maybel',pax:8,llegada:T(-1),salida:T(3),
+    pickups:[{id:'k6',d:T(0),t:'14:00',k:'t',n:'Malecón Simón Bolívar y La Perla',e:'pendiente'},{id:'k7',d:T(1),t:'09:00',k:'t',n:'Parque Histórico',e:'pendiente'},{id:'k8',d:T(3),t:'06:10',k:'v',a:'LATAM',f:'LA1428',rt:'GYE-GPS',e:'pendiente'}]},
+   {id:'P4',codigo:'ZS3-0004',nombre:'María José Torres',email:'mj.torres@outlook.com',tel:'+593 96 555 2210',hotel:'parque',guia:'samantha',pax:3,llegada:T(0),salida:T(4),
+    pickups:[{id:'k9',d:T(0),t:'11:20',k:'x',n:'Recepción en el aeropuerto · llegada desde Quito',e:'pendiente'},{id:'k10',d:T(1),t:'09:30',k:'t',n:'Las Peñas y Malecón',e:'pendiente'}]},
+   {id:'P5',codigo:'ZS3-0005',nombre:'Jorge Andrade',email:'jorge.andrade@yahoo.com',tel:'+593 99 777 1020',hotel:'unipark',guia:'',pax:1,llegada:T(1),salida:T(3),
+    pickups:[{id:'k11',d:T(1),t:'15:30',k:'x',n:'Recepción en el aeropuerto',e:'pendiente'}]}],
+  actividad:[
+   {pax:'P2',ts:now-30*h,tipo:'acceso',det:'Entró a TRAZA con su correo'},
+   {pax:'P2',ts:now-29*h,tipo:'guia',det:'Eligió a Samantha Muñoz'},
+   {pax:'P2',ts:now-26*h,tipo:'sello',det:'Malecón Simón Bolívar',lugar:'malecon'},
+   {pax:'P2',ts:now-25*h,tipo:'qr',det:'21 Gramos · 10% de descuento'},
+   {pax:'P2',ts:now-3*h,tipo:'sello',det:'Parque Histórico',lugar:'historico'},
+   {pax:'P2',ts:now-2.5*h,tipo:'recuerdo',det:'Publicó un recuerdo',lugar:'historico'},
+   {pax:'P3',ts:now-20*h,tipo:'acceso',det:'Entró a TRAZA con su correo'},
+   {pax:'P3',ts:now-19*h,tipo:'ruta',det:'Armó su ruta: Las Peñas → Malecón → Parque Seminario'},
+   {pax:'P3',ts:now-18*h,tipo:'sello',det:'Las Peñas',lugar:'penas'},
+   {pax:'P3',ts:now-17*h,tipo:'recorrido',det:'Grabó un recorrido de 2,1 km'},
+   {pax:'P3',ts:now-16*h,tipo:'asistente',det:'¿Dónde como cerca del Malecón?'},
+   {pax:'P1',ts:now-5*h,tipo:'acceso',det:'Entró a TRAZA con su correo'}]};}
+function tdbLoad(){try{const d=JSON.parse(localStorage.getItem(TDB_KEY)||'null');if(d&&d.v===1)return d;}catch(_){}const d=tdbSeed();tdbSave(d);return d;}
+function tdbSave(d){try{localStorage.setItem(TDB_KEY,JSON.stringify(d));}catch(_){}}
+function tdbReset(){const d=tdbSeed();tdbSave(d);return d;}
+function tdbFindPax(email){email=String(email||'').trim().toLowerCase();if(!email)return null;return tdbLoad().pasajeros.find(p=>p.email.toLowerCase()===email||(p.alt||'').toLowerCase()===email)||null;}
+function tdbLog(paxId,tipo,det,lugar){if(!paxId)return;const d=tdbLoad();d.actividad.push({pax:paxId,ts:Date.now(),tipo,det:String(det||'').slice(0,140),lugar:lugar||''});if(d.actividad.length>2000)d.actividad=d.actividad.slice(-2000);tdbSave(d);}
+function tdbUpdatePax(paxId,fn){const d=tdbLoad();const p=d.pasajeros.find(x=>x.id===paxId);if(p){fn(p);tdbSave(d);}return p;}
+
 const HOTELS=[{id:'parque',n:'Hotel del Parque',z:'Samborondón · Parque Histórico'},{id:'oroverde',n:'Hotel Oro Verde',z:'Centro · Av. 9 de Octubre'},
  {id:'hilton',n:'Hilton Colón Guayaquil',z:'Norte · Av. Francisco de Orellana'},{id:'sheraton',n:'Sheraton Guayaquil',z:'Norte · junto al Mall del Sol'},
  {id:'wyndham',n:'Wyndham Guayaquil',z:'Puerto Santa Ana'},{id:'unipark',n:'Hotel Unipark',z:'Centro · frente al Parque Seminario'},
  {id:'grand',n:'Grand Hotel Guayaquil',z:'Centro · junto a la Catedral'},{id:'courtyard',n:'Courtyard by Marriott Guayaquil',z:'Norte · Av. Francisco de Orellana'},
  {id:'mansion',n:'Mansión del Río',z:'Las Peñas'},{id:'holiday',n:'Holiday Inn Guayaquil Airport',z:'Junto al aeropuerto'}];
+const AIRP={GYE:'Guayaquil',UIO:'Quito',GPS:'Galápagos (Baltra)',SCY:'San Cristóbal',CUE:'Cuenca',MEC:'Manta',LIM:'Lima',BOG:'Bogotá',PTY:'Panamá',MIA:'Miami',MAD:'Madrid'};
 
 const QR=(()=>{
  const ECC_M_CW=[0,10,16,26,18,24,16,18,22,22,26];      // codewords de corrección por bloque (nivel M)
@@ -103,36 +149,130 @@ const QR=(()=>{
   M.forEach((r,y)=>r.forEach((c,x)=>{if(c)d+=`M${x+q},${y+q}h1v1h-1z`;}));
   return `<svg viewBox="0 0 ${s} ${s}" width="${s*px}" height="${s*px}" shape-rendering="crispEdges" role="img" aria-label="Código QR"><rect width="${s}" height="${s}" fill="#fff"/><path d="${d}" fill="${color}"/></svg>`;}
  return {encode,svg};})();
+const PLN={penas:'Las Peñas',malecon:'Malecón Simón Bolívar',cacao:'Museo del Cacao',seminario:'Parque Seminario',historico:'Parque Histórico'};
 const APP=new URL('./',location.href).href;
-const $=id=>document.getElementById(id);
-$('h').innerHTML=HOTELS.map(h=>`<option value="${h.id}">${h.n} · ${h.z}</option>`).join('')+'<option value="otro">Otro hotel…</option>';
-$('h').onchange=()=>{$('hnw').style.display=$('h').value==='otro'?'flex':'none';};
-function pkRow(v={}){const d=document.createElement('div');d.className='pk';
- const t=new Date(Date.now()+864e5);const dd=v.d||t.toISOString().slice(0,10);
- d.innerHTML=`<button class="del" title="Quitar">Quitar</button><div class="grid">
-  <label>Fecha<input type="date" class="pd" value="${dd}"></label><label>Hora<input type="time" class="pt" value="${v.t||'08:30'}"></label>
-  <label>Tipo<select class="pk2"><option value="t">Recorrido con guía</option><option value="v">Traslado al aeropuerto (vuelo)</option><option value="x">Otro traslado</option></select></label></div>
-  <div class="grid fl" style="margin-top:10px;display:none"><label>Aerolínea<input class="pa" placeholder="Ej. LATAM" value="${v.a||''}"></label><label>N.º de vuelo<input class="pf" placeholder="Ej. LA1362" value="${v.f||''}"></label><label>Ruta<input class="pr" placeholder="Ej. GYE-UIO" value="${v.rt||''}"></label></div>
-  <label style="margin-top:10px">Nota <span class="hint">(opcional)</span><input class="pn" placeholder="Ej. Lleva tu pasaporte" value="${v.n||''}"></label>`;
- const sel=d.querySelector('.pk2');sel.value=v.k||'t';const fl=d.querySelector('.fl');const upd=()=>fl.style.display=sel.value==='v'?'grid':'none';sel.onchange=upd;upd();
- d.querySelector('.del').onclick=()=>d.remove();$('pks').appendChild(d);}
-pkRow({t:'04:45',k:'v',a:'LATAM',f:'LA1362',rt:'GYE-UIO'});
-$('add').onclick=()=>pkRow();
-function b64url(str){return btoa(unescape(encodeURIComponent(str))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
-function hora12(t){const[h,m]=t.split(':').map(Number);return `${((h+11)%12)+1}:${String(m).padStart(2,'0')} ${h<12?'a. m.':'p. m.'}`;}
-$('gen').onclick=()=>{
- const p=[...document.querySelectorAll('.pk')].map(d=>{const k=d.querySelector('.pk2').value;const r=[d.querySelector('.pd').value,d.querySelector('.pt').value,k];
-  const f=k==='v'?[d.querySelector('.pf').value.trim().toUpperCase(),d.querySelector('.pa').value.trim(),d.querySelector('.pr').value.trim().toUpperCase()]:['','',''];
-  const n=d.querySelector('.pn').value.trim();const a=[...r,...f,n];while(a.length>3&&!a[a.length-1])a.pop();return a;}).filter(a=>a[0]&&a[1]);
- const h=$('h').value;const o={n:$('n').value.trim(),h:h==='otro'?'':h,g:$('g').value,p};if(h==='otro')o.hn=$('hn').value.trim();
- Object.keys(o).forEach(k=>{if(o[k]===''||(Array.isArray(o[k])&&!o[k].length))delete o[k];});
- const url=APP+'?r='+b64url(JSON.stringify(o));
- const hn=h==='otro'?o.hn:HOTELS.find(x=>x.id===h).n;
- $('prev').innerHTML=`<b>${o.n||'Pasajero'}</b> · ${hn||''}<br>`+p.map(x=>`${x[0]} · ${hora12(x[1])} · ${x[2]==='v'?'Vuelo '+[x[4],x[3]].filter(Boolean).join(' ')+(x[5]?' ('+x[5]+')':''):x[2]==='x'?'Traslado':'Recorrido'}`).join('<br>');
- $('link').textContent=url;$('open').href=url;
- try{$('qr').innerHTML=QR.svg(url,4);}catch(e){$('qr').innerHTML='<span class="hint">El enlace es muy largo para QR; envíalo por WhatsApp.</span>';}
- $('out').classList.add('on');
- $('copy').onclick=()=>{navigator.clipboard.writeText(url).then(()=>{$('copy').textContent='¡Copiado!';setTimeout(()=>$('copy').textContent='Copiar enlace',1500);});};
- $('wa').onclick=()=>{const tel=$('tel').value.replace(/\D/g,'').replace(/^0/,'593');const msg=`Hola ${o.n||''}, este es tu viaje con ZEROS3 en TRAZA: ${url}`;window.open('https://wa.me/'+(tel||'')+'?text='+encodeURIComponent(msg),'_blank');};
-};
+const $=s=>document.querySelector(s);const esc=v=>String(v??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let ME=null,TAB='resumen';try{ME=JSON.parse(sessionStorage.getItem('zs3_user')||'null');}catch(_){}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2200);}
+const ini=n=>n.split(' · ').pop().split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+const hotelN=p=>{const h=HOTELS.find(x=>x.id===p.hotel);return h?h.n:(p.hotelOtro||'Por definir');};
+const guiaN=(db,id)=>{const u=db.usuarios.find(x=>x.id===id);return u?u.nombre:'Sin asignar';};
+function h12(t){const[h,m]=t.split(':').map(Number);return `${((h+11)%12)+1}:${String(m).padStart(2,'0')} ${h<12?'a. m.':'p. m.'}`;}
+function diaLbl(d){const t=tdbIso(0),m=tdbIso(1);if(d===t)return'Hoy';if(d===m)return'Mañana';const[y,mo,dd]=d.split('-').map(Number);return new Date(y,mo-1,dd).toLocaleDateString('es-EC',{weekday:'short',day:'numeric',month:'short'});}
+const tipoN=k=>k.k==='v'?`Vuelo ${[k.a,k.f].filter(Boolean).join(' ')}${k.rt?' · '+k.rt:''}`:k.k==='x'?'Traslado':'Recorrido';
+const estTag=e=>e==='recogido'?'<span class="tag ok">Recogido</span>':e==='cancelado'?'<span class="tag w">Cancelado</span>':'<span class="tag">Pendiente</span>';
+const ICO={acceso:'Ingreso',sello:'Sello',recuerdo:'Recuerdo',recorrido:'Recorrido',ruta:'Ruta',guia:'Guía',qr:'Descuento QR',asistente:'Asistente',hotel:'Hotel',pickup:'Pickup'};
+function ago(ts){const m=Math.round((Date.now()-ts)/60000);if(m<1)return'ahora';if(m<60)return`hace ${m} min`;const h=Math.round(m/60);if(h<24)return`hace ${h} h`;return`hace ${Math.round(h/24)} d`;}
+function stamps(db,pid){return [...new Set(db.actividad.filter(a=>a.pax===pid&&a.tipo==='sello').map(a=>a.lugar))].filter(x=>PLN[x]);}
+function allPickups(db,guia){const L=[];db.pasajeros.forEach(p=>(p.pickups||[]).forEach(k=>{if(!guia||p.guia===guia)L.push({p,k});}));return L.sort((a,b)=>(a.k.d+a.k.t).localeCompare(b.k.d+b.k.t));}
+
+/* ---------- ingreso por rol ---------- */
+function login(){const db=tdbLoad();let sel=null;
+ $('#app').innerHTML=`<div class="login"><div style="font:700 13px system-ui;letter-spacing:.2em;color:var(--terra-dk)">ZEROS3 TRAVEL COMPANY</div><h1>Sistema de agencia</h1><p class="muted small">Elige tu perfil e ingresa tu PIN. Cada perfil ve y maneja lo suyo.</p>
+ <div class="roles">${db.usuarios.map(u=>`<button class="role" data-u="${u.id}"><span class="av ${u.rol==='operador'?'t':'n'}">${ini(u.nombre)}</span><span style="flex:1"><b style="color:var(--navy)">${esc(u.nombre)}</b><br><span class="small muted">${u.rol==='operador'?'Operador · ':''}${esc(u.cargo)}</span></span></button>`).join('')}</div>
+ <div id="pinw" style="display:none"><div class="pin">${[0,1,2,3].map(i=>`<input inputmode="numeric" maxlength="1" id="p${i}">`).join('')}</div><button class="btn bp" id="go" style="width:100%;justify-content:center">Ingresar</button></div>
+ <p class="small muted" style="margin-top:18px">Prototipo · PIN de prueba: operador 0303 · Maybel 1111 · Samantha 2222</p></div>`;
+ document.querySelectorAll('[data-u]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.role').forEach(x=>x.classList.remove('on'));b.classList.add('on');sel=b.dataset.u;$('#pinw').style.display='block';$('#p0').focus();});
+ const ins=[0,1,2,3].map(i=>$('#p'+i));ins.forEach((x,i)=>{x.oninput=()=>{x.value=x.value.replace(/\D/g,'').slice(-1);if(x.value&&ins[i+1])ins[i+1].focus();if(ins.every(y=>y.value))$('#go').click();};x.onkeydown=e=>{if(e.key==='Backspace'&&!x.value&&ins[i-1])ins[i-1].focus();};});
+ $('#go').onclick=()=>{const u=db.usuarios.find(x=>x.id===sel);if(!u)return;if(ins.map(x=>x.value).join('')!==u.pin){toast('PIN incorrecto');ins.forEach(x=>x.value='');ins[0].focus();return;}
+  ME={id:u.id,rol:u.rol,nombre:u.nombre};sessionStorage.setItem('zs3_user',JSON.stringify(ME));TAB=u.rol==='operador'?'resumen':'hoy';render();};}
+
+/* ---------- estructura ---------- */
+function render(){if(!ME)return login();const db=tdbLoad();
+ const tabs=ME.rol==='operador'?[['resumen','Resumen'],['pasajeros','Pasajeros'],['pickups','Pickups'],['actividad','Actividad'],['equipo','Equipo']]:[['hoy','Mis pickups'],['mispax','Mis pasajeros'],['actividad','Actividad']];
+ $('#app').innerHTML=`<div class="top"><h1>ZEROS3 · TRAZA<small>${ME.rol==='operador'?'Operador · todas las reservas':'Guía · solo tus pasajeros'}</small></h1><span class="who"><span class="av w">${ini(ME.nombre)}</span><span>${esc(ME.nombre)}</span></span><button class="out" id="out">Salir</button></div>
+ <nav class="tabs">${tabs.map(t=>`<button data-t="${t[0]}" class="${TAB===t[0]?'on':''}">${t[1]}</button>`).join('')}</nav><main id="main"></main>`;
+ $('#out').onclick=()=>{ME=null;sessionStorage.removeItem('zs3_user');render();};
+ document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;render();});
+ ({resumen,pasajeros,pickups,actividad,equipo,hoy,mispax}[TAB]||resumen)(db);}
+const DEMO='<div class="demo">Base de datos de prueba: se guarda en este dispositivo y la comparte con la app TRAZA abierta en el mismo navegador.</div>';
+
+/* ---------- operador ---------- */
+function resumen(db){const hoyL=allPickups(db).filter(x=>x.k.d===tdbIso(0)),man=allPickups(db).filter(x=>x.k.d===tdbIso(1));
+ const act=db.pasajeros.filter(p=>p.llegada<=tdbIso(0)&&p.salida>=tdbIso(0)).length,sel=db.actividad.filter(a=>a.tipo==='sello');
+ const cnt={};sel.forEach(a=>{if(PLN[a.lugar])cnt[a.lugar]=(cnt[a.lugar]||0)+1;});const mx=Math.max(1,...Object.values(cnt));
+ const tipos={};db.actividad.forEach(a=>tipos[a.tipo]=(tipos[a.tipo]||0)+1);
+ $('#main').innerHTML=DEMO+`<div class="kpis"><div class="kpi"><b>${act}</b><span>Pasajeros en viaje hoy</span></div><div class="kpi"><b>${hoyL.length}</b><span>Pickups hoy</span></div><div class="kpi"><b>${man.length}</b><span>Pickups mañana</span></div><div class="kpi"><b>${sel.length}</b><span>Sellos ganados</span></div></div>
+ <div class="card"><div class="row between"><h2>Pickups de hoy</h2><button class="btn bs bg" data-t2="pickups">Ver agenda</button></div><div class="list">${hoyL.map(pkItem).join('')||'<p class="muted small">No hay pickups hoy.</p>'}</div></div>
+ <div class="card"><h2>Lugares con más sellos</h2><div class="chart">${Object.keys(PLN).map(k=>`<div class="r"><span>${PLN[k]}</span><div class="bar"><i style="width:${(cnt[k]||0)/mx*100}%"></i></div><b>${cnt[k]||0}</b></div>`).join('')}</div></div>
+ <div class="card"><h2>Uso de la app</h2><div class="row">${Object.entries(tipos).map(([k,v])=>`<span class="tag">${ICO[k]||k}: ${v}</span>`).join('')}</div></div>`;
+ bindCommon();}
+function pkItem({p,k}){return `<button class="item" data-pax="${p.id}"><span class="av n">${ini(p.nombre)}</span><span class="grow"><b>${h12(k.t)} · ${esc(p.nombre)}</b><br><span class="small muted">${diaLbl(k.d)} · ${tipoN(k)} · ${esc(hotelN(p))}${k.n?' · '+esc(k.n):''}</span></span>${k.k==='v'?'<span class="tag v">Vuelo</span>':''}${estTag(k.e)}</button>`;}
+function pasajeros(db){$('#main').innerHTML=DEMO+`<div class="card"><div class="row between"><h2>Pasajeros</h2><button class="btn bt" id="nuevo">+ Nueva reserva</button></div>
+ <input id="q" placeholder="Buscar por nombre, correo o código" style="margin-bottom:6px"><div class="list" id="pl"></div></div>`;
+ const draw=()=>{const q=$('#q').value.toLowerCase();$('#pl').innerHTML=db.pasajeros.filter(p=>(p.nombre+p.email+p.codigo).toLowerCase().includes(q)).map(p=>{const st=stamps(db,p.id).length;const enViaje=p.llegada<=tdbIso(0)&&p.salida>=tdbIso(0);
+  return `<button class="item" data-pax="${p.id}"><span class="av n">${ini(p.nombre)}</span><span class="grow"><b>${esc(p.nombre)}</b> <span class="small muted">${p.codigo}</span><br><span class="small muted">${esc(hotelN(p))} · Guía: ${esc(guiaN(db,p.guia))} · ${p.pax} pax · sellos ${st}/5</span></span>${enViaje?'<span class="tag ok">En viaje</span>':p.llegada>tdbIso(0)?'<span class="tag">Por llegar</span>':'<span class="tag w">Finalizado</span>'}</button>`;}).join('');bindCommon();};
+ $('#q').oninput=draw;draw();$('#nuevo').onclick=()=>editPax(null);}
+function pickups(db){let g='';const draw=()=>{const L=allPickups(db,g).filter(x=>x.k.d>=tdbIso(0));const by={};L.forEach(x=>(by[x.k.d]=by[x.k.d]||[]).push(x));
+  $('#ag').innerHTML=Object.keys(by).map(d=>`<h3 style="margin:14px 0 4px">${diaLbl(d)} · <span class="muted small">${d}</span></h3><div class="list">${by[d].map(pkItem).join('')}</div>`).join('')||'<p class="muted">Sin pickups.</p>';bindCommon();};
+ $('#main').innerHTML=DEMO+`<div class="card"><div class="row between"><h2>Agenda de pickups</h2><select id="fg" style="width:auto"><option value="">Todas las guías</option>${db.usuarios.filter(u=>u.rol==='guia').map(u=>`<option value="${u.id}">${u.nombre}</option>`).join('')}</select></div><div id="ag"></div></div>`;
+ $('#fg').onchange=()=>{g=$('#fg').value;draw();};draw();}
+function actividad(db){const mine=ME.rol==='guia'?new Set(db.pasajeros.filter(p=>p.guia===ME.id).map(p=>p.id)):null;
+ const L=db.actividad.filter(a=>!mine||mine.has(a.pax)).sort((a,b)=>b.ts-a.ts).slice(0,120);
+ $('#main').innerHTML=DEMO+`<div class="card"><h2>Actividad en la app</h2><p class="small muted" style="margin-top:-6px">Lo que hacen ${mine?'tus pasajeros':'los pasajeros'} en TRAZA: ingresos, sellos, recuerdos, rutas, recorridos, descuentos y preguntas al asistente.</p>
+ <div class="tl">${L.map(a=>{const p=db.pasajeros.find(x=>x.id===a.pax);return `<div class="e ${a.tipo}"><b style="color:var(--navy)">${esc(p?p.nombre:a.pax)}</b> <span class="tag">${ICO[a.tipo]||a.tipo}</span><br><span class="small">${esc(a.det)}</span> <span class="small muted">· ${ago(a.ts)}</span></div>`;}).join('')||'<p class="muted">Todavía no hay actividad.</p>'}</div></div>`;}
+function equipo(db){$('#main').innerHTML=DEMO+`<div class="card"><h2>Equipo</h2><div class="list">${db.usuarios.map(u=>{const n=db.pasajeros.filter(p=>p.guia===u.id).length;return `<div class="item"><span class="av ${u.rol==='operador'?'t':'n'}">${ini(u.nombre)}</span><span class="grow"><b>${esc(u.nombre)}</b><br><span class="small muted">${u.rol==='operador'?'Operador':'Guía'} · ${esc(u.cargo)}${u.tel?' · '+u.tel:''}</span></span>${u.rol==='guia'?`<span class="tag">${n} pasajeros</span>`:''}</div>`;}).join('')}</div></div>
+ <div class="card"><h2>Datos de prueba</h2><p class="small muted">Vuelve a cargar los pasajeros de ejemplo y borra los cambios hechos en este dispositivo.</p><button class="btn bg" id="rst">Reiniciar base de datos</button></div>`;
+ $('#rst').onclick=()=>{if(confirm('¿Reiniciar la base de datos de prueba?')){tdbReset();toast('Base de datos reiniciada');render();}};}
+
+/* ---------- guía ---------- */
+function hoy(db){const L=allPickups(db,ME.id).filter(x=>x.k.d>=tdbIso(0)&&x.k.d<=tdbIso(1));
+ $('#main').innerHTML=DEMO+`<div class="kpis"><div class="kpi"><b>${L.filter(x=>x.k.d===tdbIso(0)).length}</b><span>Pickups hoy</span></div><div class="kpi"><b>${L.filter(x=>x.k.d===tdbIso(1)).length}</b><span>Pickups mañana</span></div><div class="kpi"><b>${db.pasajeros.filter(p=>p.guia===ME.id).length}</b><span>Pasajeros asignados</span></div></div>
+ <div class="card"><h2>Mis pickups · hoy y mañana</h2>${L.map(({p,k})=>`<div class="pk"><div class="row between"><b style="color:var(--navy)">${diaLbl(k.d)} · ${h12(k.t)}</b>${estTag(k.e)}</div>
+  <div style="margin:6px 0"><b>${esc(p.nombre)}</b> <span class="small muted">· ${p.pax} pax</span><br><span class="small">${tipoN(k)}${k.n?' · '+esc(k.n):''}</span>${k.k==='x'?'':`<br><span class="small muted">Lobby del ${esc(hotelN(p))}</span>`}</div>
+  <div class="row"><button class="btn bs bw" data-wa="${p.id}">WhatsApp</button>${k.e!=='recogido'?`<button class="btn bs bp" data-rec="${p.id}|${k.id}">Marcar recogido</button>`:''}<button class="btn bs bg" data-pax="${p.id}">Ver pasajero</button></div></div>`).join('')||'<p class="muted">No tienes pickups hoy ni mañana.</p>'}</div>`;
+ bindCommon();}
+function mispax(db){$('#main').innerHTML=DEMO+`<div class="card"><h2>Mis pasajeros</h2><div class="list">${db.pasajeros.filter(p=>p.guia===ME.id).map(p=>{const st=stamps(db,p.id).length;return `<button class="item" data-pax="${p.id}"><span class="av n">${ini(p.nombre)}</span><span class="grow"><b>${esc(p.nombre)}</b><br><span class="small muted">${esc(hotelN(p))} · ${p.pax} pax</span><div class="bar" style="margin-top:6px"><i style="width:${st/5*100}%"></i></div></span><span class="tag">${st}/5 sellos</span></button>`;}).join('')||'<p class="muted">Sin pasajeros asignados.</p>'}</div></div>`;bindCommon();}
+
+/* ---------- ficha del pasajero ---------- */
+function openModal(html){$('#sheet').innerHTML=html;$('#modal').classList.add('on');}
+function closeModal(){$('#modal').classList.remove('on');}
+$('#modal').onclick=e=>{if(e.target.id==='modal')closeModal();};
+function paxSheet(id){const db=tdbLoad(),p=db.pasajeros.find(x=>x.id===id);if(!p)return;const st=stamps(db,p.id);const op=ME.rol==='operador';
+ const acts=db.actividad.filter(a=>a.pax===id).sort((a,b)=>b.ts-a.ts);
+ openModal(`<div class="row between"><div><span class="small muted">${p.codigo}</span><h2 style="margin:2px 0">${esc(p.nombre)}</h2></div><button class="btn bs bg" id="cx">Cerrar</button></div>
+ <div class="card"><div class="grid small"><div><b>Correo</b><br>${esc(p.email)}</div><div><b>WhatsApp</b><br>${esc(p.tel||'—')}</div><div><b>Hotel</b><br>${esc(hotelN(p))}</div><div><b>Guía</b><br>${esc(guiaN(db,p.guia))}</div><div><b>Viaje</b><br>${p.llegada} → ${p.salida}</div><div><b>Pasajeros</b><br>${p.pax}</div></div>
+ <div class="row" style="margin-top:12px"><button class="btn bs bw" data-wa="${p.id}">WhatsApp</button>${op?`<button class="btn bs bp" id="ed">Editar reserva</button><button class="btn bs bg" id="acc">Enviar acceso a TRAZA</button>`:''}</div></div>
+ <div class="card"><h3>Pasaporte de sellos · ${st.length}/5</h3><div class="row" style="margin-top:8px">${Object.keys(PLN).map(k=>`<span class="tag ${st.includes(k)?'v':''}">${st.includes(k)?'✓ ':''}${PLN[k]}</span>`).join('')}</div></div>
+ <div class="card"><h3>Pickups</h3><div class="list">${(p.pickups||[]).slice().sort((a,b)=>(a.d+a.t).localeCompare(b.d+b.t)).map(k=>`<div class="item"><span class="grow"><b>${diaLbl(k.d)} · ${h12(k.t)}</b><br><span class="small muted">${tipoN(k)}${k.n?' · '+esc(k.n):''}</span></span>${estTag(k.e)}</div>`).join('')||'<p class="muted small">Sin pickups.</p>'}</div></div>
+ <div class="card"><h3>Actividad en la app</h3><div class="tl" style="margin-top:8px">${acts.map(a=>`<div class="e ${a.tipo}"><span class="tag">${ICO[a.tipo]||a.tipo}</span> <span class="small">${esc(a.det)}</span> <span class="small muted">· ${ago(a.ts)}</span></div>`).join('')||'<p class="muted small">Aún no usa la app.</p>'}</div></div>`);
+ $('#cx').onclick=closeModal;bindCommon($('#sheet'));
+ if(op){$('#ed').onclick=()=>editPax(id);$('#acc').onclick=()=>accessSheet(id);}}
+function accessSheet(id){const db=tdbLoad(),p=db.pasajeros.find(x=>x.id===id);
+ const msg=`Hola ${p.nombre.split(' · ').pop().split(' ')[0]}, bienvenido/a a Guayaquil con ZEROS3 Travel Company. Tu viaje ya está en TRAZA: ábrela en ${APP} y entra con tu correo ${p.email}. Te llegará un código para ingresar. ¡Buen viaje!`;
+ openModal(`<div class="row between"><h2 style="margin:0">Acceso a TRAZA</h2><button class="btn bs bg" id="cx">Cerrar</button></div>
+ <div class="card"><p class="small">La pasajera abre TRAZA, escribe su correo <b>${esc(p.email)}</b> y recibe un código. Al entrar, la app descarga su hotel, pickups, vuelos y guía.</p>
+ <div class="row" style="justify-content:center"><div class="qr">${QR.svg(APP,5)}</div></div><p class="small muted" style="text-align:center">QR general de TRAZA (sirve para todos los pasajeros)</p>
+ <div class="row"><button class="btn bw" id="sw">Enviar por WhatsApp</button><button class="btn bg" id="cp">Copiar mensaje</button></div></div>`);
+ $('#cx').onclick=closeModal;$('#sw').onclick=()=>window.open('https://wa.me/'+(p.tel||'').replace(/\D/g,'')+'?text='+encodeURIComponent(msg),'_blank');$('#cp').onclick=()=>navigator.clipboard.writeText(msg).then(()=>toast('Mensaje copiado'));}
+function editPax(id){const db=tdbLoad();const p=id?JSON.parse(JSON.stringify(db.pasajeros.find(x=>x.id===id))):{id:'',codigo:'',nombre:'',email:'',tel:'',hotel:'oroverde',guia:'',pax:1,llegada:tdbIso(0),salida:tdbIso(3),pickups:[]};
+ openModal(`<div class="row between"><h2 style="margin:0">${id?'Editar reserva':'Nueva reserva'}</h2><button class="btn bs bg" id="cx">Cancelar</button></div>
+ <div class="card"><div class="grid"><label>Nombre<input id="fn" value="${esc(p.nombre)}"></label><label>Correo de la reserva<input id="fe" type="email" value="${esc(p.email)}"></label><label>WhatsApp<input id="ft" value="${esc(p.tel)}"></label>
+ <label>N.º de pasajeros<input id="fp" type="number" min="1" value="${p.pax}"></label><label>Llegada<input id="fl" type="date" value="${p.llegada}"></label><label>Salida<input id="fs" type="date" value="${p.salida}"></label>
+ <label>Hotel<select id="fh">${HOTELS.map(h=>`<option value="${h.id}" ${p.hotel===h.id?'selected':''}>${h.n}</option>`).join('')}</select></label>
+ <label>Guía<select id="fg2"><option value="">Que la pasajera elija</option>${db.usuarios.filter(u=>u.rol==='guia').map(u=>`<option value="${u.id}" ${p.guia===u.id?'selected':''}>${u.nombre}</option>`).join('')}</select></label></div></div>
+ <div class="card"><div class="row between"><h3>Pickups</h3><button class="btn bs bg" id="ap">+ Agregar pickup</button></div><div id="pks" style="margin-top:10px"></div></div>
+ <button class="btn bt" id="sv" style="width:100%;justify-content:center">Guardar reserva</button>`);
+ const pks=$('#pks');
+ const row=(k={})=>{const d=document.createElement('div');d.className='pk';d.innerHTML=`<div class="grid"><label>Fecha<input type="date" class="d" value="${k.d||tdbIso(1)}"></label><label>Hora<input type="time" class="t" value="${k.t||'08:30'}"></label>
+  <label>Tipo<select class="k"><option value="t">Recorrido con guía</option><option value="v">Traslado al aeropuerto (vuelo)</option><option value="x">Otro traslado</option></select></label></div>
+  <div class="grid fl" style="margin-top:8px"><label>Aerolínea<input class="a" value="${esc(k.a||'')}" placeholder="LATAM"></label><label>N.º de vuelo<input class="f" value="${esc(k.f||'')}" placeholder="LA1362"></label><label>Ruta<input class="r" value="${esc(k.rt||'')}" placeholder="GYE-UIO"></label></div>
+  <label style="margin-top:8px">Detalle o nota<input class="n" value="${esc(k.n||'')}"></label><div class="row between" style="margin-top:8px"><select class="e" style="width:auto"><option value="pendiente">Pendiente</option><option value="recogido">Recogido</option><option value="cancelado">Cancelado</option></select><button class="btn bs bg del">Quitar</button></div>`;
+  d.dataset.id=k.id||('k'+Date.now()+Math.random().toString(36).slice(2,6));const ks=d.querySelector('.k');ks.value=k.k||'t';d.querySelector('.e').value=k.e||'pendiente';
+  const up=()=>d.querySelector('.fl').style.display=ks.value==='v'?'grid':'none';ks.onchange=up;up();d.querySelector('.del').onclick=()=>d.remove();pks.appendChild(d);};
+ (p.pickups||[]).forEach(row);if(!id)row();
+ $('#ap').onclick=()=>row();$('#cx').onclick=()=>id?paxSheet(id):closeModal();
+ $('#sv').onclick=()=>{const em=$('#fe').value.trim().toLowerCase();if(!$('#fn').value.trim()||!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){toast('Escribe el nombre y un correo válido');return;}
+  const D=tdbLoad();if(D.pasajeros.some(x=>x.id!==id&&(x.email.toLowerCase()===em||(x.alt||'').toLowerCase()===em))){toast('Ese correo ya tiene una reserva');return;}
+  Object.assign(p,{nombre:$('#fn').value.trim(),email:em,tel:$('#ft').value.trim(),pax:+$('#fp').value||1,llegada:$('#fl').value,salida:$('#fs').value,hotel:$('#fh').value,guia:$('#fg2').value,
+   pickups:[...pks.querySelectorAll('.pk')].map(d=>{const k={id:d.dataset.id,d:d.querySelector('.d').value,t:d.querySelector('.t').value,k:d.querySelector('.k').value,n:d.querySelector('.n').value.trim(),e:d.querySelector('.e').value};if(k.k==='v'){k.a=d.querySelector('.a').value.trim();k.f=d.querySelector('.f').value.trim().toUpperCase();k.rt=d.querySelector('.r').value.trim().toUpperCase();}return k;}).filter(k=>k.d&&k.t)});
+  if(!id){D.seq=(D.seq||0)+1;p.id='P'+D.seq+Date.now().toString(36).slice(-3);p.codigo='ZS3-'+String(D.seq).padStart(4,'0');D.pasajeros.push(p);}else{const i=D.pasajeros.findIndex(x=>x.id===id);D.pasajeros[i]=p;}
+  tdbSave(D);toast(id?'Reserva actualizada':'Reserva creada · '+p.codigo);render();paxSheet(p.id);};}
+function bindCommon(root=document){
+ root.querySelectorAll('[data-pax]').forEach(b=>b.onclick=()=>paxSheet(b.dataset.pax));
+ root.querySelectorAll('[data-t2]').forEach(b=>b.onclick=()=>{TAB=b.dataset.t2;render();});
+ root.querySelectorAll('[data-wa]').forEach(b=>b.onclick=e=>{e.stopPropagation();const p=tdbLoad().pasajeros.find(x=>x.id===b.dataset.wa);window.open('https://wa.me/'+(p.tel||'').replace(/\D/g,'')+'?text='+encodeURIComponent(`Hola ${p.nombre.split(' · ').pop().split(' ')[0]}, te escribe ${ME.nombre} de ZEROS3.`),'_blank');});
+ root.querySelectorAll('[data-rec]').forEach(b=>b.onclick=e=>{e.stopPropagation();const[pid,kid]=b.dataset.rec.split('|');tdbUpdatePax(pid,p=>{const k=p.pickups.find(x=>x.id===kid);if(k)k.e='recogido';});tdbLog(pid,'pickup','Recogido por '+ME.nombre);toast('Pickup marcado como recogido');render();});}
+window.addEventListener('storage',e=>{if(e.key===TDB_KEY&&ME&&!$('#modal').classList.contains('on'))render();});
+render();
 </script></body></html>
