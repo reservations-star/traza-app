@@ -531,6 +531,10 @@ a.list-item,a.list-item *{text-decoration:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (min-width:600px){#app{margin-block:0}}
 
+/* Pickups de la reserva */
+.pk-row{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--white)}
+.pk-row.nx{border-color:var(--navy);box-shadow:0 0 0 2px rgba(22,82,119,.1)}
+.pk-t{display:flex;flex-direction:column;min-width:76px;color:var(--navy)}.pk-t small{color:var(--gray);font-size:11px}
 /* Guías: elegir entre dos */
 .gd-card{border:1px solid var(--line);border-radius:16px;padding:10px 12px;display:flex;flex-direction:column;gap:10px;background:var(--white)}
 .gd-card.on{border-color:var(--navy);box-shadow:0 0 0 2px rgba(22,82,119,.12)}
@@ -617,6 +621,7 @@ tt:'<path d="M14 4v10.5a3.5 3.5 0 1 1-3-3.5M14 4c.5 2.5 2.3 4 5 4"/>',more:'<pat
 down:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',gift:'<rect x="4" y="9" width="16" height="11" rx="1"/><path d="M3 9h18M12 9v11M12 9c-2-4-6-4-6-1.5S10 9 12 9c2 0 6 0 6-1.5S14 5 12 9"/>',
 compass:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',logout:'<path d="M14 4h5v16h-5M10 8l-4 4 4 4M6 12h10"/>',
 star:'<path d="M12 4l2.3 5 5.2.6-3.9 3.6 1 5.2L12 15.8 7.4 18.4l1-5.2L4.5 9.6l5.2-.6z"/>',bed:'<path d="M3 18V7M3 13h18v5M21 13a3 3 0 0 0-3-3h-8v3"/><circle cx="7" cy="11" r="1.5"/>',
+plane:'<path d="M10.5 13.5 4 12l-1 1 5 3 3 5 1-1-1.5-6.5L16 9.5l3.5-3.5a1.5 1.5 0 0 0-2-2L14 7.5Z"/>',
 nav:'<path d="M4 11l16-7-7 16-2-7z"/>',sliders:'<path d="M5 6h14M5 12h14M5 18h14"/><circle cx="9" cy="6" r="2" fill="#fff"/><circle cx="15" cy="12" r="2" fill="#fff"/><circle cx="8" cy="18" r="2" fill="#fff"/>'
 };
 const I=(n,c='svg')=>`<svg class="${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]||''}</svg>`;
@@ -665,11 +670,35 @@ function dLbl(d,wd=true){const E=isEN();const o=wd?{weekday:'short',day:'numeric
  let t=d.toLocaleDateString(E?'en-US':'es-EC',o).replace(/\./g,'').replace(',','');return E?t:t.replace(/^\w/,c=>c.toUpperCase());}
 function tripRange(){const a=tripDay(0),b=tripDay(TRIP.n-1);const E=isEN();
  if(a.getMonth()===b.getMonth())return E?`${dLbl(a,false)} – ${b.getDate()}`:`${a.getDate()} – ${dLbl(b,false)}`;return `${dLbl(a,false)} – ${dLbl(b,false)}`;}
+/* Hoteles con los que trabaja ZEROS3 (la agencia lo asigna desde agencia.html o el viajero lo elige) */
+const HOTELS=[{id:'parque',n:'Hotel del Parque',z:'Samborondón · Parque Histórico'},{id:'oroverde',n:'Hotel Oro Verde',z:'Centro · Av. 9 de Octubre'},
+ {id:'hilton',n:'Hilton Colón Guayaquil',z:'Norte · Av. Francisco de Orellana'},{id:'sheraton',n:'Sheraton Guayaquil',z:'Norte · junto al Mall del Sol'},
+ {id:'wyndham',n:'Wyndham Guayaquil',z:'Puerto Santa Ana'},{id:'unipark',n:'Hotel Unipark',z:'Centro · frente al Parque Seminario'},
+ {id:'grand',n:'Grand Hotel Guayaquil',z:'Centro · junto a la Catedral'},{id:'courtyard',n:'Courtyard by Marriott Guayaquil',z:'Norte · Av. Francisco de Orellana'},
+ {id:'mansion',n:'Mansión del Río',z:'Las Peñas'},{id:'holiday',n:'Holiday Inn Guayaquil Airport',z:'Junto al aeropuerto'}];
+const AIRP={GYE:'Guayaquil',UIO:'Quito',GPS:'Galápagos (Baltra)',SCY:'San Cristóbal',CUE:'Cuenca',MEC:'Manta',LIM:'Lima',BOG:'Bogotá',PTY:'Panamá',MIA:'Miami',MAD:'Madrid'};
+/* Reserva del viajero: llega en el enlace personal que envía ZEROS3 (?r=...) */
+function b64urlDec(t){t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';return decodeURIComponent(escape(atob(t)));}
+function loadRes(){const m=/[?&]r=([^&#]+)/.exec(location.search);if(!m)return false;
+ try{const r=JSON.parse(b64urlDec(m[1]));S.res={h:r.h||'',hn:r.hn||'',g:r.g||'',p:(r.p||[]).map(x=>({d:x[0],t:x[1],k:x[2]||'t',f:x[3]||'',a:x[4]||'',rt:x[5]||'',n:x[6]||''}))};
+  if(r.n)S.name=r.n;if(r.g)S.guide=r.g;S.mode='cliente';S.onboarded=true;S.resNew=true;save();}catch(e){console.warn('reserva',e);}
+ try{history.replaceState(null,'',location.pathname);}catch(_){}return true;}
+function resHotel(){const r=S.res||{};const h=HOTELS.find(x=>x.id===r.h);return h?h:(r.hn?{id:'otro',n:r.hn,z:''}:HOTELS[0]);}
+function pkDate(p){const[y,mo,d]=p.d.split('-').map(Number);const[h,mi]=p.t.split(':').map(Number);return new Date(y,mo-1,d,h,mi);}
+function fmtHora(t){const[h,m]=t.split(':').map(Number);const h12=((h+11)%12)+1;return isEN()?`${h12}:${String(m).padStart(2,'0')} ${h<12?'AM':'PM'}`:`${h12}:${String(m).padStart(2,'0')} ${h<12?'a. m.':'p. m.'}`;}
+function fmtDia(p){const d=pkDate(p),t=new Date();const a=new Date(t.getFullYear(),t.getMonth(),t.getDate()),b=new Date(d.getFullYear(),d.getMonth(),d.getDate());const k=Math.round((b-a)/864e5);
+ return k===0?(isEN()?'Today':'Hoy'):k===1?(isEN()?'Tomorrow':'Mañana'):dLbl(d);}
+function nextPickup(){const r=S.res;if(!r||!r.p||!r.p.length)return null;const now=Date.now()-60*60*1000;const ps=r.p.slice().sort((a,b)=>pkDate(a)-pkDate(b));return ps.find(p=>pkDate(p)>=now)||null;}
+function pkLugar(){return (isEN()?'Pickup at the ':'Pickup en el lobby del ')+resHotel().n+(isEN()?' lobby':'');}
+function pkRuta(p){if(!p.rt)return'';const[o,d]=p.rt.toUpperCase().split(/[-–>]+/);return `${AIRP[o]||o} (${o}) → ${AIRP[d]||d} (${d})`;}
+function pkTitulo(p){return p.k==='v'?(isEN()?'Airport transfer · flight ':'Traslado al aeropuerto · vuelo ')+[p.a,p.f].filter(Boolean).join(' '):p.k==='x'?(isEN()?'Transfer':'Traslado'):(isEN()?'Tour with your guide':'Recorrido con tu guía');}
 /* Guías de ZEROS3: el cliente escoge con quién va; cada una tiene su WhatsApp directo */
 const GUIDES=[{id:'maybel',nombre:'Maybel Gálvez',ini:'MG',tel:'+593 99 850 5181'},{id:'samantha',nombre:'Samantha Muñoz',ini:'SM',tel:'+593 96 778 4572'}];
 function curGuide(){return GUIDES.find(g=>g.id===S.guide)||null;}
 function guideWA(g,msg){g=g||curGuide()||GUIDES[0];window.open('https://wa.me/'+g.tel.replace(/\D/g,'')+'?text='+encodeURIComponent(msg||('Hola '+g.nombre.split(' ')[0]+', soy '+S.name+' (viaje con ZEROS3).')),'_blank');}
-const GUIDE={get nombre(){const g=curGuide();return g?g.nombre:(isEN()?'Choose your guide':'Elige tu guía');},get ini(){const g=curGuide();return g?g.ini:'+';},get tel(){const g=curGuide();return g?g.tel:'';},idiomas:'',hoy:{hora:'8:30',lugar:'Pickup en el lobby del Hotel del Parque',poi:'Hotel del Parque',place:'penas',plan:'Las Peñas y Museo del Cacao'}};
+const GUIDE0={hora:'8:30',lugar:'Pickup en el lobby del Hotel del Parque',poi:'Hotel del Parque',place:'penas',plan:'Las Peñas y Museo del Cacao'};
+const GUIDE={get nombre(){const g=curGuide();return g?g.nombre:(isEN()?'Choose your guide':'Elige tu guía');},get ini(){const g=curGuide();return g?g.ini:'+';},get tel(){const g=curGuide();return g?g.tel:'';},idiomas:'',get hoy(){const p=nextPickup();if(!p)return GUIDE0;const h=resHotel();
+ return {hora:fmtHora(p.t),dia:fmtDia(p),lugar:pkLugar(),poi:h.n,place:'penas',plan:pkTitulo(p)+(p.rt?' · '+pkRuta(p):''),pk:p};}};
 const SEED_MEM=[
  {id:'s1',place:'penas',img:'img/gal/penas-portada.webp',text:'Atardecer subiendo los 444 escalones. La brisa del río y los colores de las casas hacen que cada paso valga la pena.',date:'2026-10-13T17:40',pub:false,likes:24,seed:true},
  {id:'s2',place:'malecon',img:'img/gal/malecon-4.webp',text:'Paseo matutino junto al río Guayas, con un jugo fresco frente al agua.',date:'2026-10-12T09:15',pub:true,likes:48,seed:true}];
@@ -1086,7 +1115,15 @@ AFTER.verif=()=>{const ins=[...document.querySelectorAll('#otp input')];ins[0].f
 
 function saludo(){const h=+new Date().toLocaleString('en-US',{timeZone:'America/Guayaquil',hour:'numeric',hour12:false});return h<12?'Buenos días':h<19?'Buenas tardes':'Buenas noches';}
 const VOZ={penas:'narrada por el faro',malecon:'narrada por el río Guayas',cacao:'narrada por una mazorca',seminario:'narrada por las iguanas',historico:'narrada por una abuela guayaquileña'};
-const HOY=[{t:'8:30',poi:'Hotel del Parque',n:'Pickup en tu hotel',d:'Tu guía te recoge en el lobby del Hotel del Parque',tag:'Guía'},{t:'9:15',place:'penas',n:'Las Peñas con tu guía',d:'Recorrido por la escalinata y el faro'},{t:'11:30',place:'cacao',n:'Museo del Cacao',d:'La historia de la pepa de oro · 45 min'},{t:'13:00',poi:'21 Gramos',n:'Almuerzo en 21 Gramos',d:'Puerto Santa Ana · frente al río',tag:'Aliado'}];
+const HOY0=[{t:'8:30',poi:'Hotel del Parque',n:'Pickup en tu hotel',d:'Tu guía te recoge en el lobby del Hotel del Parque',tag:'Guía'},{t:'9:15',place:'penas',n:'Las Peñas con tu guía',d:'Recorrido por la escalinata y el faro'},{t:'11:30',place:'cacao',n:'Museo del Cacao',d:'La historia de la pepa de oro · 45 min'},{t:'13:00',poi:'21 Gramos',n:'Almuerzo en 21 Gramos',d:'Puerto Santa Ana · frente al río',tag:'Aliado'}];
+/* Si la reserva tiene pickup hoy, reemplaza el de ejemplo (con el hotel real); si es vuelo, el día es el traslado */
+const HOY=new Proxy([],{get(_,k){const L=hoyList();const v=L[k];return typeof v==='function'?v.bind(L):v;}});
+function hoyList(){const r=S.res;if(!r)return HOY0;const t=new Date();const td=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+ const ps=(r.p||[]).filter(p=>p.d===td).sort((a,b)=>pkDate(a)-pkDate(b));const h=resHotel();
+ if(!ps.length){if(!(r.p||[]).length)return [{...HOY0[0],poi:h.n,d:(isEN()?'Your guide picks you up at the ':'Tu guía te recoge en el lobby del ')+h.n+(isEN()?' lobby':'')},...HOY0.slice(1)];
+  const nx=nextPickup();return [{t:'—',poi:h.n,n:isEN()?'Free day to explore':'Día libre para explorar',d:nx?(isEN()?'Next pickup: ':'Próximo pickup: ')+fmtDia(nx)+' '+fmtHora(nx.t)+(nx.k==='v'?' · '+[nx.a,nx.f].filter(Boolean).join(' '):''):(isEN()?'Use the map and audio stories':'Usa el mapa y las historias en audio')}];}
+ const out=ps.map(p=>({t:p.t.replace(/^0/,''),poi:h.n,n:p.k==='v'?(isEN()?'Pickup to the airport':'Pickup al aeropuerto'):(isEN()?'Hotel pickup':'Pickup en tu hotel'),d:p.k==='v'?([p.a,p.f].filter(Boolean).join(' ')+(p.rt?' · '+pkRuta(p):'')):(isEN()?'Lobby of ':'Lobby del ')+h.n,tag:p.k==='v'?(isEN()?'Flight':'Vuelo'):'Guía'}));
+ return ps.some(p=>p.k==='v')?out:[...out,...HOY0.slice(1)];}
 const tdKey=k=>'d2-'+k;
 function tdDone(h,k){const t=(S.todo||{})[tdKey(k)];return t===undefined?!!(h.place&&vis(h.place)):t;}
 function tdSum(){const n=HOY.filter((h,k)=>tdDone(h,k)).length;return n===HOY.length?'¡Completaste el plan de hoy!':`${n} de ${HOY.length} actividades de hoy`;}
@@ -1099,8 +1136,8 @@ SCREENS.inicio=()=>{const vc=visitedCount();const lugares=['penas','malecon','ca
  ${isClient()?`<div class="tripx"><img class="tx-art" src="img/trip-art.webp" alt="" aria-hidden="true">
   <div class="tx-top"><span class="tx-pill"><i></i>En ruta activa</span><span class="tx-date">Guayaquil · ${tripRange()}</span></div>
   <h3 class="tx-h">Mi viaje con ZEROS3</h3><span class="tx-bar"></span>
-  <div class="tx-stay"><span class="tx-ic">${I('bed','svg-s')}</span><span class="stack"><span class="tx-lbl">Alojamiento</span><b>Hotel del Parque, Samborondón</b></span></div>
-  <button class="tx-guide" id="guia"><span class="tx-av">${GUIDE.ini}</span><span class="stack" style="flex:1;min-width:0;text-align:left;gap:3px"><span class="tx-lbl2">${curGuide()?'Tu guía':'Guías ZEROS3'}</span><b class="tx-name" data-notr>${GUIDE.nombre}</b><span class="tx-l tx-time">${I('clock','svg-s')}Hoy ${GUIDE.hoy.hora}</span><span class="tx-l">${I('pin','svg-s')}${GUIDE.hoy.lugar}</span></span><span class="tx-go">${I('chev','svg-s')}</span></button>
+  <div class="tx-stay"><span class="tx-ic">${I('bed','svg-s')}</span><span class="stack"><span class="tx-lbl">Alojamiento</span><b data-notr>${S.res?esc(resHotel().n):'Hotel del Parque, Samborondón'}</b></span></div>
+  <button class="tx-guide" id="guia"><span class="tx-av">${GUIDE.ini}</span><span class="stack" style="flex:1;min-width:0;text-align:left;gap:3px"><span class="tx-lbl2">${curGuide()?'Tu guía':'Guías ZEROS3'}</span><b class="tx-name" data-notr>${GUIDE.nombre}</b><span class="tx-l tx-time">${I('clock','svg-s')}${GUIDE.hoy.dia||(isEN()?'Today':'Hoy')} ${GUIDE.hoy.hora}</span><span class="tx-l" data-notr>${I('pin','svg-s')}${esc(GUIDE.hoy.lugar)}</span>${GUIDE.hoy.pk&&GUIDE.hoy.pk.k==='v'?`<span class="tx-l" data-notr>${I('plane','svg-s')}${esc([GUIDE.hoy.pk.a,GUIDE.hoy.pk.f].filter(Boolean).join(' '))}${GUIDE.hoy.pk.rt?' · '+esc(GUIDE.hoy.pk.rt.toUpperCase().replace(/[-–>]+/,' → ')):''}</span>`:''}</span><span class="tx-go">${I('chev','svg-s')}</span></button>
   <div class="tx-foot"><button class="tx-itin" id="itin">Ver itinerario ${I('chev','svg-s')}</button><span class="tx-day"><i></i>${isEN()?`Day ${TRIP.today} of ${TRIP.n}`:`Día ${TRIP.today} de ${TRIP.n}`}</span></div></div>`
  :`<div class="trip"><span class="pill">Modo explorador</span><h3 style="margin-top:12px">Explora Guayaquil a tu ritmo</h3><p class="small" style="opacity:.85;margin-top:6px">Mapa, historias en audio y recuerdos gratis. Con ZEROS3 desbloqueas sellos, guía y descuentos.</p>
   <button class="btn btn-s" id="exper" style="background:#fff;color:var(--navy);margin-top:14px">Conocer experiencias ZEROS3</button></div>`}
@@ -1121,22 +1158,29 @@ SCREENS.inicio=()=>{const vc=visitedCount();const lugares=['penas','malecon','ca
   ${isClient()?`<div class="hscroll eats">${ALIADOS.map(a=>`<button class="eat-card" data-poin="${esc(a.n)}"><span class="eat-ph${a.logo&&!a.cover?' logo':''}" style="${a.logo?`background:${a.bg}`:''}"><img src="${a.logo||a.img||'img/puerto.webp'}" alt="Logo de ${esc(a.n)}" loading="lazy"><span class="eat-off">${esc(a.offer)}</span></span><span class="eat-b"><b>${esc(a.n)}</b><span class="small muted">${esc(a.tipo||'')} · Puerto Santa Ana</span></span></button>`).join('')}</div>`
   :[['La Central','Restaurante · calle Panamá','fork'],['Bar Juliana','Cócteles · Museo del Cacao','coffee'],['Puerto Ancla','Mariscos · calle Panamá','fork']].map(r=>`<button class="card list-item" data-poin="${esc(r[0])}"><span class="ico">${I(r[2])}</span><span class="stack gap4" style="flex:1;min-width:0"><b style="color:var(--navy)">${r[0]}</b><span class="small muted">${r[1]}</span></span>${I('chev','svg-s')}</button>`).join('')}</div>
  </div></div><button class="ai-fab" id="aiFab" aria-label="Asistente virtual Trazi">${I('spark')}</button>${tabbar('inicio')}</section>`;};
+function pkCards(){const r=S.res,ps=(r.p||[]).slice().sort((a,b)=>pkDate(a)-pkDate(b)),nx=nextPickup(),h=resHotel();
+ return `<div class="card stack gap8" style="padding:14px;border:1px solid var(--line)"><div class="row between"><b style="color:var(--navy)">${isEN()?'Your hotel':'Tu hotel'}</b><button class="ct-chg small" id="chgh">${isEN()?'Change':'Cambiar'}</button></div><div class="row gap8 small" data-notr>${I('bed','svg-s')}<span><b>${esc(h.n)}</b>${h.z?' · '+esc(h.z):''}</span></div></div>
+ ${ps.length?`<div class="stack gap8"><b style="color:var(--navy)">${isEN()?'Your pickups':'Tus pickups'}</b>${ps.map(p=>`<div class="pk-row${p===nx?' nx':''}"><span class="pk-t"><b>${fmtHora(p.t)}</b><small>${fmtDia(p)}</small></span><span class="stack gap4" style="flex:1;min-width:0"><b data-notr>${esc(pkTitulo(p))}</b><span class="small muted" data-notr>${esc(pkLugar())}${p.rt?'<br>'+esc(pkRuta(p)):''}${p.n?'<br>'+esc(p.n):''}</span></span>${p===nx?`<span class="td-tag">${isEN()?'Next':'Próximo'}</span>`:''}</div>`).join('')}</div>`:''}`;}
+function hotelSheet(){const r=S.res||{};sheet(`<h2 class="h2">${isEN()?'Where are you staying?':'¿Dónde te hospedas?'}</h2><div class="stack gap8">${HOTELS.map(h=>`<button class="opt" data-hid="${h.id}">${I('bed','svg-s')}<span class="stack gap4" style="flex:1;text-align:left"><b data-notr>${h.n}</b><span class="small muted" data-notr>${h.z}</span></span>${r.h===h.id?I('check','svg-s'):''}</button>`).join('')}</div>`,
+ {onOpen:(o,close)=>o.querySelectorAll('[data-hid]').forEach(b=>b.onclick=()=>{S.res=S.res||{p:[]};S.res.h=b.dataset.hid;S.res.hn='';save();toast((isEN()?'Hotel: ':'Hotel: ')+resHotel().n);close();if(cur==='inicio')render();})});}
 function guideSheet(){const g=GUIDE,cg=curGuide();
  const cards=GUIDES.map(x=>{const on=cg&&cg.id===x.id;return `<div class="gd-card${on?' on':''}" data-gid="${x.id}"><button class="gd-pick" data-gpick="${x.id}"><span class="g-av" style="background:${on?'var(--navy)':'var(--sky-soft)'};color:${on?'#fff':'var(--navy)'}">${x.ini}</span><span class="stack gap4" style="flex:1;min-width:0;text-align:left"><b style="color:var(--navy)" data-notr>${x.nombre}</b><span class="small muted">${on?(isEN()?'Your guide':'Tu guía'):(isEN()?'ZEROS3 guide · tap to choose':'Guía ZEROS3 · toca para elegir')}</span></span><span class="gd-radio">${on?I('check','svg-s'):''}</span></button>
   <div class="row gap8"><button class="btn btn-s gd-wa" data-gwa="${x.id}">${I('wa','svg-s')}WhatsApp</button><button class="btn btn-s btn-ghost gd-tel" data-gtel="${x.id}">${I('phone','svg-s')}${isEN()?'Call':'Llamar'}</button><span class="small muted" style="margin-left:auto;white-space:nowrap;font-size:12px" data-notr>${x.tel.replace('+593 ','0')}</span></div></div>`;}).join('');
  sheet(`<div class="stack gap4"><span class="small muted">${isEN()?'ZEROS3 guides':'Guías ZEROS3'}</span><h2 class="h2" style="margin:0">${cg?(isEN()?'Your guide':'Tu guía'):(isEN()?'Choose your guide':'Elige tu guía')}</h2><span class="small muted">${isEN()?'Both are always available for you. Choose who goes with you and message her anytime.':'Las dos están siempre a tu disposición. Escoge quién te acompaña y escríbele cuando necesites.'}</span></div>
  <div class="stack gap10">${cards}</div>
- <div class="card stack gap8" style="padding:14px;border:1px solid var(--line)"><b style="color:var(--navy)">${isEN()?`Today · Day ${TRIP.today}`:`Hoy · Día ${TRIP.today}`}</b>
+ ${S.res?pkCards():''}<div class="card stack gap8" style="padding:14px;border:1px solid var(--line)${S.res?';display:none':''}"><b style="color:var(--navy)">${isEN()?`Today · Day ${TRIP.today}`:`Hoy · Día ${TRIP.today}`}</b>
   <div class="row gap8 small">${I('clock','svg-s')}${isEN()?'Pickup at':'Pickup a las'} ${g.hoy.hora}</div><div class="row gap8 small">${I('pin','svg-s')}${g.hoy.lugar}</div><div class="row gap8 small">${I('route','svg-s')}${g.hoy.plan}</div></div>
  <p class="small muted" style="margin:0">Cada día tu guía te recoge en el hotel y te acompaña en los recorridos del itinerario. Para cambios de horario o dudas, escribe a la agencia.</p>
  <button class="btn btn-primary" id="gmap">${I('map','svg-s')}Ver punto de pickup</button>
  <button class="btn btn-ghost" id="gmail">${I('chat','svg-s')}Contactar a ZEROS3</button>`,
- {onOpen:(o,close)=>{o.querySelector('#gmap').onclick=()=>{close();const i=poiByName(g.hoy.poi);if(i>=0)setTimeout(()=>poiSheet(i,null),220);else go('mapa',{sel:g.hoy.place});};
+ {onOpen:(o,close)=>{o.querySelector('#gmap').onclick=()=>{close();const i=poiByName(g.hoy.poi);if(i>=0)setTimeout(()=>poiSheet(i,null),220);else window.open('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(g.hoy.poi+' Guayaquil'),'_blank');};
   o.querySelector('#gmail').onclick=()=>{close();go('contacto');};
+  const ch=o.querySelector('#chgh');if(ch)ch.onclick=()=>{close();setTimeout(hotelSheet,220);};
   o.querySelectorAll('[data-gpick]').forEach(b=>b.onclick=()=>{S.guide=b.dataset.gpick;save();const x=curGuide();toast(isEN()?`${x.nombre} is your guide`:`${x.nombre} será tu guía`);close();if(cur==='inicio')render();setTimeout(guideSheet,260);});
   o.querySelectorAll('[data-gwa]').forEach(b=>b.onclick=()=>guideWA(GUIDES.find(x=>x.id===b.dataset.gwa)));
   o.querySelectorAll('[data-gtel]').forEach(b=>b.onclick=()=>{location.href='tel:'+GUIDES.find(x=>x.id===b.dataset.gtel).tel.replace(/\s/g,'');});}});}
 AFTER.inicio=()=>{document.getElementById('srch').onclick=openSearch;
+ if(S.resNew){S.resNew=false;save();setTimeout(()=>toast(isEN()?'Your ZEROS3 trip is loaded':'Tu viaje con ZEROS3 ya está cargado'),600);}
  app.querySelectorAll('[data-td]').forEach(b=>b.onclick=e=>{e.stopPropagation();const k=+b.dataset.td;S.todo=S.todo||{};const nv=!tdDone(HOY[k],k);S.todo[tdKey(k)]=nv;save();
   const row=b.closest('.td-row');row.classList.toggle('done',nv);b.setAttribute('aria-checked',nv);if(nv){b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop');try{navigator.vibrate&&navigator.vibrate(20);}catch(_){}}
   const sm=document.getElementById('tdsum');if(sm){sm.textContent=tdSum();if(isEN())trNode(sm);}});
@@ -2175,6 +2219,7 @@ const perfilMenu=()=>app.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{
 /* ---------- Inicio de la app ---------- */
 try{speechSynthesis.getVoices();}catch(e){}
 /* ?demo en el enlace: empieza desde cero (bienvenida + ingreso), ideal para presentar */
+loadRes();
 if(/[?&]demo\b/.test(location.search)){S.onboarded=false;S.mode=null;S.otp=null;save();try{history.replaceState(null,'',location.pathname);}catch(_){}}
 go('splash',{},{replace:true});
 
@@ -2215,8 +2260,8 @@ async function ai_answer(q){const t=ai_nrm(q);const id=ai_findPlace(t);const cli
  if(ai_has(t,['ingles','english','idioma','language','espanol','spanish']))return ai_T('Puedo cambiar el idioma de toda la app.','I can switch the whole app’s language.')+ai_acts(ai_btn('lang',isEN()?'Español':'English','globe'));
  if(ai_has(t,['hoy','plan','itinerario','que hago','agenda','today','programa','que sigue','siguiente','next']))return ai_planHoy(cli);
  if(ai_has(t,['guia','guias','guide','guides','pickup','recoge','recogen','recoger','maybel','samantha','conductor','chofer']))return cli
-  ?(curGuide()?ai_T(`Tu guía es ${GUIDE.nombre}. Hoy te recoge a las ${GUIDE.hoy.hora} en el lobby del Hotel del Parque. Cada día el recorrido empieza con el pickup en tu hotel.`,`Your guide is ${GUIDE.nombre}. Today the pickup is at ${GUIDE.hoy.hora} in the Hotel del Parque lobby. Every day starts with a hotel pickup.`)+ai_acts(ai_btn('wa',ai_T('Escribir a mi guía','Message my guide'),'wa'),ai_btn('guide',ai_T('Cambiar o ver detalles','Change or see details'),'user'))
-   :ai_T(`Tus guías ZEROS3 son <b>Maybel Gálvez</b> y <b>Samantha Muñoz</b>; las dos están siempre a tu disposición. Escoge con quién vas y escríbele por WhatsApp. Hoy el pickup es a las ${GUIDE.hoy.hora} en el lobby del Hotel del Parque.`,`Your ZEROS3 guides are <b>Maybel Gálvez</b> and <b>Samantha Muñoz</b>; both are always available. Choose who goes with you and message her on WhatsApp. Today the pickup is at ${GUIDE.hoy.hora} in the Hotel del Parque lobby.`)+ai_acts(ai_btn('guide',ai_T('Elegir mi guía','Choose my guide'),'user')))
+  ?(curGuide()?ai_T(`Tu guía es ${GUIDE.nombre}. ${GUIDE.hoy.dia||'Hoy'} te recoge a las ${GUIDE.hoy.hora} en el lobby del ${resHotel().n}. Cada día el recorrido empieza con el pickup en tu hotel.`,`Your guide is ${GUIDE.nombre}. ${GUIDE.hoy.dia||'Today'} the pickup is at ${GUIDE.hoy.hora} in the ${resHotel().n} lobby. Every day starts with a hotel pickup.`)+ai_acts(ai_btn('wa',ai_T('Escribir a mi guía','Message my guide'),'wa'),ai_btn('guide',ai_T('Cambiar o ver detalles','Change or see details'),'user'))
+   :ai_T(`Tus guías ZEROS3 son <b>Maybel Gálvez</b> y <b>Samantha Muñoz</b>; las dos están siempre a tu disposición. Escoge con quién vas y escríbele por WhatsApp. ${GUIDE.hoy.dia||'Hoy'} el pickup es a las ${GUIDE.hoy.hora} en el lobby del ${resHotel().n}.`,`Your ZEROS3 guides are <b>Maybel Gálvez</b> and <b>Samantha Muñoz</b>; both are always available. Choose who goes with you and message her on WhatsApp. ${GUIDE.hoy.dia||'Today'} the pickup is at ${GUIDE.hoy.hora} in the ${resHotel().n} lobby.`)+ai_acts(ai_btn('guide',ai_T('Elegir mi guía','Choose my guide'),'user')))
   :ai_T('El guía y el pickup en el hotel son parte de los paquetes de ZEROS3. Si quieres reservar uno, escríbenos.','The guide and hotel pickup are part of ZEROS3 packages. Message us to book one.')+ai_acts(ai_btn('go:contacto',ai_T('Contactar a ZEROS3','Contact ZEROS3'),'chat'));
  if(ai_has(t,['cerca','cercano','cercanos','alrededor','near','nearby','donde estoy','aqui cerca']))return await ai_cerca();
  if(ai_has(t,['donde como','que como','para comer','donde puedo comer','donde almorzar','comer','comida','almuerzo','almorzar','cena','cenar','restaurante','restaurantes','hambre','desayuno','food','eat','lunch','dinner','beber','tomar algo','bar']))return ai_comer(id,cli);
